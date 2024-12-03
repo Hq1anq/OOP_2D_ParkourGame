@@ -16,7 +16,7 @@ public class Keyboard implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_W -> gamePanel.getGame().getPlayer().setUp(false);
+            case KeyEvent.VK_W -> System.out.println("UP");
             case KeyEvent.VK_A -> gamePanel.getGame().getPlayer().setLeft(false);
             case KeyEvent.VK_S -> gamePanel.getGame().getPlayer().setDown(false);
             case KeyEvent.VK_D -> gamePanel.getGame().getPlayer().setRight(false);

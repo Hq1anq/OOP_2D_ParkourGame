@@ -11,13 +11,13 @@ public class Player extends Entity {
 
     private BufferedImage[][] animations;
     private int aniTick, aniIndex, aniSpeed = 15;
-    private int playerAction = RUNNING;
+    private int playerAction = IDLE;
     private boolean moving = false;
     private boolean left, up, right, down, jump;
     private float playerSpeed = 2.0f;
     private int[][] levelData;
-    private float xDrawOffset = 3 * 2 * Game.SCALE;
-    private float yDrawOffset = 1 * 2 * Game.SCALE;
+    private float xDrawOffset = 3 * Game.SCALE;
+    private float yDrawOffset = 1 * Game.SCALE;
 
     // Jumping
     private float airSpeed = 0f;
@@ -29,19 +29,19 @@ public class Player extends Entity {
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
         loadAnimation();
-        initHitbox(x, y, 24 * Game.SCALE, 29 * Game.SCALE);
+        initHitbox(x, y, 24 * Game.SCALE, 30 * Game.SCALE);
     }
 
     public void update() {
         updatePos();
         updateAnimationTick();
         setAnimation();
-
+        System.out.println(IsEntityOnFloor(hitbox, levelData));
     }
 
     public void render(Graphics g) {
         g.drawImage(animations[playerAction][aniIndex], (int) (hitbox.x - xDrawOffset), (int) (hitbox.y - yDrawOffset), width, height, null);
-        // drawHitbox(g);
+        drawHitbox(g);
     }
 
     private void updateAnimationTick() {
@@ -58,21 +58,25 @@ public class Player extends Entity {
     private void setAnimation() {
         int startAnimation = playerAction;
 
-        if (moving)
-            playerAction = WALKING;
-        else
-            playerAction = IDLE;
         if (inAir) {
-            // if (airSpeed < 0)
+            if (airSpeed < 0)
                 playerAction = JUMP;
+            else
+                playerAction = FALL;
+        } else if (moving) {
+            playerAction = WALKING;
+        } else {
+            playerAction = IDLE;
         }
+
         if (startAnimation != playerAction) {
             resetAnimationTick();
         }
     }
 
     private void resetAnimationTick() {
-        aniTick = 0; aniIndex = 0;
+        aniTick = 0;
+        aniIndex = 0;
     }
 
     private void updatePos() {
@@ -87,9 +91,11 @@ public class Player extends Entity {
             xSpeed -= playerSpeed;
         if (right)
             xSpeed += playerSpeed;
-        if (!inAir)
-            if (!IsEntityOnFloor(hitbox, levelData))
+        if (!inAir) {
+            if (!IsEntityOnFloor(hitbox, levelData)) {
                 inAir = true;
+            }
+        }
         if (inAir) {
             if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, levelData)) {
                 hitbox.y += airSpeed;
@@ -103,8 +109,9 @@ public class Player extends Entity {
                     airSpeed = fallSpeedAfterCollision;
                 updateXPos(xSpeed);
             }
-        } else
+        } else {
             updateXPos(xSpeed);
+        }
         moving = true;
     }
 
@@ -125,14 +132,15 @@ public class Player extends Entity {
     private void resetInAir() {
         inAir = false;
         airSpeed = 0;
+        hitbox.y = (int) (hitbox.y / Game.TILE_SIZE) * Game.TILE_SIZE; // Align with the tile grid
     }
 
     private void loadAnimation() {
         BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
-        animations = new BufferedImage[30][8];
+        animations = new BufferedImage[10][8];
         for (int i = 0; i < animations.length; i++) {
             for (int j = 0; j < animations[i].length; j++) {
-                animations[i][j] = img.getSubimage(j*32, i*32, 32, 32);
+                animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
             }
         }
     }
@@ -144,8 +152,10 @@ public class Player extends Entity {
     }
 
     public void resetDirectionBooleans() {
-        left = false; right = false;
-        up = false; down = false;
+        left = false;
+        right = false;
+        up = false;
+        down = false;
     }
 
     public boolean isLeft() {
@@ -183,6 +193,4 @@ public class Player extends Entity {
     public void setJump(boolean jump) {
         this.jump = jump;
     }
-
-
 }
