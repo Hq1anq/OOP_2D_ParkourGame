@@ -36,7 +36,6 @@ public class Player extends Entity {
         updatePos();
         updateAnimationTick();
         setAnimation();
-        System.out.println(IsEntityOnFloor(hitbox, levelData));
     }
 
     public void render(Graphics g) {
