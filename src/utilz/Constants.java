@@ -15,8 +15,8 @@ public class Constants {
                 case WALKING: return 8;
                 case RUNNING: return 8;
                 case IDLE: return 5;
-                case JUMP: return 3;
-                case FALL: return 3;
+                case JUMP: return 2;
+                case FALL: return 4;
                 // case GROUND: return 8;
                 // case HIT: return 8;
                 default: return 1;

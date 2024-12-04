@@ -16,31 +16,31 @@ public class Player extends Entity {
     private boolean left, up, right, down, jump;
     private float playerSpeed = 2.0f;
     private int[][] levelData;
-    private float xDrawOffset = 3 * Game.SCALE;
-    private float yDrawOffset = 1 * Game.SCALE;
+    private float xDrawOffset = 3 * 2 * Game.SCALE;
+    private float yDrawOffset = 0 * 2 * Game.SCALE;
 
     // Jumping
     private float airSpeed = 0f;
     private float gravity = 0.04f * Game.SCALE;
-    private float jumpSpeed = -2.75f * Game.SCALE;
+    private float jumpSpeed = -2.5f * Game.SCALE;
     private float fallSpeedAfterCollision = 0.5f * Game.SCALE;
     private boolean inAir = false;
 
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
         loadAnimation();
-        initHitbox(x, y, 24 * Game.SCALE, 30 * Game.SCALE);
+        initHitbox(x, y, 24 * 2 * Game.SCALE, 31 * 2 * Game.SCALE);
     }
 
     public void update() {
         updatePos();
         updateAnimationTick();
         setAnimation();
-        System.out.println(IsEntityOnFloor(hitbox, levelData));
     }
 
     public void render(Graphics g) {
         g.drawImage(animations[playerAction][aniIndex], (int) (hitbox.x - xDrawOffset), (int) (hitbox.y - yDrawOffset), width, height, null);
+        // g.drawRect((int) hitbox.x, (int) (hitbox.y + hitbox.height) + 3, 10, 10);
         drawHitbox(g);
     }
 
@@ -132,7 +132,7 @@ public class Player extends Entity {
     private void resetInAir() {
         inAir = false;
         airSpeed = 0;
-        hitbox.y = (int) (hitbox.y / Game.TILE_SIZE) * Game.TILE_SIZE; // Align with the tile grid
+        // hitbox.y = (int) (hitbox.y / Game.TILE_SIZE) * Game.TILE_SIZE; // Align with the tile grid
     }
 
     private void loadAnimation() {

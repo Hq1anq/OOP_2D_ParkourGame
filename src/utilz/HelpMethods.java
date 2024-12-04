@@ -21,10 +21,10 @@ public class HelpMethods {
         if (x < 0 || x >= maxWidth || y < 0 || y >= maxHeight)
             return true;
 
-        float xIndex = x / Game.TILE_SIZE;
-        float yIndex = y / Game.TILE_SIZE;
+        int xIndex = (int) (x / Game.TILE_SIZE);
+        int yIndex = (int) (y / Game.TILE_SIZE);
 
-        int value = levelData[(int) yIndex][(int) xIndex];
+        int value = levelData[yIndex][xIndex];
         return (value >= 48 || value < 0 || value != 11);
     }
 
@@ -32,7 +32,7 @@ public class HelpMethods {
         int currentTile = (int) (hitbox.x / Game.TILE_SIZE);
         if (xSpeed > 0) { // Move to Right
             int tileXPos = currentTile * Game.TILE_SIZE;
-            int xOffSet = (int) (Game.TILE_SIZE - hitbox.width);
+            int xOffSet = (int) (2 * Game.TILE_SIZE - hitbox.width);
             return tileXPos + xOffSet - 1; // -1 For not overlapping
         } else { // Move to Left
             return currentTile * Game.TILE_SIZE + 1;
@@ -41,24 +41,16 @@ public class HelpMethods {
 
     public static boolean IsEntityOnFloor(Rectangle2D.Float hitbox, int[][] levelData) {
         // Check pixels below the bottom-left and bottom-right corners of the hitbox
-        float xStart = hitbox.x;
-        float xEnd = hitbox.x + hitbox.width;
-        float y = hitbox.y + hitbox.height + 3;
-
-        for (float x = xStart; x < xEnd; x += Game.TILE_SIZE / 2) {
-            if (IsSolid(x, y, levelData)) {
-                return true;
-            }
-        }
-        return IsSolid(xEnd, y, levelData);
+        return (IsSolid(hitbox.x, hitbox.y + hitbox.height + 3, levelData) ||
+                IsSolid(hitbox.x + hitbox.width / 2, hitbox.y + hitbox.height + 3, levelData) ||
+                IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 3, levelData));
     }
 
     public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitbox, float airSpeed) {
         int currentTile = (int) (hitbox.y / Game.TILE_SIZE);
         if (airSpeed > 0) { // Falling -> Touching Floor
-            int tileYPos = currentTile * Game.TILE_SIZE;
-            int yOffSet = (int) (Game.TILE_SIZE - hitbox.height);
-            return tileYPos + yOffSet - 1;
+            int tileYPos = (currentTile + 2) * Game.TILE_SIZE;
+            return tileYPos - hitbox.height - 2;
         } else { // Jumping -> Hit the roof
             return currentTile * Game.TILE_SIZE;
         }
