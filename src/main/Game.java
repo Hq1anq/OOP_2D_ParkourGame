@@ -9,7 +9,7 @@ public class Game implements Runnable {
     private GamePanel gamePanel;
     private Thread gameThread;
     private final int FPS_SET = 120;
-    private final int UPS_SET = 200;
+    private final int UPS_SET = 150;
 
     private Player player;
     private LevelManager levelManager;
@@ -34,7 +34,7 @@ public class Game implements Runnable {
 
     private void initClasses() {
         levelManager = new LevelManager(this);
-        player = new Player(200, 230, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE));
+        player = new Player(100, 350, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE));
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
     }
 

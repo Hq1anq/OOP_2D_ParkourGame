@@ -14,7 +14,7 @@ public class Player extends Entity {
     private int playerAction = IDLE;
     private boolean moving = false;
     private boolean left, up, right, down, jump;
-    private float playerSpeed = 2.0f;
+    private float playerSpeed = 3.0f;
     private int[][] levelData;
     private float xDrawOffset = 3 * 2 * Game.SCALE;
     private float yDrawOffset = 0 * 2 * Game.SCALE;
@@ -22,9 +22,12 @@ public class Player extends Entity {
     // Jumping
     private float airSpeed = 0f;
     private float gravity = 0.04f * Game.SCALE;
-    private float jumpSpeed = -2.5f * Game.SCALE;
-    private float fallSpeedAfterCollision = 0.5f * Game.SCALE;
+    private float jumpSpeed = -3.0f * Game.SCALE;
+    private float fallSpeedAfterCollision = 1.5f * Game.SCALE;
     private boolean inAir = false;
+
+    private int flipX = 0;
+    private int flipW = 1;
 
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
@@ -39,9 +42,12 @@ public class Player extends Entity {
     }
 
     public void render(Graphics g) {
-        g.drawImage(animations[playerAction][aniIndex], (int) (hitbox.x - xDrawOffset), (int) (hitbox.y - yDrawOffset), width, height, null);
+        g.drawImage(animations[playerAction][aniIndex],
+            (int) (hitbox.x - xDrawOffset) + flipX,
+            (int) (hitbox.y - yDrawOffset),
+            width * flipW, height, null);
         // g.drawRect((int) hitbox.x, (int) (hitbox.y + hitbox.height) + 3, 10, 10);
-        drawHitbox(g);
+        // drawHitbox(g);
     }
 
     private void updateAnimationTick() {
@@ -50,7 +56,10 @@ public class Player extends Entity {
             aniTick = 0;
             aniIndex++;
             if (aniIndex >= GetSpriteAmount(playerAction)) {
-                aniIndex = 0;
+                if (playerAction == FALL)
+                    aniIndex --;
+                else
+                    aniIndex = 0;
             }
         }
     }
@@ -87,10 +96,16 @@ public class Player extends Entity {
         if (!left && !right && !inAir)
             return;
         float xSpeed = 0;
-        if (left)
+        if (left) {
             xSpeed -= playerSpeed;
-        if (right)
+            flipX = width;
+            flipW = -1;
+        }
+        if (right) {
             xSpeed += playerSpeed;
+            flipX = 0;
+            flipW = 1;
+        }
         if (!inAir) {
             if (!IsEntityOnFloor(hitbox, levelData)) {
                 inAir = true;
