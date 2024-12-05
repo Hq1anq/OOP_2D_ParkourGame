@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
-import main.Game;
 
 public class LoadSave {
 
@@ -31,8 +30,8 @@ public class LoadSave {
         return img;
     }
     public static int[][] getLevelData() {
-        int[][] levelData = new int[Game.TILES_IN_HEIGHT][Game.TILES_IN_WIDTH];
         BufferedImage img = GetSpriteAtlas(LEVEL_ONE_DATA);
+        int[][] levelData = new int[img.getHeight()][img.getWidth()];
 
         for (int i = 0; i < img.getHeight(); i++)
             for (int j = 0; j < img.getWidth(); j++) {

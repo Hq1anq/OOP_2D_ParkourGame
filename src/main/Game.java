@@ -3,6 +3,7 @@ package main;
 import entities.Player;
 import java.awt.Graphics;
 import levels.LevelManager;
+import utilz.LoadSave;
 
 public class Game implements Runnable {
     private GameWindow gameWindow;
@@ -21,6 +22,13 @@ public class Game implements Runnable {
     public final static int TILE_SIZE = (int) (TILE_DEFAULT_SIZE * SCALE);
     public final static int GAME_WIDTH = TILE_SIZE * TILES_IN_WIDTH;
     public final static int GAME_HEIGHT = TILE_SIZE * TILES_IN_HEIGHT;
+
+    private int xLevelOffset;
+    private int leftBorder = (int) (0.4 * Game.GAME_WIDTH);
+    private int rightBorder = (int) (0.6 * Game.GAME_WIDTH);
+    private int levelTileWide = LoadSave.getLevelData()[0].length;
+    private int maxTileOffset = levelTileWide - Game.TILES_IN_WIDTH;
+    private int maxLevelOffsetX = maxTileOffset * Game.TILE_SIZE;
 
     public Game() {
         initClasses();
@@ -46,11 +54,27 @@ public class Game implements Runnable {
     public void update() {
         player.update();
         levelManager.update();
+        checkCloseToBorder();
+    }
+
+    private void checkCloseToBorder() {
+        int playerX = (int) player.getHitbox().x;
+        int diff = playerX - xLevelOffset;
+
+        if (diff > rightBorder)
+            xLevelOffset += diff - rightBorder;
+        else if (diff < leftBorder)
+            xLevelOffset += diff - leftBorder;
+
+        if (xLevelOffset > maxLevelOffsetX)
+            xLevelOffset = maxLevelOffsetX;
+        else if (xLevelOffset < 0)
+            xLevelOffset = 0;
     }
 
     public void render(Graphics g) {
-        levelManager.draw(g);
-        player.render(g);
+        levelManager.draw(g, xLevelOffset);
+        player.render(g, xLevelOffset);
     }
 
     @Override

@@ -49,12 +49,11 @@ public class HelpMethods {
     }
 
     public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitbox, float airSpeed) {
-        int currentTile = (int) (hitbox.y / Game.TILE_SIZE);
         if (airSpeed > 0) { // Falling -> Touching Floor
-            int tileYPos = (currentTile + 2) * Game.TILE_SIZE;
-            return tileYPos - hitbox.height - 2;
+            int floorTile = (int) ((hitbox.y + airSpeed) / Game.TILE_SIZE);
+            return floorTile * Game.TILE_SIZE;
         } else { // Jumping -> Hit the roof
-            return currentTile * Game.TILE_SIZE;
+            return ((int) (hitbox.y / Game.TILE_SIZE)) * Game.TILE_SIZE;
         }
     }
 }

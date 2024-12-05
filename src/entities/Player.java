@@ -23,7 +23,7 @@ public class Player extends Entity {
     private float airSpeed = 0f;
     private float gravity = 0.04f * Game.SCALE;
     private float jumpSpeed = -3.0f * Game.SCALE;
-    private float fallSpeedAfterCollision = 1.5f * Game.SCALE;
+    private float fallSpeedScale = 2.0f;
     private boolean inAir = false;
 
     private int flipX = 0;
@@ -41,12 +41,12 @@ public class Player extends Entity {
         setAnimation();
     }
 
-    public void render(Graphics g) {
+    public void render(Graphics g, int xLevelOffset) {
         g.drawImage(animations[playerAction][aniIndex],
-            (int) (hitbox.x - xDrawOffset) + flipX,
+            (int) (hitbox.x - xDrawOffset) - xLevelOffset + flipX,
             (int) (hitbox.y - yDrawOffset),
             width * flipW, height, null);
-        // g.drawRect((int) hitbox.x, (int) (hitbox.y + hitbox.height) + 3, 10, 10);
+        // g.drawLine(0, 0, 100, (int) ((hitbox.y + airSpeed) / Game.TILE_SIZE) * Game.TILE_SIZE);
         // drawHitbox(g);
     }
 
@@ -93,8 +93,11 @@ public class Player extends Entity {
 
         if (jump)
             jump();
-        if (!left && !right && !inAir)
-            return;
+
+        if (!inAir)
+            if((!left && !right) || (left && right))
+                return;
+    
         float xSpeed = 0;
         if (left) {
             xSpeed -= playerSpeed;
@@ -114,14 +117,16 @@ public class Player extends Entity {
         if (inAir) {
             if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, levelData)) {
                 hitbox.y += airSpeed;
-                airSpeed += gravity;
+                if (airSpeed > 0)
+                    airSpeed += gravity * fallSpeedScale;
+                else airSpeed += gravity;
                 updateXPos(xSpeed);
             } else {
                 hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
                 if (airSpeed > 0)
                     resetInAir();
                 else
-                    airSpeed = fallSpeedAfterCollision;
+                    airSpeed += gravity * fallSpeedScale;
                 updateXPos(xSpeed);
             }
         } else {
