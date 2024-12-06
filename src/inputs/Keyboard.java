@@ -22,7 +22,8 @@ public class Keyboard implements KeyListener {
             case KeyEvent.VK_A -> gamePanel.getGame().getPlayer().setLeft(false);
             case KeyEvent.VK_S -> gamePanel.getGame().getPlayer().setCrouch(false);
             case KeyEvent.VK_D -> gamePanel.getGame().getPlayer().setRight(false);
-            case KeyEvent.VK_K -> gamePanel.getGame().getPlayer().setJump(false);
+            // case KeyEvent.VK_K -> gamePanel.getGame().getPlayer().setJump(false);
+            // case KeyEvent.VK_SPACE -> gamePanel.getGame().getPlayer().setJump(false);
         }
     }
 
@@ -82,7 +83,8 @@ public class Keyboard implements KeyListener {
             case KeyEvent.VK_A -> gamePanel.getGame().getPlayer().setLeft(true);
             case KeyEvent.VK_S -> gamePanel.getGame().getPlayer().setCrouch(true);
             case KeyEvent.VK_D -> gamePanel.getGame().getPlayer().setRight(true);
-            case KeyEvent.VK_K -> gamePanel.getGame().getPlayer().setJump(true);
+            case KeyEvent.VK_K -> gamePanel.getGame().getPlayer().jump();
+            case KeyEvent.VK_SPACE -> gamePanel.getGame().getPlayer().jump();
             case KeyEvent.VK_ESCAPE -> gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
         }
     }

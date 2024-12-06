@@ -12,7 +12,8 @@ public class Player extends Entity {
 
     // LOGIC STATISTICS
     private boolean moving = false, isFacingLeft = false, canMove = true;
-    private boolean left, up, right, down, jump, crouch;
+    private boolean left, up, right, down, crouch;
+    // private boolean jump;
     private float playerSpeed = 3.0f;
     private int[][] levelData;
     // FOR ANIMATIONS
@@ -30,8 +31,11 @@ public class Player extends Entity {
     private boolean inAir = false;
     private int countJump = 0;
 
-    private float timeSinceGrounded = 0;
-    private float coyoteTime = 0.1f;
+    // Double jump
+    private final int maxNumberOfJumps = 2;
+
+    private float timeSinceGrounded = 0;            // count time while not on floor/ground
+    private float coyoteTime = 0.1f;                // could be final, 0.15f might be more optimize
 
     // Direction flip
     // For drawing
@@ -139,8 +143,11 @@ public class Player extends Entity {
         moving = false;
 
         // jump handling
-        if (jump)
-            jump();
+        // if (jump)
+        //     jump();
+        //*******************************************READ THIS PLEASE********************************************
+        // old code do not suit with double jump!!
+        // lastest jump logic will be call directly in Keyboard.java instead of just set the jump boolean to true
 
         // not in air but nothing being pressed -> do nothing
         if (!inAir)
@@ -168,6 +175,7 @@ public class Player extends Entity {
         // check if player is still on the floor
         // (go to the end of the floor = fall down)
         if (!inAir) {
+            countJump = 0;
             timeSinceGrounded = 0;
             if (!IsEntityOnFloor(hitbox, levelData)) {
                 inAir = true;
@@ -212,8 +220,10 @@ public class Player extends Entity {
     private void crouch() {
 
     }
-    private void jump() {
-        if (inAir && timeSinceGrounded > coyoteTime) return;
+    public void jump() {
+        if (countJump >= maxNumberOfJumps) return;
+        if (countJump == 0 && timeSinceGrounded > coyoteTime) return;
+        countJump++;
         inAir = true;
         airSpeed = jumpSpeed;
         timeSinceGrounded = coyoteTime;
@@ -301,9 +311,10 @@ public class Player extends Entity {
         this.down = down;
     }
 
-    public void setJump(boolean jump) {
-        this.jump = jump;
-    }
+    // public void setJump(boolean jump) {
+    //     this.jump = jump;
+    // }
+    
     public void setCrouch(boolean crouch) {
         this.crouch = crouch;
     }
