@@ -25,8 +25,8 @@ public class Game implements Runnable {
     public final static int GAME_HEIGHT = TILE_SIZE * TILES_IN_HEIGHT;
 
     private int xLevelOffset;
-    private int leftBorder = (int) (0.3 * Game.GAME_WIDTH);
-    private int rightBorder = (int) (0.7 * Game.GAME_WIDTH);
+    private int leftBorder = (int) (0.4 * Game.GAME_WIDTH);
+    private int rightBorder = (int) (0.6 * Game.GAME_WIDTH);
     private int levelTileWide = LoadSave.getLevelData()[0].length;
     private int maxTileOffset = levelTileWide - Game.TILES_IN_WIDTH;
     private int maxLevelOffsetX = maxTileOffset * Game.TILE_SIZE;
