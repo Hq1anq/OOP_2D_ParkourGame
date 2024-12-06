@@ -9,6 +9,13 @@
             "name": "MainClass",
             "request": "launch",
             "mainClass": "main.MainClass",
+            "projectName": "OOP_2D_ParkourGame-1_a0ff081a"
+        },
+        {
+            "type": "java",
+            "name": "MainClass",
+            "request": "launch",
+            "mainClass": "main.MainClass",
             "projectName": "OOP_2D_ParkourGame_d02c87"
         },
         {
