@@ -15,7 +15,7 @@ public class Game implements Runnable {
     private GamePanel gamePanel;
     private Thread gameThread;
     private final int FPS_SET = 120;
-    private final int UPS_SET = 150;
+    public final static int UPS_SET = 150;
 
     private Player player;
     private LevelManager levelManager;
@@ -33,8 +33,8 @@ public class Game implements Runnable {
     // STATISTICS
     // VARIABLE
     private int xLevelOffset;
-    private int leftBorder = (int) (0.4 * Game.GAME_WIDTH);
-    private int rightBorder = (int) (0.6 * Game.GAME_WIDTH);
+    private int leftBorder = (int) (0.3 * Game.GAME_WIDTH);
+    private int rightBorder = (int) (0.7 * Game.GAME_WIDTH);
     private int levelTileWide = LoadSave.getLevelData()[0].length;
     private int maxTileOffset = levelTileWide - Game.TILES_IN_WIDTH;
     private int maxLevelOffsetX = maxTileOffset * Game.TILE_SIZE;

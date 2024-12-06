@@ -28,6 +28,10 @@ public class Player extends Entity {
     private float jumpSpeed = -3.0f * Game.SCALE;   // starting jump speed
     private float fallSpeedScale = 2.0f;            // multiple to make falling faster than jumping
     private boolean inAir = false;
+    private int countJump = 0;
+
+    private float timeSinceGrounded = 0;
+    private float coyoteTime = 0.1f;
 
     // Direction flip
     // For drawing
@@ -37,8 +41,6 @@ public class Player extends Entity {
     // Ledge climbing
     private float ledgeClimbXOffset = 2;
     private float ledgeClimbYOffset = 5;
-
-    // Double jump
 
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
@@ -97,6 +99,7 @@ public class Player extends Entity {
                 else if (playerAction == LEDGE_CLIMB) {
                     canMove = true;
                     aniIndex = 0;
+                    airSpeed = 0;
                 } else
                     aniIndex = 0;
             }
@@ -165,12 +168,13 @@ public class Player extends Entity {
         // check if player is still on the floor
         // (go to the end of the floor = fall down)
         if (!inAir) {
+            timeSinceGrounded = 0;
             if (!IsEntityOnFloor(hitbox, levelData)) {
                 inAir = true;
             }
-        }
+        } else timeSinceGrounded += 1.0 / Game.UPS_SET;
 
-        // if player is falling/jumping
+        // jumping/falling handling
         if (inAir) {
             // edge climbing handling : detect when climbable and do climbing
             Point ledgePos = GetEntityWhenLedgeClimb(hitbox, levelData, isFacingLeft, ledgeClimbXOffset, ledgeClimbYOffset);
@@ -209,9 +213,10 @@ public class Player extends Entity {
 
     }
     private void jump() {
-        if (inAir) return;
+        if (inAir && timeSinceGrounded > coyoteTime) return;
         inAir = true;
         airSpeed = jumpSpeed;
+        timeSinceGrounded = coyoteTime;
     }
 
     private void updateXPos(float xSpeed) {
