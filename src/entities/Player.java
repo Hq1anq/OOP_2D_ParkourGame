@@ -10,24 +10,27 @@ import utilz.Point;
 
 public class Player extends Entity {
 
-    private BufferedImage[][] animations;
-    private int aniTick, aniIndex, aniSpeed = 15;
-    private int playerAction = IDLE;
+    // LOGIC STATISTICS
     private boolean moving = false, isFacingLeft = false, canMove = true;
     private boolean left, up, right, down, jump, crouch;
     private float playerSpeed = 3.0f;
     private int[][] levelData;
+    // FOR ANIMATIONS
     private float xDrawOffset = 3 * 2 * Game.SCALE;
     private float yDrawOffset = 0 * 2 * Game.SCALE;
+    private int aniTick, aniIndex, aniSpeed = 15;
+    private BufferedImage[][] animations;
+    private int playerAction = IDLE;
 
     // Jumping
-    private float airSpeed = 0f;
+    private float airSpeed = 0f;                    // falling speed: less than 0 if jumping, greater than 0 if falling
     private float gravity = 0.04f * Game.SCALE;
-    private float jumpSpeed = -3.0f * Game.SCALE;
-    private float fallSpeedScale = 2.0f;
+    private float jumpSpeed = -3.0f * Game.SCALE;   // starting jump speed
+    private float fallSpeedScale = 2.0f;            // multiple to make falling faster than jumping
     private boolean inAir = false;
 
     // Direction flip
+    // For drawing
     private int flipX = 0;
     private int flipW = 1;
 
@@ -44,6 +47,8 @@ public class Player extends Entity {
     }
 
     public void update() {
+        // UPDATE POSITION AND STATISTICS FOR DRAWING ANIMATION
+
         updatePos();
         updateAnimationTick();
         setAnimation();
@@ -52,6 +57,8 @@ public class Player extends Entity {
     }
 
     public void render(Graphics g, int xLevelOffset) {
+        // DRAW PLAYER
+
         if (playerAction == LEDGE_CLIMB) {
             // g.drawLine(0, 0, (int) (hitbox.x - xLevelOffset), (int) (hitbox.y - yDrawOffset));
             if (isFacingLeft)
@@ -122,17 +129,24 @@ public class Player extends Entity {
         aniIndex = 0;
     }
 
+    // ***IMPORTANT
     private void updatePos() {
+        //PLAYER MOVING LOGIC
+
         moving = false;
 
+        // jump handling
         if (jump)
             jump();
 
+        // not in air but nothing being pressed -> do nothing
         if (!inAir)
             if((!left && !right) || (left && right))
                 return;
     
-        float xSpeed = 0;
+        // normal moving
+        // d -> move right, a -> move left
+        float xSpeed = 0;   // prefer as delta x : to add to player position x (horizontal)
         if (canMove) {
             if (left) {
                 isFacingLeft = true;
@@ -147,24 +161,34 @@ public class Player extends Entity {
                 flipW = 1;
             }
         }
+
+        // check if player is still on the floor
+        // (go to the end of the floor = fall down)
         if (!inAir) {
             if (!IsEntityOnFloor(hitbox, levelData)) {
                 inAir = true;
             }
         }
+
+        // if player is falling/jumping
         if (inAir) {
+            // edge climbing handling : detect when climbable and do climbing
             Point ledgePos = GetEntityWhenLedgeClimb(hitbox, levelData, isFacingLeft, ledgeClimbXOffset, ledgeClimbYOffset);
             if (ledgePos != null) {
                 hitbox.x = ledgePos.x;
                 hitbox.y = ledgePos.y;
                 canMove = false;
             }
+
+            // no climbing
+            // changing vertical position when jumping/falling
             if (canMove)
                 if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, levelData)) {
                     hitbox.y += airSpeed;
                     if (airSpeed > 0)
                         airSpeed += gravity * fallSpeedScale;
                     else airSpeed += gravity;
+                    // making falling faster than jumping
                     updateXPos(xSpeed);
                 } else {
                     hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
@@ -177,6 +201,7 @@ public class Player extends Entity {
         } else {
             updateXPos(xSpeed);
         }
+        
         moving = true;
     }
 
@@ -190,6 +215,8 @@ public class Player extends Entity {
     }
 
     private void updateXPos(float xSpeed) {
+        // ADD player position x += xSpeed | xSpeed := delta x
+        
         if (CanMoveHere(hitbox.x + xSpeed, hitbox.y, hitbox.width, hitbox.height, levelData)) {
             hitbox.x += xSpeed;
         } else {
@@ -222,6 +249,9 @@ public class Player extends Entity {
     }
 
     public void loadLevelData(int[][] levelData) {
+        // USE IN GAME.JAVA
+        // LOAD LEVEL DATA TO DETECT COLLISION
+
         this.levelData = levelData;
         if (!IsEntityOnFloor(hitbox, levelData))
             inAir = true;
