@@ -56,4 +56,24 @@ public class HelpMethods {
             return ((int) (hitbox.y / Game.TILE_SIZE)) * Game.TILE_SIZE;
         }
     }
+
+    public static Point GetEntityWhenLedgeClimb(Rectangle2D.Float hitbox, int[][] levelData, boolean isFacingLeft, float ledgeClimbXOffset, float ledgeClimbYOffset) {
+        if (isFacingLeft) {
+            int ledgeX = (int) ((hitbox.x - ledgeClimbXOffset) / Game.TILE_SIZE);
+            int ledgeY = (int) ((hitbox.y + ledgeClimbYOffset) / Game.TILE_SIZE);
+            if (IsSolid(ledgeX * Game.TILE_SIZE, hitbox.y + Game.TILE_SIZE / 2, levelData) &&
+                !IsSolid(ledgeX * Game.TILE_SIZE, ledgeY * Game.TILE_SIZE, levelData))
+                return new Point(ledgeX * Game.TILE_SIZE + Game.TILE_SIZE - (int)hitbox.width,
+                                ledgeY * Game.TILE_SIZE - Game.TILE_SIZE);
+            else return null;
+        } else {
+            int ledgeX = (int) ((hitbox.x + hitbox.width + ledgeClimbXOffset) / Game.TILE_SIZE);
+            int ledgeY = (int) ((hitbox.y + ledgeClimbYOffset) / Game.TILE_SIZE);
+            if (IsSolid(ledgeX * Game.TILE_SIZE, hitbox.y + Game.TILE_SIZE / 2, levelData) &&
+                !IsSolid(ledgeX * Game.TILE_SIZE, ledgeY * Game.TILE_SIZE, levelData))
+                return new Point(ledgeX * Game.TILE_SIZE,
+                                ledgeY * Game.TILE_SIZE - Game.TILE_SIZE);
+            else return null;
+        }
+    }
 }

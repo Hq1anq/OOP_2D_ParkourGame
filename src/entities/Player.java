@@ -6,14 +6,15 @@ import main.Game;
 import static utilz.Constants.PlayerConstants.*;
 import static utilz.HelpMethods.*;
 import utilz.LoadSave;
+import utilz.Point;
 
 public class Player extends Entity {
 
     private BufferedImage[][] animations;
     private int aniTick, aniIndex, aniSpeed = 15;
     private int playerAction = IDLE;
-    private boolean moving = false;
-    private boolean left, up, right, down, jump;
+    private boolean moving = false, isFacingLeft = false, canMove = true;
+    private boolean left, up, right, down, jump, crouch;
     private float playerSpeed = 3.0f;
     private int[][] levelData;
     private float xDrawOffset = 3 * 2 * Game.SCALE;
@@ -26,28 +27,56 @@ public class Player extends Entity {
     private float fallSpeedScale = 2.0f;
     private boolean inAir = false;
 
+    // Direction flip
     private int flipX = 0;
     private int flipW = 1;
+
+    // Ledge climbing
+    private float ledgeClimbXOffset = 2;
+    private float ledgeClimbYOffset = 5;
+
+    // Double jump
 
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
         loadAnimation();
-        initHitbox(x, y, 24 * 2 * Game.SCALE, 31 * 2 * Game.SCALE);
+        initHitbox(x, y, 22 * 2 * Game.SCALE, 31 * 2 * Game.SCALE);
     }
 
     public void update() {
         updatePos();
         updateAnimationTick();
         setAnimation();
+        // if (IsTouchingLedge(hitbox, levelData, true)) System.out.println("1");
+        // if (IsTouchingLedge(hitbox, levelData, false)) System.out.println("2");
     }
 
     public void render(Graphics g, int xLevelOffset) {
-        g.drawImage(animations[playerAction][aniIndex],
-            (int) (hitbox.x - xDrawOffset) - xLevelOffset + flipX,
-            (int) (hitbox.y - yDrawOffset),
-            width * flipW, height, null);
+        if (playerAction == LEDGE_CLIMB) {
+            // g.drawLine(0, 0, (int) (hitbox.x - xLevelOffset), (int) (hitbox.y - yDrawOffset));
+            if (isFacingLeft)
+                g.drawImage(animations[playerAction][aniIndex],
+                    (int) (hitbox.x - xLevelOffset) + (int) hitbox.width + 2 * Game.TILE_SIZE - 21,
+                    (int) (hitbox.y - yDrawOffset) - 2,
+                    -2 * width, 2 * height, null);
+            else
+                g.drawImage(animations[playerAction][aniIndex],
+                    (int) (hitbox.x - xLevelOffset) - Game.TILE_SIZE - 27,
+                    (int) (hitbox.y - yDrawOffset) - 2,
+                    2 * width, 2 * height, null);
+        } else
+            if (isFacingLeft)
+                g.drawImage(animations[playerAction][aniIndex],
+                    (int) (hitbox.x + hitbox.width + xDrawOffset) - xLevelOffset,
+                    (int) (hitbox.y - yDrawOffset),
+                    width * flipW, height, null);
+            else
+                g.drawImage(animations[playerAction][aniIndex],
+                    (int) (hitbox.x - xDrawOffset) - xLevelOffset,
+                    (int) (hitbox.y - yDrawOffset),
+                    width * flipW, height, null);
         // g.drawLine(0, 0, 100, (int) ((hitbox.y + airSpeed) / Game.TILE_SIZE) * Game.TILE_SIZE);
-        // drawHitbox(g);
+        // drawHitbox(g, xLevelOffset);
     }
 
     private void updateAnimationTick() {
@@ -58,7 +87,10 @@ public class Player extends Entity {
             if (aniIndex >= GetSpriteAmount(playerAction)) {
                 if (playerAction == FALL)
                     aniIndex --;
-                else
+                else if (playerAction == LEDGE_CLIMB) {
+                    canMove = true;
+                    aniIndex = 0;
+                } else
                     aniIndex = 0;
             }
         }
@@ -67,16 +99,18 @@ public class Player extends Entity {
     private void setAnimation() {
         int startAnimation = playerAction;
 
-        if (inAir) {
+        if (!canMove) {
+            playerAction = LEDGE_CLIMB;
+        } else if (inAir) {
             if (airSpeed < 0)
                 playerAction = JUMP;
             else
                 playerAction = FALL;
         } else if (moving) {
             playerAction = WALKING;
-        } else {
-            playerAction = IDLE;
-        }
+        } else if (crouch) {
+            playerAction = CROUCH;
+        } else playerAction = IDLE;
 
         if (startAnimation != playerAction) {
             resetAnimationTick();
@@ -99,15 +133,19 @@ public class Player extends Entity {
                 return;
     
         float xSpeed = 0;
-        if (left) {
-            xSpeed -= playerSpeed;
-            flipX = width;
-            flipW = -1;
-        }
-        if (right) {
-            xSpeed += playerSpeed;
-            flipX = 0;
-            flipW = 1;
+        if (canMove) {
+            if (left) {
+                isFacingLeft = true;
+                xSpeed -= playerSpeed;
+                flipX = width;
+                flipW = -1;
+            }
+            if (right) {
+                isFacingLeft = false;
+                xSpeed += playerSpeed;
+                flipX = 0;
+                flipW = 1;
+            }
         }
         if (!inAir) {
             if (!IsEntityOnFloor(hitbox, levelData)) {
@@ -115,26 +153,36 @@ public class Player extends Entity {
             }
         }
         if (inAir) {
-            if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, levelData)) {
-                hitbox.y += airSpeed;
-                if (airSpeed > 0)
-                    airSpeed += gravity * fallSpeedScale;
-                else airSpeed += gravity;
-                updateXPos(xSpeed);
-            } else {
-                hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
-                if (airSpeed > 0)
-                    resetInAir();
-                else
-                    airSpeed += gravity * fallSpeedScale;
-                updateXPos(xSpeed);
+            Point ledgePos = GetEntityWhenLedgeClimb(hitbox, levelData, isFacingLeft, ledgeClimbXOffset, ledgeClimbYOffset);
+            if (ledgePos != null) {
+                hitbox.x = ledgePos.x;
+                hitbox.y = ledgePos.y;
+                canMove = false;
             }
+            if (canMove)
+                if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, levelData)) {
+                    hitbox.y += airSpeed;
+                    if (airSpeed > 0)
+                        airSpeed += gravity * fallSpeedScale;
+                    else airSpeed += gravity;
+                    updateXPos(xSpeed);
+                } else {
+                    hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
+                    if (airSpeed > 0)
+                        resetInAir();
+                    else
+                        airSpeed += gravity * fallSpeedScale;
+                    updateXPos(xSpeed);
+                }
         } else {
             updateXPos(xSpeed);
         }
         moving = true;
     }
 
+    private void crouch() {
+
+    }
     private void jump() {
         if (inAir) return;
         inAir = true;
@@ -157,12 +205,20 @@ public class Player extends Entity {
 
     private void loadAnimation() {
         BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
-        animations = new BufferedImage[10][8];
-        for (int i = 0; i < animations.length; i++) {
+        animations = new BufferedImage[12][8];
+        // for (int i = 0; i < animations.length; i++) {
+        //     for (int j = 0; j < animations[i].length; j++) {
+        //         animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
+        //     }
+        // }
+        for (int i = 0; i < animations.length - 1; i++) {
             for (int j = 0; j < animations[i].length; j++) {
                 animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
             }
         }
+        // Animation Ledge Climb
+        for (int i = 0; i < 8; i++)
+            animations[11][i] = img.getSubimage(i * 64, 11 * 32, 64, 64);
     }
 
     public void loadLevelData(int[][] levelData) {
@@ -212,5 +268,8 @@ public class Player extends Entity {
 
     public void setJump(boolean jump) {
         this.jump = jump;
+    }
+    public void setCrouch(boolean crouch) {
+        this.crouch = crouch;
     }
 }

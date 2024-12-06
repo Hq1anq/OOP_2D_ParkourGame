@@ -12,9 +12,9 @@ public abstract class Entity {
         this.x = x; this.y = y;
         this.width = width; this.height = height;
     }
-    protected void drawHitbox(Graphics g) {
+    protected void drawHitbox(Graphics g, int xLevelOffset) {
         g.setColor(Color.GREEN);
-        g.drawRect((int) hitbox.x, (int) hitbox.y, (int) hitbox.width, (int) hitbox.height);
+        g.drawRect((int) (hitbox.x - xLevelOffset), (int) hitbox.y, (int) hitbox.width, (int) hitbox.height);
     }
     protected  void initHitbox(float x, float y, float width, float height) {
         hitbox = new Rectangle2D.Float(x, y, width, height);
