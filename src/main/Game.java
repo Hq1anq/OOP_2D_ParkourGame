@@ -2,6 +2,8 @@ package main;
 
 import entities.Player;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+
 import levels.LevelManager;
 import utilz.LoadSave;
 
@@ -39,14 +41,28 @@ public class Game implements Runnable {
     private int maxTileOffset = levelTileWide - Game.TILES_IN_WIDTH;
     private int maxLevelOffsetX = maxTileOffset * Game.TILE_SIZE;
 
+    // GAME STATES
+    public final int startingMenuState = -1;    // for easier code handling than to remember which state to which number
+    public final int playingState = 0;
+    public final int settingState = 1;
+    public final int guidesState = 2;
+    public final int exitState = 3;
+    public int gameState = -1;      // current game state : default when start game : starting menu state
+    public int selectedOptions = 0; // current selecting option : to choose option of the next game state
+
+    // STATES DRAWER
+    private Menu menu;
+
     public Game() {
-        // GENERATE GAME WINDOW AND PANEL
+        // GENERATE GAME WINDOW AND PANEL AND MENU DRAWER
 
         initClasses();
 
         gamePanel = new GamePanel(this);
         gameWindow = new GameWindow(gamePanel);
         gamePanel.requestFocus();
+
+        menu = new Menu(gamePanel);
         
         startGameLoop();
     }
@@ -70,9 +86,11 @@ public class Game implements Runnable {
     public void update() {
         // UPDATE STATISTICS EVERY FRAME
 
-        player.update();
-        levelManager.update();
-        checkCloseToBorder();
+        if(gameState == playingState){
+            player.update();
+            levelManager.update();
+            checkCloseToBorder();
+        }
     }
 
     private void checkCloseToBorder() {
@@ -96,8 +114,12 @@ public class Game implements Runnable {
         // RE-DRAW GAME FRAME EVERY GAME FRAME
         // DRAWING METHODS
         
-        levelManager.draw(g, xLevelOffset);
-        player.render(g, xLevelOffset);
+        if(gameState == playingState){
+            levelManager.draw(g, xLevelOffset);
+            player.render(g, xLevelOffset);
+        }
+        else
+            menu.draw((Graphics2D)g);
     }
 
     @Override
