@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import levels.LevelManager;
 import utilz.LoadSave;
 
+@SuppressWarnings("unused")
 public class Game implements Runnable {
     private GameWindow gameWindow;
     private GamePanel gamePanel;
