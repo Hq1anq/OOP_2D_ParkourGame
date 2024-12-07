@@ -27,7 +27,7 @@ public class HelpMethods {
         int yIndex = (int) (y / Game.TILE_SIZE);
 
         int value = levelData[yIndex][xIndex];
-        return (value >= 48 || value < 0 || value != 11);
+        return (value >= 60 || value <= -2 || value != -1);
     }
 
     public static float GetEntityXPosNextToWall(Rectangle2D.Float hitbox, float xSpeed) {

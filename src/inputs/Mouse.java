@@ -5,6 +5,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import main.GamePanel;
 
+@SuppressWarnings({"FieldMayBeFinal", "unused"})
+
 public class Mouse implements MouseListener, MouseMotionListener {
     private GamePanel gamePanel;
     public Mouse(GamePanel gamePanel) {

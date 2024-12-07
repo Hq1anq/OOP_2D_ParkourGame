@@ -18,7 +18,6 @@ public class Keyboard implements KeyListener {
         int code = e.getKeyCode();
 
         switch (code) {
-            case KeyEvent.VK_W -> System.out.println("UP");
             case KeyEvent.VK_A -> gamePanel.getGame().getPlayer().setLeft(false);
             case KeyEvent.VK_S -> gamePanel.getGame().getPlayer().setCrouch(false);
             case KeyEvent.VK_D -> gamePanel.getGame().getPlayer().setRight(false);
