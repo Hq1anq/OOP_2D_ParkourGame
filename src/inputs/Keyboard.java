@@ -93,7 +93,7 @@ public class Keyboard implements KeyListener {
             case KeyEvent.VK_D -> gamePanel.getGame().getPlayer().setRight(true);
             case KeyEvent.VK_K -> gamePanel.getGame().getPlayer().jump();
             case KeyEvent.VK_SPACE -> gamePanel.getGame().getPlayer().jump();
-            case KeyEvent.VK_Q -> gamePanel.getGame().getPlayer().climb();
+            case KeyEvent.VK_J -> gamePanel.getGame().getPlayer().climb();
             case KeyEvent.VK_ESCAPE -> gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
         }
     }

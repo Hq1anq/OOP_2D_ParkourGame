@@ -14,8 +14,7 @@ public class Player extends Entity {
     // LOGIC STATISTICS
     // Normal moving
     private boolean moving = false, isFacingLeft = false; 
-    private boolean left, up, right, down, crouch;
- // private boolean jump;
+    private boolean left, up, right, down, crouch, jump;
     private float playerSpeed = 3.0f;
     private int[][] levelData;
 
@@ -32,9 +31,13 @@ public class Player extends Entity {
 
     // Climbing
     private boolean climbing = false;               // true if player is climbing, false otherwise
+    private boolean firstClimb = true;              // true if player is climbing for the first time, false otherwise
+    private boolean isClimbingLeft = false;         // true if player is climbing left, false otherwise
     private float climbingSpeed = 1f;               // prefer as delta x, the amount will change of player position
+    private float climbOffset = 2 * Game.TILE_SIZE;
     
     // Ledge climbing
+    private boolean ledgeClimbing = false;          // true if player can climb ledge, false otherwise
     private boolean canMove = true;                 // true if player is not climbing legde, false otherwise (prefer as !climbingLedge)
     private float ledgeClimbXOffset = 2;
     private float ledgeClimbYOffset = 5;
@@ -85,6 +88,18 @@ public class Player extends Entity {
                     (int) (hitbox.x - xLevelOffset) - Game.TILE_SIZE - 27,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset) - 2,
                     2 * width, 2 * height, null);
+        } else if (playerAction == WALL_CLIMB) {
+            if (firstClimb) aniIndex = GetSpriteAmount(WALL_CLIMB) - 1;
+            if (isClimbingLeft)
+                g.drawImage(animations[playerAction][aniIndex],
+                    (int) (hitbox.x + hitbox.width + xDrawOffset) - xLevelOffset,
+                    (int) (hitbox.y - yDrawOffset - yLevelOffset),
+                    width * flipW, 2 * height, null);
+            else
+                g.drawImage(animations[playerAction][aniIndex],
+                    (int) (hitbox.x - xDrawOffset) - xLevelOffset,
+                    (int) (hitbox.y - yDrawOffset - yLevelOffset),
+                    width * flipW, 2 * height, null);
         } else
             if (isFacingLeft)
                 g.drawImage(animations[playerAction][aniIndex],
@@ -110,7 +125,13 @@ public class Player extends Entity {
                     case FALL -> aniIndex --;
                     case LEDGE_CLIMB -> {
                         canMove = true;
+                        ledgeClimbing = false;
                         aniIndex = 0;
+                        airSpeed = 0;
+                    }
+                    case WALL_CLIMB -> {
+                        canMove = true;
+                        aniIndex --;
                         airSpeed = 0;
                     }
                     default -> aniIndex = 0;
@@ -121,11 +142,14 @@ public class Player extends Entity {
 
     private void setAnimation() {
         int startAnimation = playerAction;
-
-        if (!canMove) {
+        if (ledgeClimbing) {
             playerAction = LEDGE_CLIMB;
+        } else if (climbing) {
+            playerAction = WALL_CLIMB;
         } else if (inAir) {
-            if (airSpeed < 0)
+            if (countJump == 2)
+                playerAction = AIR_FLIP;
+            else if (airSpeed < 0)
                 playerAction = JUMP;
             else
                 playerAction = FALL;
@@ -169,7 +193,7 @@ public class Player extends Entity {
         // normal moving
         // d -> move right, a -> move left
         float xSpeed = 0;   // prefer as delta x : to add to player position x (horizontal)
-        if (canMove) {
+        if (canMove && !climbing) {
             if (left) {
                 isFacingLeft = true;
                 xSpeed -= playerSpeed;
@@ -200,35 +224,13 @@ public class Player extends Entity {
                 hitbox.x = ledgePos.x;
                 hitbox.y = ledgePos.y;
                 canMove = false;
+                ledgeClimbing = true;
                 climbing = false;
             }
 
             // wall climbing handling
             if(climbing == true){
-                if(CanMoveHere(hitbox.x - 3, hitbox.y, hitbox.width, hitbox.height, levelData) 
-                && CanMoveHere(hitbox.x + 3, hitbox.y, hitbox.width, hitbox.height, levelData)){
-                    // check if player is still next to a wall to hold on, if not set climb to false
-                    climbing = false;
-                    return;
-                }
-
                 airSpeed = 0;
-
-                if(up){
-                    // climb up
-                    hitbox.y -= climbingSpeed;
-                    if(!CanMoveHere(hitbox.x, hitbox.y, hitbox.width, hitbox.height, levelData))
-                    hitbox.y += climbingSpeed;
-                }
-
-                if(down){
-                    // climb down
-                    hitbox.y += climbingSpeed;
-                    if(!CanMoveHere(hitbox.x, hitbox.y, hitbox.width, hitbox.height, levelData)){
-                        hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, 1f);
-                        climbing = false;
-                    }
-                }
             }
 
             // if player is not climbing than update position after jumping/falling
@@ -264,14 +266,40 @@ public class Player extends Entity {
 
     }
 
-    public void jump() {
+    public void jump(){
         if (countJump >= maxNumberOfJumps) return;
         if (!climbing && countJump == 0 && timeSinceGrounded > coyoteTime) return;
-        countJump++;
-        inAir = true;
-        climbing = false;
-        airSpeed = jumpSpeed;
-        timeSinceGrounded = coyoteTime;
+        if (!climbing) {
+            countJump++;
+            inAir = true;
+            airSpeed = jumpSpeed;
+            timeSinceGrounded = coyoteTime;
+        } else if (canMove) {
+            if ((left && isClimbingLeft) || (right && !isClimbingLeft)) {
+                float nextHeight = hitbox.y - climbOffset;
+                while (hitbox.y > nextHeight &&
+                        CanMoveHere(hitbox.x, hitbox.y - climbingSpeed,
+                                    hitbox.width, hitbox.height, levelData)) {
+                    hitbox.y -= climbingSpeed;
+                    if (GetEntityWhenLedgeClimb(hitbox, levelData, isFacingLeft, ledgeClimbXOffset, ledgeClimbYOffset) != null) {
+                        canMove = false;
+                        ledgeClimbing = true;
+                        climbing = false;
+                        return;
+                    }
+                }
+                if (CanMoveHere(hitbox.x, hitbox.y - climbingSpeed, hitbox.width, hitbox.height, levelData))
+                    aniIndex = 0;
+                else aniIndex = GetSpriteAmount(WALL_CLIMB) - 1;
+                firstClimb = false;
+                climbing = true;
+            } else {
+                climbing = false;
+                inAir = true;
+                airSpeed = jumpSpeed;
+                countJump = 1;
+            }
+        }
     }
 
     public void climb(){
@@ -291,11 +319,15 @@ public class Player extends Entity {
         if(isFacingLeft == true){
             if(!CanMoveHere(hitbox.x - 3, hitbox.y, hitbox.width, hitbox.height, levelData)){
                 climbing = true;
+                firstClimb = true;
+                isClimbingLeft = true;
             }
         } 
         else {
             if(!CanMoveHere(hitbox.x + 3, hitbox.y, hitbox.width, hitbox.height, levelData)){
                 climbing = true;
+                firstClimb = true;
+                isClimbingLeft = false;
             }
         }
     }
@@ -318,20 +350,22 @@ public class Player extends Entity {
 
     private void loadAnimation() {
         BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
-        animations = new BufferedImage[12][8];
+        animations = new BufferedImage[14][8];
         // for (int i = 0; i < animations.length; i++) {
         //     for (int j = 0; j < animations[i].length; j++) {
         //         animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
         //     }
         // }
-        for (int i = 0; i < animations.length - 1; i++) {
+        for (int i = 0; i < animations.length - 2; i++) {
             for (int j = 0; j < animations[i].length; j++) {
                 animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
             }
         }
-        // Animation Ledge Climb
-        for (int i = 0; i < 8; i++)
-            animations[11][i] = img.getSubimage(i * 64, 11 * 32, 64, 64);
+        // Animation > 32 pixels
+        for (int i = 0; i < 8; i++) {
+            animations[12][i] = img.getSubimage(i * 32, 12 * 32, 32, 64); // CLIMB 64x32
+            animations[13][i] = img.getSubimage(i * 64, 14 * 32, 64, 64); // LEDGE CLIMB 64x64
+        }
     }
 
     public void loadLevelData(int[][] levelData) {
