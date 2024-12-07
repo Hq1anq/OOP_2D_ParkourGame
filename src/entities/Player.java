@@ -14,7 +14,7 @@ public class Player extends Entity {
     // LOGIC STATISTICS
     private boolean moving = false, isFacingLeft = false, canMove = true;
     private boolean left, up, right, down, crouch;
-    // private boolean jump;
+ // private boolean jump;
     private float playerSpeed = 3.0f;
     private int[][] levelData;
     // FOR ANIMATIONS
@@ -147,14 +147,17 @@ public class Player extends Entity {
         // jump handling
         // if (jump)
         //     jump();
-        //*******************************************READ THIS PLEASE********************************************
+        //*******************************************READ THIS PLEASE**********************************************
         // old code do not suit with double jump!!
-        // lastest jump logic will be call directly in Keyboard.java instead of just set the jump boolean to true
+        // lastest jump logic will be called directly in Keyboard.java instead of just set the jump boolean to true
 
         // not in air but nothing being pressed -> do nothing
-        if (!inAir)
+        if (!inAir){
+            countJump = 0;
+            timeSinceGrounded = 0;
             if((!left && !right) || (left && right))
                 return;
+        }
     
         // normal moving
         // d -> move right, a -> move left
@@ -177,8 +180,6 @@ public class Player extends Entity {
         // check if player is still on the floor
         // (go to the end of the floor = fall down)
         if (!inAir) {
-            countJump = 0;
-            timeSinceGrounded = 0;
             if (!IsEntityOnFloor(hitbox, levelData)) {
                 inAir = true;
             }
