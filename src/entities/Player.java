@@ -25,6 +25,7 @@ public class Player extends Entity {
     private float fallSpeedScale = 2.0f;            // multiple to make falling faster than jumping
     private boolean inAir = false;
     private int countJump = 0;
+    private boolean preWallKick = false;
 
     // Double jump
     private final int maxNumberOfJumps = 2;
@@ -145,7 +146,9 @@ public class Player extends Entity {
         if (ledgeClimbing) {
             playerAction = LEDGE_CLIMB;
         } else if (climbing) {
-            playerAction = WALL_CLIMB;
+            if (!preWallKick)
+                playerAction = WALL_CLIMB;
+            else playerAction = WALL_KICK;
         } else if (inAir) {
             if (countJump == 2)
                 playerAction = AIR_FLIP;
@@ -193,18 +196,27 @@ public class Player extends Entity {
         // normal moving
         // d -> move right, a -> move left
         float xSpeed = 0;   // prefer as delta x : to add to player position x (horizontal)
-        if (canMove && !climbing) {
-            if (left) {
-                isFacingLeft = true;
-                xSpeed -= playerSpeed;
-                flipX = width;
-                flipW = -1;
+        if (canMove) {
+            if (climbing) {
+                if ((isFacingLeft && right) || (!isFacingLeft && left)) preWallKick = true;
+                else if (!left && !right) {
+                    preWallKick = false;
+                    firstClimb = true;
+                }
             }
-            if (right) {
-                isFacingLeft = false;
-                xSpeed += playerSpeed;
-                flipX = 0;
-                flipW = 1;
+            else {
+                if (left) {
+                    isFacingLeft = true;
+                    xSpeed -= playerSpeed;
+                    flipX = width;
+                    flipW = -1;
+                }
+                if (right) {
+                    isFacingLeft = false;
+                    xSpeed += playerSpeed;
+                    flipX = 0;
+                    flipW = 1;
+                }
             }
         }
 
@@ -238,23 +250,22 @@ public class Player extends Entity {
 
             // no climbing
             // changing vertical position when jumping/falling
-            if (canMove)
-                if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, levelData)) {
-                    hitbox.y += airSpeed;
-                    if (airSpeed > 0)
-                        airSpeed += gravity * fallSpeedScale;
-                    else airSpeed += gravity;
-                    // making falling faster than jumping
-                    updateXPos(xSpeed);
-                } else {
-                    hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
-                    if (airSpeed > 0)
-                        resetInAir();
-                    else
-                        airSpeed += gravity * fallSpeedScale;
-                    updateXPos(xSpeed);
-                }
-
+                if (canMove)
+                    if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, levelData)) {
+                        hitbox.y += airSpeed;
+                        if (airSpeed > 0)
+                            airSpeed += gravity * fallSpeedScale;
+                        else airSpeed += gravity;
+                        // making falling faster than jumping
+                        updateXPos(xSpeed);
+                    } else {
+                        hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
+                        if (airSpeed > 0)
+                            resetInAir();
+                        else
+                            airSpeed += gravity * fallSpeedScale;
+                        updateXPos(xSpeed);
+                    }
         } else {
             updateXPos(xSpeed);
         }
@@ -294,6 +305,7 @@ public class Player extends Entity {
                 firstClimb = false;
                 climbing = true;
             } else {
+                preWallKick = false;
                 climbing = false;
                 inAir = true;
                 airSpeed = jumpSpeed;
@@ -350,7 +362,7 @@ public class Player extends Entity {
 
     private void loadAnimation() {
         BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
-        animations = new BufferedImage[14][8];
+        animations = new BufferedImage[15][8];
         // for (int i = 0; i < animations.length; i++) {
         //     for (int j = 0; j < animations[i].length; j++) {
         //         animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
@@ -363,8 +375,8 @@ public class Player extends Entity {
         }
         // Animation > 32 pixels
         for (int i = 0; i < 8; i++) {
-            animations[12][i] = img.getSubimage(i * 32, 12 * 32, 32, 64); // CLIMB 64x32
-            animations[13][i] = img.getSubimage(i * 64, 14 * 32, 64, 64); // LEDGE CLIMB 64x64
+            animations[13][i] = img.getSubimage(i * 32, 13 * 32, 32, 64); // CLIMB 64x32
+            animations[14][i] = img.getSubimage(i * 64, 15 * 32, 64, 64); // LEDGE CLIMB 64x64
         }
     }
 
