@@ -1,6 +1,9 @@
 package main;
+
+@SuppressWarnings("unused")
+
 public class MainClass {
     public static void main(String[] args) {
-        new Game();
+        Game game = new Game();
     }
 }

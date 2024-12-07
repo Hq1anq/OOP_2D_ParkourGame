@@ -1,5 +1,7 @@
 package levels;
 
+@SuppressWarnings({"FieldMayBeFinal", "unused"})
+
 public class Level {
 
     private int[][] levelData;

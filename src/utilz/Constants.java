@@ -13,18 +13,17 @@ public class Constants {
         // public static final int HIT = 5;
 
         public static int GetSpriteAmount(int player_action) {
-            switch(player_action) {
-                case IDLE: return 5;
-                case JUMP: return 2;
-                case FALL: return 4;
-                case WALKING: return 8;
-                case RUNNING: return 8;
-                case CROUCH: return 2;
-                case LEDGE_CLIMB: return 8;
-                // case GROUND: return 8;
-                // case HIT: return 8;
-                default: return 1;
-            }
+            return switch (player_action) {
+                case IDLE -> 5;
+                case JUMP -> 2;
+                case FALL -> 4;
+                case WALKING -> 8;
+                case RUNNING -> 8;
+                case CROUCH -> 2;
+                case LEDGE_CLIMB -> 8;
+                default -> 1;
+            }; // case GROUND: return 8;
+            // case HIT: return 8;
         }
     }
     public static class Directions {

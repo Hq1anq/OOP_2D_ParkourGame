@@ -8,6 +8,7 @@ import static utilz.HelpMethods.*;
 import utilz.LoadSave;
 import utilz.Point;
 
+@SuppressWarnings({"FieldMayBeFinal", "unused"})
 public class Player extends Entity {
 
     // LOGIC STATISTICS
@@ -69,7 +70,7 @@ public class Player extends Entity {
         // if (IsTouchingLedge(hitbox, levelData, false)) System.out.println("2");
     }
 
-    public void render(Graphics g, int xLevelOffset) {
+    public void render(Graphics g, int xLevelOffset, int yLevelOffset) {
         // DRAW PLAYER
 
         if (playerAction == LEDGE_CLIMB) {
@@ -77,23 +78,23 @@ public class Player extends Entity {
             if (isFacingLeft)
                 g.drawImage(animations[playerAction][aniIndex],
                     (int) (hitbox.x - xLevelOffset) + (int) hitbox.width + 2 * Game.TILE_SIZE - 21,
-                    (int) (hitbox.y - yDrawOffset) - 2,
+                    (int) (hitbox.y - yDrawOffset - yLevelOffset) - 2,
                     -2 * width, 2 * height, null);
             else
                 g.drawImage(animations[playerAction][aniIndex],
                     (int) (hitbox.x - xLevelOffset) - Game.TILE_SIZE - 27,
-                    (int) (hitbox.y - yDrawOffset) - 2,
+                    (int) (hitbox.y - yDrawOffset - yLevelOffset) - 2,
                     2 * width, 2 * height, null);
         } else
             if (isFacingLeft)
                 g.drawImage(animations[playerAction][aniIndex],
                     (int) (hitbox.x + hitbox.width + xDrawOffset) - xLevelOffset,
-                    (int) (hitbox.y - yDrawOffset),
+                    (int) (hitbox.y - yDrawOffset - yLevelOffset),
                     width * flipW, height, null);
             else
                 g.drawImage(animations[playerAction][aniIndex],
                     (int) (hitbox.x - xDrawOffset) - xLevelOffset,
-                    (int) (hitbox.y - yDrawOffset),
+                    (int) (hitbox.y - yDrawOffset - yLevelOffset),
                     width * flipW, height, null);
         // g.drawLine(0, 0, 100, (int) ((hitbox.y + airSpeed) / Game.TILE_SIZE) * Game.TILE_SIZE);
         // drawHitbox(g, xLevelOffset);
@@ -105,14 +106,15 @@ public class Player extends Entity {
             aniTick = 0;
             aniIndex++;
             if (aniIndex >= GetSpriteAmount(playerAction)) {
-                if (playerAction == FALL)
-                    aniIndex --;
-                else if (playerAction == LEDGE_CLIMB) {
-                    canMove = true;
-                    aniIndex = 0;
-                    airSpeed = 0;
-                } else
-                    aniIndex = 0;
+                switch (playerAction) {
+                    case FALL -> aniIndex --;
+                    case LEDGE_CLIMB -> {
+                        canMove = true;
+                        aniIndex = 0;
+                        airSpeed = 0;
+                    }
+                    default -> aniIndex = 0;
+                }
             }
         }
     }

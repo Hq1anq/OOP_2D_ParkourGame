@@ -1,16 +1,14 @@
 package main;
 
-import static main.Game.GAME_HEIGHT;
-import static main.Game.GAME_WIDTH;
-import static main.Game.TILE_SIZE;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
 import javax.imageio.ImageIO;
+import static main.Game.GAME_HEIGHT;
+import static main.Game.GAME_WIDTH;
+import static main.Game.TILE_SIZE;
 
 // MAIN USE: DRAWING MENU STATES
 public class Menu {

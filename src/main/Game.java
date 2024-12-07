@@ -3,11 +3,10 @@ package main;
 import entities.Player;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
 import levels.LevelManager;
 import utilz.LoadSave;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"FieldMayBeFinal", "unused"})
 
 // ***IMPORTANT
 
@@ -34,12 +33,19 @@ public class Game implements Runnable {
 
     // STATISTICS
     // VARIABLE
+    // Camera feature
     private int xLevelOffset;
+    private int yLevelOffset;
     private int leftBorder = (int) (0.3 * Game.GAME_WIDTH);
     private int rightBorder = (int) (0.7 * Game.GAME_WIDTH);
+    private int topBorder = (int) (0.3 * Game.GAME_HEIGHT);
+    private int bottomBorder = (int) (0.7 * Game.GAME_HEIGHT);
     private int levelTileWide = LoadSave.getLevelData()[0].length;
-    private int maxTileOffset = levelTileWide - Game.TILES_IN_WIDTH;
-    private int maxLevelOffsetX = maxTileOffset * Game.TILE_SIZE;
+    private int levelTileHeight = LoadSave.getLevelData().length;
+    private int maxTileX = levelTileWide - Game.TILES_IN_WIDTH;
+    private int maxTileY = levelTileHeight - Game.TILES_IN_HEIGHT;
+    private int maxLevelOffsetX = maxTileX * Game.TILE_SIZE;
+    private int maxLevelOffsetY = maxTileY * Game.TILE_SIZE;
 
     // GAME STATES
     public final int startingMenuState = -1;    // for easier code handling than to remember which state to which number
@@ -56,23 +62,26 @@ public class Game implements Runnable {
     public Game() {
         // GENERATE GAME WINDOW AND PANEL AND MENU DRAWER
 
+        initWindowAndPanel();
         initClasses();
-
-        gamePanel = new GamePanel(this);
-        gameWindow = new GameWindow(gamePanel);
-        gamePanel.requestFocus();
-
-        menu = new Menu(gamePanel);
-        
         startGameLoop();
     }
 
     private void initClasses() {
-        //  INITIATE LEVEL AND PLAYER
+        // INITIATE LEVEL AND PLAYER
 
         levelManager = new LevelManager(this);
         player = new Player(100, 350, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE));
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
+        menu = new Menu(gamePanel);
+    }
+
+    private void initWindowAndPanel() {
+        // INITIATE GAME WINDOW AND PANEL
+
+        gamePanel = new GamePanel(this);
+        gameWindow = new GameWindow(gamePanel);
+        gamePanel.requestFocus();
     }
 
     private void startGameLoop() {
@@ -97,17 +106,27 @@ public class Game implements Runnable {
         // CHECK WHETHER IF PLAYER IS CLOSE ENOUGH TO GAME WINDOW BORDERS
 
         int playerX = (int) player.getHitbox().x;
-        int diff = playerX - xLevelOffset;
+        int playerY = (int) player.getHitbox().y;
+        int diffX = playerX - xLevelOffset;
+        int diffY = playerY - yLevelOffset;
 
-        if (diff > rightBorder)
-            xLevelOffset += diff - rightBorder;
-        else if (diff < leftBorder)
-            xLevelOffset += diff - leftBorder;
+        if (diffX > rightBorder)
+            xLevelOffset += diffX - rightBorder;
+        else if (diffX < leftBorder)
+            xLevelOffset += diffX - leftBorder;
+        if (diffY > bottomBorder)
+            yLevelOffset += diffY - bottomBorder;
+        else if (diffY < topBorder)
+            yLevelOffset += diffY - topBorder;
 
         if (xLevelOffset > maxLevelOffsetX)
             xLevelOffset = maxLevelOffsetX;
         else if (xLevelOffset < 0)
             xLevelOffset = 0;
+        if (yLevelOffset > maxLevelOffsetY)
+            yLevelOffset = maxLevelOffsetY;
+        else if (yLevelOffset < 0)
+            yLevelOffset = 0;
     }
 
     public void render(Graphics g) {
@@ -115,10 +134,10 @@ public class Game implements Runnable {
         // DRAWING METHODS
         
         if(gameState == playingState){
-            levelManager.draw(g, xLevelOffset);
-            player.render(g, xLevelOffset);
+            levelManager.draw(g, xLevelOffset, yLevelOffset);
+            player.render(g, xLevelOffset, yLevelOffset);
         }
-        else
+        else if (menu != null)
             menu.draw((Graphics2D)g);
     }
 

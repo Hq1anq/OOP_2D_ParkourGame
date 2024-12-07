@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 import static main.Game.GAME_HEIGHT;
 import static main.Game.GAME_WIDTH;
 
+@SuppressWarnings({"FieldMayBeFinal", "unused"})
+
 public class GamePanel extends JPanel {
     private Mouse mouse;
     private Game game;
