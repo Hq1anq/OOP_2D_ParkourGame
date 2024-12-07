@@ -11,17 +11,12 @@ import utilz.Point;
 public class Player extends Entity {
 
     // LOGIC STATISTICS
-    private boolean moving = false, isFacingLeft = false, canMove = true;
+    // Normal moving
+    private boolean moving = false, isFacingLeft = false; 
     private boolean left, up, right, down, crouch;
  // private boolean jump;
     private float playerSpeed = 3.0f;
     private int[][] levelData;
-    // FOR ANIMATIONS
-    private float xDrawOffset = 3 * 2 * Game.SCALE;
-    private float yDrawOffset = 0 * 2 * Game.SCALE;
-    private int aniTick, aniIndex, aniSpeed = 15;
-    private BufferedImage[][] animations;
-    private int playerAction = IDLE;
 
     // Jumping
     private float airSpeed = 0f;                    // falling speed: less than 0 if jumping, greater than 0 if falling
@@ -34,17 +29,29 @@ public class Player extends Entity {
     // Double jump
     private final int maxNumberOfJumps = 2;
 
+    // Climbing
+    private boolean climbing = false;               // true if player is climbing, false otherwise
+    private float climbingSpeed = 1f;               // prefer as delta x, the amount will change of player position
+    
+    // Ledge climbing
+    private boolean canMove = true;                 // true if player is not climbing legde, false otherwise (prefer as !climbingLedge)
+    private float ledgeClimbXOffset = 2;
+    private float ledgeClimbYOffset = 5;
+
+    // CoyoteTime
     private float timeSinceGrounded = 0;            // count time while not on floor/ground
     private float coyoteTime = 0.1f;                // could be final, 0.15f might be more optimize
 
+    // FOR ANIMATIONS
     // Direction flip
-    // For drawing
     private int flipX = 0;
     private int flipW = 1;
-
-    // Ledge climbing
-    private float ledgeClimbXOffset = 2;
-    private float ledgeClimbYOffset = 5;
+    // For drawing
+    private float xDrawOffset = 3 * 2 * Game.SCALE;
+    private float yDrawOffset = 0 * 2 * Game.SCALE;
+    private int aniTick, aniIndex, aniSpeed = 15;
+    private BufferedImage[][] animations;
+    private int playerAction = IDLE;
 
     public Player(float x, float y, int width, int height) {
         super(x, y, width, height);
@@ -191,7 +198,39 @@ public class Player extends Entity {
                 hitbox.x = ledgePos.x;
                 hitbox.y = ledgePos.y;
                 canMove = false;
+                climbing = false;
             }
+
+            // wall climbing handling
+            if(climbing == true){
+                if(CanMoveHere(hitbox.x - 3, hitbox.y, hitbox.width, hitbox.height, levelData) 
+                && CanMoveHere(hitbox.x + 3, hitbox.y, hitbox.width, hitbox.height, levelData)){
+                    // check if player is still next to a wall to hold on, if not set climb to false
+                    climbing = false;
+                    return;
+                }
+
+                airSpeed = 0;
+
+                if(up){
+                    // climb up
+                    hitbox.y -= climbingSpeed;
+                    if(!CanMoveHere(hitbox.x, hitbox.y, hitbox.width, hitbox.height, levelData))
+                    hitbox.y += climbingSpeed;
+                }
+
+                if(down){
+                    // climb down
+                    hitbox.y += climbingSpeed;
+                    if(!CanMoveHere(hitbox.x, hitbox.y, hitbox.width, hitbox.height, levelData)){
+                        hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, 1f);
+                        climbing = false;
+                    }
+                }
+            }
+
+            // if player is not climbing than update position after jumping/falling
+            else
 
             // no climbing
             // changing vertical position when jumping/falling
@@ -211,6 +250,7 @@ public class Player extends Entity {
                         airSpeed += gravity * fallSpeedScale;
                     updateXPos(xSpeed);
                 }
+
         } else {
             updateXPos(xSpeed);
         }
@@ -221,13 +261,41 @@ public class Player extends Entity {
     private void crouch() {
 
     }
+
     public void jump() {
         if (countJump >= maxNumberOfJumps) return;
-        if (countJump == 0 && timeSinceGrounded > coyoteTime) return;
+        if (!climbing && countJump == 0 && timeSinceGrounded > coyoteTime) return;
         countJump++;
         inAir = true;
+        climbing = false;
         airSpeed = jumpSpeed;
         timeSinceGrounded = coyoteTime;
+    }
+
+    public void climb(){
+        // Manually switching climbing state by user
+        // Called when user press Q in Keyboard.java
+        
+        if(canMove == false) return;
+
+        if(climbing == true){
+            climbing = false;
+            return;
+        }
+
+        inAir = true;
+        countJump = 0;
+
+        if(isFacingLeft == true){
+            if(!CanMoveHere(hitbox.x - 3, hitbox.y, hitbox.width, hitbox.height, levelData)){
+                climbing = true;
+            }
+        } 
+        else {
+            if(!CanMoveHere(hitbox.x + 3, hitbox.y, hitbox.width, hitbox.height, levelData)){
+                climbing = true;
+            }
+        }
     }
 
     private void updateXPos(float xSpeed) {
@@ -318,5 +386,9 @@ public class Player extends Entity {
     
     public void setCrouch(boolean crouch) {
         this.crouch = crouch;
+    }
+
+    public void setClimbing(boolean climbing){
+        this.climbing = climbing;
     }
 }

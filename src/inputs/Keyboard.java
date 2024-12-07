@@ -18,12 +18,16 @@ public class Keyboard implements KeyListener {
         int code = e.getKeyCode();
 
         switch (code) {
-            case KeyEvent.VK_W -> System.out.println("UP");
+            case KeyEvent.VK_W -> gamePanel.getGame().getPlayer().setUp(false);
             case KeyEvent.VK_A -> gamePanel.getGame().getPlayer().setLeft(false);
-            case KeyEvent.VK_S -> gamePanel.getGame().getPlayer().setCrouch(false);
+            case KeyEvent.VK_S -> gamePanel.getGame().getPlayer().setDown(false);
             case KeyEvent.VK_D -> gamePanel.getGame().getPlayer().setRight(false);
+            // case KeyEvent.VK_Q -> gamePanel.getGame().getPlayer().setClimbing(false);
             // case KeyEvent.VK_K -> gamePanel.getGame().getPlayer().setJump(false);
             // case KeyEvent.VK_SPACE -> gamePanel.getGame().getPlayer().setJump(false);
+
+            // ****************************READ THIS PLEASE*****************************
+            // the S key has been fixed no longer setCrouch, instead to setDown for the purpose of wall climbing logic
         }
     }
 
@@ -34,13 +38,17 @@ public class Keyboard implements KeyListener {
         // handling every game state input
         if(gamePanel.getGame().gameState == gamePanel.getGame().startingMenuState){
             updateStartingMenuState(code);
-        } else if(gamePanel.getGame().gameState == gamePanel.getGame().playingState){
+        } 
+        else if(gamePanel.getGame().gameState == gamePanel.getGame().playingState){
             updatePlayingState(code);
-        } else if(gamePanel.getGame().gameState == gamePanel.getGame().settingState){
+        } 
+        else if(gamePanel.getGame().gameState == gamePanel.getGame().settingState){
             updateSettingState(code);
-        } else if(gamePanel.getGame().gameState == gamePanel.getGame().guidesState){
+        } 
+        else if(gamePanel.getGame().gameState == gamePanel.getGame().guidesState){
             updateGuidesState(code);
-        } else if(gamePanel.getGame().gameState == gamePanel.getGame().exitState){
+        } 
+        else if(gamePanel.getGame().gameState == gamePanel.getGame().exitState){
             updateExitState(code);
         }
         
@@ -81,10 +89,11 @@ public class Keyboard implements KeyListener {
         switch (code) {
             case KeyEvent.VK_W -> gamePanel.getGame().getPlayer().setUp(true);
             case KeyEvent.VK_A -> gamePanel.getGame().getPlayer().setLeft(true);
-            case KeyEvent.VK_S -> gamePanel.getGame().getPlayer().setCrouch(true);
+            case KeyEvent.VK_S -> gamePanel.getGame().getPlayer().setDown(true);
             case KeyEvent.VK_D -> gamePanel.getGame().getPlayer().setRight(true);
             case KeyEvent.VK_K -> gamePanel.getGame().getPlayer().jump();
             case KeyEvent.VK_SPACE -> gamePanel.getGame().getPlayer().jump();
+            case KeyEvent.VK_Q -> gamePanel.getGame().getPlayer().climb();
             case KeyEvent.VK_ESCAPE -> gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
         }
     }
