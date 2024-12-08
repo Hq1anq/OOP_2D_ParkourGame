@@ -198,7 +198,7 @@ public class Player extends Entity {
         if (startAnimation != playerAction) {
             resetAnimationTick();
             if (startAnimation == LEDGE_CLIMB)
-                {playerAction = IDLE;}
+                playerAction = IDLE;
         }
     }
 
@@ -323,12 +323,15 @@ public class Player extends Entity {
             airSpeed = jumpSpeed;
             timeSinceGrounded = coyoteTime;
         } else if (canMove) {
+            if (left && right) return;
             if ((left && isClimbingLeft) || (right && !isClimbingLeft)) {
                 float nextHeight = hitbox.y - climbOffset;
+                boolean climbed = false;
                 while (hitbox.y > nextHeight &&
                         CanMoveHere(hitbox.x, hitbox.y - climbingSpeed,
                                     hitbox.width, hitbox.height, levelData)) {
                     hitbox.y -= climbingSpeed;
+                    climbed = true;
                     if (GetEntityWhenLedgeClimb(hitbox, levelData, isFacingLeft, ledgeClimbXOffset, ledgeClimbYOffset) != null) {
                         canMove = false;
                         ledgeClimbing = true;
@@ -338,6 +341,7 @@ public class Player extends Entity {
                 }
                 if (CanMoveHere(hitbox.x, hitbox.y - climbingSpeed, hitbox.width, hitbox.height, levelData))
                     aniIndex = 0;
+                else if (climbed) aniIndex = GetSpriteAmount(WALL_CLIMB) - 4;
                 else aniIndex = GetSpriteAmount(WALL_CLIMB) - 1;
                 firstClimb = false;
                 canMove = false;
@@ -363,23 +367,42 @@ public class Player extends Entity {
             return;
         }
 
-        inAir = true;
         countJump = 0;
-
-        if(isFacingLeft == true){
-            if(!CanMoveHere(hitbox.x - 3, hitbox.y, hitbox.width, hitbox.height, levelData)){
-                climbing = true;
-                firstClimb = true;
-                isClimbingLeft = true;
-            }
-        } 
-        else {
-            if(!CanMoveHere(hitbox.x + 3, hitbox.y, hitbox.width, hitbox.height, levelData)){
-                climbing = true;
-                firstClimb = true;
-                isClimbingLeft = false;
-            }
+        
+        if (canClimb()) {
+            climbing = true;
+            firstClimb = true;
+            isClimbingLeft = isFacingLeft;
         }
+        // if(isFacingLeft == true){
+        //     if(!CanMoveHere(hitbox.x - 3, hitbox.y + hitbox.height / 4, hitbox.width, hitbox.height / 4, levelData)){
+        //         climbing = true;
+        //         firstClimb = true;
+        //         isClimbingLeft = true;
+        //     }
+        // } 
+        // else {
+        //     if(!CanMoveHere(hitbox.x + 3, hitbox.y + hitbox.height / 4, hitbox.width, hitbox.height / 4, levelData)){
+        //         climbing = true;
+        //         firstClimb = true;
+        //         isClimbingLeft = false;
+        //     }
+        // }
+    }
+
+    private boolean canClimb() {
+        // return ((isFacingLeft &&
+        //         !CanMoveHere(hitbox.x - 3, hitbox.y, hitbox.width, Game.TILE_SIZE / 2, levelData)) &&
+        //         !CanMoveHere(hitbox.x - 3, hitbox.y + hitbox.height - 3, hitbox.width, Game.TILE_SIZE / 2, levelData)
+        //     ||  (!isFacingLeft &&
+        //         !CanMoveHere(hitbox.x + 3, hitbox.y, hitbox.width, Game.TILE_SIZE / 2, levelData)) &&
+        //         !CanMoveHere(hitbox.x + 3, hitbox.y + hitbox.height - 3, hitbox.width, Game.TILE_SIZE / 2, levelData));
+        return ((isFacingLeft &&
+                IsSolid(hitbox.x - 3, hitbox.y, levelData) &&
+                IsSolid(hitbox.x - 3, hitbox.y + hitbox.height - 3, levelData))
+            ||  (!isFacingLeft &&
+                IsSolid(hitbox.x + hitbox.width + 3, hitbox.y, levelData) &&
+                IsSolid(hitbox.x + hitbox.width + 3, hitbox.y + hitbox.height - 3, levelData)));
     }
 
     private void updateXPos(float xSpeed) {
