@@ -5,8 +5,8 @@ import java.awt.Color;
 public class Constants {
 
     public static class Environment {
-        public static final int ENV_WIDTH_DEFAULT = 1000;
-        public static final int ENV_HEIGHT_DEFAULT = 234;
+        public static final int ENV_WIDTH_DEFAULT = 1152;
+        public static final int ENV_HEIGHT_DEFAULT = 324;
         public static final Color BG_COLOR = new Color(86, 88, 123);
     }
 
