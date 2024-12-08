@@ -13,13 +13,15 @@ import static main.Game.GAME_WIDTH;
 public class GamePanel extends JPanel {
     private Mouse mouse;
     private Game game;
+    public Keyboard keyboard;
 
     public GamePanel(Game game) {
         mouse = new Mouse(this);
         this.game = game;
+        keyboard = new Keyboard(this);
 
         setPanelSize();
-        addKeyListener(new Keyboard(this));
+        addKeyListener(keyboard);
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
         setFocusable(true);

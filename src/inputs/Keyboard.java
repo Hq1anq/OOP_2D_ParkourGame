@@ -10,6 +10,15 @@ public class Keyboard implements KeyListener {
     public Keyboard(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }
+    public int upButton = KeyEvent.VK_W;
+    public int downButton = KeyEvent.VK_S;
+    public int leftButton = KeyEvent.VK_A;
+    public int rightButton = KeyEvent.VK_D;
+    public int jumpButton = KeyEvent.VK_SPACE;
+    public int climbButton = KeyEvent.VK_J;
+    public int dashButton = KeyEvent.VK_V;
+    public int runButton = KeyEvent.VK_B;
+
     @Override
     public void keyTyped(KeyEvent e) {}
     
@@ -17,23 +26,56 @@ public class Keyboard implements KeyListener {
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
 
-        switch (code) {
-            case KeyEvent.VK_W -> gamePanel.getGame().getPlayer().setUp(false);
-            case KeyEvent.VK_A -> gamePanel.getGame().getPlayer().setLeft(false);
-            case KeyEvent.VK_S -> gamePanel.getGame().getPlayer().setDown(false);
-            case KeyEvent.VK_D -> gamePanel.getGame().getPlayer().setRight(false);
-            // case KeyEvent.VK_Q -> gamePanel.getGame().getPlayer().setClimbing(false);
-            // case KeyEvent.VK_K -> gamePanel.getGame().getPlayer().setJump(false);
-            // case KeyEvent.VK_SPACE -> gamePanel.getGame().getPlayer().setJump(false);
-
-            // ****************************READ THIS PLEASE*****************************
-            // the S key has been fixed no longer setCrouch, instead to setDown for the purpose of wall climbing logic
-        }
+        if(code == upButton)    gamePanel.getGame().getPlayer().setUp(false);
+        if(code == downButton)  gamePanel.getGame().getPlayer().setDown(false);
+        if(code == leftButton)  gamePanel.getGame().getPlayer().setLeft(false);
+        if(code == rightButton) gamePanel.getGame().getPlayer().setRight(false);
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
+
+        if(gamePanel.getGame().changingButton == true){
+            if((code >= KeyEvent.VK_A && code <= KeyEvent.VK_Z) || code == KeyEvent.VK_SPACE){
+                if(gamePanel.getGame().selectedOptions == 2){
+                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                    upButton = code;
+                }
+                else if(gamePanel.getGame().selectedOptions == 3){
+                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                    downButton = code;
+                }
+                else if(gamePanel.getGame().selectedOptions == 4){
+                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                    leftButton = code;
+                }
+                else if(gamePanel.getGame().selectedOptions == 5){
+                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                    rightButton = code;
+                }
+                else if(gamePanel.getGame().selectedOptions == 6){
+                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                    jumpButton = code;
+                }
+                else if(gamePanel.getGame().selectedOptions == 7){
+                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                    climbButton = code;
+                }
+                else if(gamePanel.getGame().selectedOptions == 8){
+                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                    dashButton = code;
+                }
+                else if(gamePanel.getGame().selectedOptions == 9){
+                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                    runButton = code;
+                }
+
+                gamePanel.getGame().changingButton = false;
+            }
+
+            return;
+        }
 
         // handling every game state input
         if(gamePanel.getGame().gameState == gamePanel.getGame().startingMenuState){
@@ -81,20 +123,59 @@ public class Keyboard implements KeyListener {
             else if(gamePanel.getGame().selectedOptions == gamePanel.getGame().exitState){
                 gamePanel.getGame().gameState = gamePanel.getGame().exitState;
             }
+            gamePanel.getGame().selectedOptions = 0;
         }
     }
 
     private void updatePlayingState(int code){
         // HANDLING INPUT LOGIC IN PLAYING STATE
-        switch (code) {
-            case KeyEvent.VK_W -> gamePanel.getGame().getPlayer().setUp(true);
-            case KeyEvent.VK_A -> gamePanel.getGame().getPlayer().setLeft(true);
-            case KeyEvent.VK_S -> gamePanel.getGame().getPlayer().setDown(true);
-            case KeyEvent.VK_D -> gamePanel.getGame().getPlayer().setRight(true);
-            case KeyEvent.VK_K -> gamePanel.getGame().getPlayer().jump();
-            case KeyEvent.VK_SPACE -> gamePanel.getGame().getPlayer().jump();
-            case KeyEvent.VK_J -> gamePanel.getGame().getPlayer().climb();
-            case KeyEvent.VK_ESCAPE -> gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+        if(gamePanel.getGame().paused == false){
+
+            if(code == upButton)    gamePanel.getGame().getPlayer().setUp(true);
+            if(code == downButton)  gamePanel.getGame().getPlayer().setDown(true);
+            if(code == leftButton)  gamePanel.getGame().getPlayer().setLeft(true);
+            if(code == rightButton) gamePanel.getGame().getPlayer().setRight(true);
+            if(code == jumpButton)  gamePanel.getGame().getPlayer().jump();
+            if(code == climbButton) gamePanel.getGame().getPlayer().climb();
+            if(code == KeyEvent.VK_ESCAPE)  gamePanel.getGame().paused = true;
+
+        }
+        else {
+            if(code == KeyEvent.VK_ESCAPE)  gamePanel.getGame().paused = false;
+
+            if(code == KeyEvent.VK_W || code == KeyEvent.VK_UP){
+                gamePanel.getGame().selectedOptions--;
+                if(gamePanel.getGame().selectedOptions < 0) gamePanel.getGame().selectedOptions = 3;
+            }
+    
+            if(code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN){
+                gamePanel.getGame().selectedOptions++;
+                if(gamePanel.getGame().selectedOptions > 3) gamePanel.getGame().selectedOptions = 0;
+            }
+
+            if(code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT){
+                if(gamePanel.getGame().selectedOptions == 2){
+                    if(gamePanel.getGame().volume < 5)
+                    gamePanel.getGame().volume++;
+                }
+            }
+
+            if(code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT){
+                if(gamePanel.getGame().selectedOptions == 2){
+                    if(gamePanel.getGame().volume > 0)
+                    gamePanel.getGame().volume--;
+                }
+            }
+
+            if(code == KeyEvent.VK_ENTER){
+                if(gamePanel.getGame().selectedOptions == 0)    gamePanel.getGame().paused = false;
+                else if(gamePanel.getGame().selectedOptions == 1)   gamePanel.getGame().showFPS = !gamePanel.getGame().showFPS;
+                else if(gamePanel.getGame().selectedOptions == 3){
+                    gamePanel.getGame().selectedOptions = 0;
+                    gamePanel.getGame().paused = false;
+                    gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+                }
+            }
         }
     }
 
@@ -102,6 +183,44 @@ public class Keyboard implements KeyListener {
         // HANDLING INPUT LOGIC IN SETTING MENU STATE
         if(code == KeyEvent.VK_ESCAPE){
             gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+            gamePanel.getGame().selectedOptions = 1;
+        }
+
+        if(code == KeyEvent.VK_W || code == KeyEvent.VK_UP){
+            gamePanel.getGame().selectedOptions--;
+            if(gamePanel.getGame().selectedOptions < 0) gamePanel.getGame().selectedOptions = 9;
+        }
+
+        if(code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN){
+            gamePanel.getGame().selectedOptions++;
+            if(gamePanel.getGame().selectedOptions > 9) gamePanel.getGame().selectedOptions = 0;
+        }
+
+        if(code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT){
+            if(gamePanel.getGame().selectedOptions == 1){
+                if(gamePanel.getGame().volume > 0)
+                gamePanel.getGame().volume--;
+            }
+            else if(gamePanel.getGame().selectedOptions >= 6){
+                gamePanel.getGame().selectedOptions -= 4;
+            }
+        }
+
+        if(code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT){
+            if(gamePanel.getGame().selectedOptions == 1){
+                if(gamePanel.getGame().volume < 5)
+                gamePanel.getGame().volume++;
+            }
+            else if(gamePanel.getGame().selectedOptions >= 2 && gamePanel.getGame().selectedOptions <= 5){
+                gamePanel.getGame().selectedOptions += 4;
+            }
+        }
+
+        if(code == KeyEvent.VK_ENTER){
+            if(gamePanel.getGame().selectedOptions == 0)
+                gamePanel.getGame().showFPS = !gamePanel.getGame().showFPS;
+            else if(gamePanel.getGame().selectedOptions >= 2 && gamePanel.getGame().selectedOptions <= 9)
+                gamePanel.getGame().changingButton = true;
         }
     }
 
@@ -109,6 +228,7 @@ public class Keyboard implements KeyListener {
         // HANDLING INPUT LOGIC IN GUIDES MENU STATE
         if(code == KeyEvent.VK_ESCAPE){
             gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+            gamePanel.getGame().selectedOptions = 2;
         }
     }
 
@@ -116,10 +236,22 @@ public class Keyboard implements KeyListener {
         // HANDLING INPUT LOGIC IN EXITING STATE
         if(code == KeyEvent.VK_ESCAPE){
             gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+            gamePanel.getGame().selectedOptions = 3;
         }
 
         if(code == KeyEvent.VK_ENTER){
             System.exit(0);
         }
+    }
+
+    private boolean appearTwiceOrMore(int code, int selectedOptions){
+        // check if the code is already in the code set
+        int[] temp = {upButton, downButton, leftButton, rightButton, jumpButton, climbButton, dashButton, runButton};
+        temp[selectedOptions - 2] = code;
+        int appear = 0;
+
+        for(int i : temp)   if(i == code)   appear++;
+
+        return appear >= 2;
     }
 }
