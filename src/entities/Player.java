@@ -27,6 +27,10 @@ public class Player extends Entity {
     private int countJump = 0;
     private boolean preWallKick = false;
 
+    // FALLING
+    private boolean floorSmash = false;
+    private float fallSpeedForSmash = 0;
+
     // Double jump
     private final int maxNumberOfJumps = 2;
 
@@ -116,6 +120,26 @@ public class Player extends Entity {
         // drawHitbox(g, xLevelOffset);
     }
 
+    private void loadAnimation() {
+        BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
+        animations = new BufferedImage[15][8];
+        // for (int i = 0; i < animations.length; i++) {
+        //     for (int j = 0; j < animations[i].length; j++) {
+        //         animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
+        //     }
+        // }
+        for (int i = 0; i < animations.length - 2; i++) {
+            for (int j = 0; j < animations[i].length; j++) {
+                animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
+            }
+        }
+        // Animation > 32 pixels
+        for (int i = 0; i < 8; i++) {
+            animations[WALL_CLIMB][i] = img.getSubimage(i * 32, WALL_CLIMB * 32, 32, 64); // CLIMB 64x32
+            animations[LEDGE_CLIMB][i] = img.getSubimage(i * 64, (LEDGE_CLIMB + 1) * 32, 64, 64); // LEDGE CLIMB 64x64
+        }
+    }
+
     private void updateAnimationTick() {
         aniTick++;
         if (aniTick >= aniSpeed) {
@@ -124,6 +148,11 @@ public class Player extends Entity {
             if (aniIndex >= GetSpriteAmount(playerAction)) {
                 switch (playerAction) {
                     case FALL -> aniIndex --;
+                    case FLOOR_SMASH -> {
+                        floorSmash = false;
+                        canMove = true;
+                        aniIndex = 0;
+                    }
                     case LEDGE_CLIMB -> {
                         canMove = true;
                         ledgeClimbing = false;
@@ -156,14 +185,20 @@ public class Player extends Entity {
                 playerAction = JUMP;
             else
                 playerAction = FALL;
-        } else if (moving) {
-            playerAction = WALKING;
-        } else if (crouch) {
-            playerAction = CROUCH;
-        } else playerAction = IDLE;
-
+        } else {
+            if (floorSmash) {
+                playerAction = FLOOR_SMASH;
+            } else if (moving) {
+                playerAction = WALKING;
+            } else if (crouch) {
+                playerAction = CROUCH;
+            } else playerAction = IDLE;
+        }
+        
         if (startAnimation != playerAction) {
             resetAnimationTick();
+            if (startAnimation == LEDGE_CLIMB)
+                {playerAction = IDLE;}
         }
     }
 
@@ -260,8 +295,10 @@ public class Player extends Entity {
                         updateXPos(xSpeed);
                     } else {
                         hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
-                        if (airSpeed > 0)
+                        if (airSpeed > 0) {
+                            floorSmash = (airSpeed > 9);
                             resetInAir();
+                        }
                         else
                             airSpeed += gravity * fallSpeedScale;
                         updateXPos(xSpeed);
@@ -303,6 +340,7 @@ public class Player extends Entity {
                     aniIndex = 0;
                 else aniIndex = GetSpriteAmount(WALL_CLIMB) - 1;
                 firstClimb = false;
+                canMove = false;
                 climbing = true;
             } else {
                 preWallKick = false;
@@ -358,26 +396,6 @@ public class Player extends Entity {
         inAir = false;
         airSpeed = 0;
         // hitbox.y = (int) (hitbox.y / Game.TILE_SIZE) * Game.TILE_SIZE; // Align with the tile grid
-    }
-
-    private void loadAnimation() {
-        BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
-        animations = new BufferedImage[15][8];
-        // for (int i = 0; i < animations.length; i++) {
-        //     for (int j = 0; j < animations[i].length; j++) {
-        //         animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
-        //     }
-        // }
-        for (int i = 0; i < animations.length - 2; i++) {
-            for (int j = 0; j < animations[i].length; j++) {
-                animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
-            }
-        }
-        // Animation > 32 pixels
-        for (int i = 0; i < 8; i++) {
-            animations[13][i] = img.getSubimage(i * 32, 13 * 32, 32, 64); // CLIMB 64x32
-            animations[14][i] = img.getSubimage(i * 64, 15 * 32, 64, 64); // LEDGE CLIMB 64x64
-        }
     }
 
     public void loadLevelData(int[][] levelData) {

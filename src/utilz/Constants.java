@@ -9,6 +9,7 @@ public class Constants {
         public static final int RUNNING = 4;
         public static final int CROUCH = 6;
         public static final int AIR_FLIP = 8;
+        public static final int FLOOR_SMASH = 9;
         public static final int WALL_KICK = 12;
         public static final int WALL_CLIMB = 13;
         public static final int LEDGE_CLIMB = 14;
@@ -24,6 +25,7 @@ public class Constants {
                 case RUNNING -> 8;
                 case CROUCH -> 2;
                 case AIR_FLIP -> 8;
+                case FLOOR_SMASH -> 3;
                 case WALL_KICK -> 1;
                 case WALL_CLIMB -> 8;
                 case LEDGE_CLIMB -> 8;
