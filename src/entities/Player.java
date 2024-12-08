@@ -22,7 +22,6 @@ public class Player extends Entity {
     private float airSpeed = 0f;                    // falling speed: less than 0 if jumping, greater than 0 if falling
     private float gravity = 0.04f * Game.SCALE;
     private float jumpSpeed = -3.0f * Game.SCALE;   // starting jump speed
-    private float fallSpeedScale = 2.0f;            // multiple to make falling faster than jumping
     private boolean inAir = false;
     private int countJump = 0;
     private boolean preWallKick = false;
@@ -30,6 +29,7 @@ public class Player extends Entity {
     // FALLING
     private boolean floorSmash = false;
     private float fallSpeedForSmash = 0;
+    private float fallSpeedScale = 2.0f;            // multiple to make falling faster than jumping
 
     // Double jump
     private final int maxNumberOfJumps = 2;
@@ -279,7 +279,13 @@ public class Player extends Entity {
 
             // no climbing
             // changing vertical position when jumping/falling
-                if (canMove)
+                if (canMove) {
+                    if (down) {
+                        if (airSpeed < 0) {
+                            airSpeed = 0;
+                        }
+                        fallSpeedScale = 2.5f;
+                    } else fallSpeedScale = 2f;
                     if (CanMoveHere(hitbox.x, hitbox.y + airSpeed, hitbox.width, hitbox.height, levelData)) {
                         hitbox.y += airSpeed;
                         if (airSpeed > 0)
@@ -297,6 +303,7 @@ public class Player extends Entity {
                             airSpeed += gravity * fallSpeedScale;
                         updateXPos(xSpeed);
                     }
+                }
         } else {
             updateXPos(xSpeed);
         }
@@ -308,7 +315,7 @@ public class Player extends Entity {
     }
 
     public void jump(){
-        if (countJump >= maxNumberOfJumps) return;
+        if ((countJump >= maxNumberOfJumps) || down) return;
         if (!climbing && countJump == 0 && timeSinceGrounded > coyoteTime) return;
         if (!climbing) {
             countJump++;
