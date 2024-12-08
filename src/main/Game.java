@@ -3,6 +3,7 @@ package main;
 import entities.Player;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import levels.LevelManager;
 import utilz.LoadSave;
 
@@ -59,6 +60,8 @@ public class Game implements Runnable {
     // STATES DRAWER
     private Menu menu;
 
+    private BufferedImage backgroundImg;
+
     public Game() {
         // GENERATE GAME WINDOW AND PANEL AND MENU DRAWER
 
@@ -74,6 +77,7 @@ public class Game implements Runnable {
         player = new Player(100, 350, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE));
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
         menu = new Menu(gamePanel);
+        backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.PLAYING_BG_IMG);
     }
 
     private void initWindowAndPanel() {
@@ -132,6 +136,8 @@ public class Game implements Runnable {
     public void render(Graphics g) {
         // RE-DRAW GAME FRAME EVERY GAME FRAME
         // DRAWING METHODS
+
+        g.drawImage(backgroundImg, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
         
         if(gameState == playingState){
             levelManager.draw(g, xLevelOffset, yLevelOffset);
