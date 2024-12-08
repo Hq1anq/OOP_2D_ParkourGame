@@ -22,7 +22,7 @@ public class Menu {
     public Menu(GamePanel gamePanel){
         this.gamePanel = gamePanel;
         loadFont();
-        // loadImage();
+        loadImage();
 
         // *****************************************READ THIS PLEASE*************************************************
         // no background image was uploaded when these code were written so don't load image yet utill we have one
@@ -42,7 +42,7 @@ public class Menu {
 
     private void loadImage() {
         try{
-            file = new File("path to image");
+            file = new File("res/starting_menu_background_main_project.png");
             mainBackground = ImageIO.read(file);
         } catch(Exception e){
             e.printStackTrace();
@@ -66,15 +66,16 @@ public class Menu {
     }
 
     private void drawStartingMenuScreen(Graphics2D g2){
-        g2.setColor(Color.black);
-        g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-        // g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
+        // g2.setColor(Color.black);
+        // g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
         g2.setFont(mainFont);
 
         int x, y = 10 * TILE_SIZE;
         for(int i = 0 ; i < startingMenuTexts.length; i++){
-            g2.setColor(Color.white);
             x = Game.GAME_WIDTH/2 - getTextLenght(g2, startingMenuTexts[i])/2;
+            g2.setColor(Color.gray);
+            g2.drawString(startingMenuTexts[i], x + 3, y + 3);
             if(i == gamePanel.getGame().selectedOptions)
                 g2.setColor(Color.yellow);
             else
@@ -85,9 +86,9 @@ public class Menu {
     }
 
     private void drawSettingScreen(Graphics2D g2){
-        g2.setColor(Color.black);
-        g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-        // g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
+        // g2.setColor(Color.black);
+        // g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
         g2.setFont(mainFont);
         drawMiniWindow(g2, 8 * TILE_SIZE, 2 * TILE_SIZE, 10 * TILE_SIZE, 10 * TILE_SIZE);
 
@@ -99,9 +100,9 @@ public class Menu {
     }
 
     private void drawGuidesScreen(Graphics2D g2){
-        g2.setColor(Color.black);
-        g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-        // g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
+        // g2.setColor(Color.black);
+        // g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
         g2.setFont(mainFont);
         drawMiniWindow(g2, 8 * TILE_SIZE, 2 * TILE_SIZE, 10 * TILE_SIZE, 10 * TILE_SIZE);
 
@@ -113,9 +114,9 @@ public class Menu {
     }
 
     private void drawExitScreen(Graphics2D g2){
-        g2.setColor(Color.black);
-        g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-        // g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
+        // g2.setColor(Color.black);
+        // g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
         g2.setFont(mainFont);
         drawMiniWindow(g2, 4 * TILE_SIZE, 4 * TILE_SIZE, 18 * TILE_SIZE, 6 * TILE_SIZE);
 
@@ -136,9 +137,9 @@ public class Menu {
 
     private void drawMiniWindow(Graphics2D g2, int x, int y, int width, int height){
         g2.setColor(Color.white);
-        g2.drawRoundRect(x, y, width, height, 35, 35);
+        g2.fillRoundRect(x, y, width, height, 20, 20);
         g2.setColor(Color.black);
-        g2.drawRoundRect(x + 15, y + 15, width - 30, height - 30, 35, 35);
+        g2.fillRoundRect(x + 5, y + 5, width - 10, height - 10, 20, 20);
     }
 
     private int getTextLenght(Graphics2D g2, String text){
