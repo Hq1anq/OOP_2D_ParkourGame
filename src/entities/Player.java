@@ -15,8 +15,14 @@ public class Player extends Entity {
     // Normal moving
     private boolean moving = false, isFacingLeft = false; 
     private boolean left, up, right, down, crouch, jump;
-    private float playerSpeed = 3.0f;
+    // private float playerSpeed = 3.0f;            // no more use after added friction and acceleration
     private int[][] levelData;
+
+    // Accelaration and friction (testing / might have bugs)
+    private float accelaration = 0.1f;
+    private float friction = 0.05f;
+    private float currentSpeed = 0f;
+    private float maxSpeed = 3f;
 
     // Jumping
     private float airSpeed = 0f;                    // falling speed: less than 0 if jumping, greater than 0 if falling
@@ -208,22 +214,14 @@ public class Player extends Entity {
 
         moving = false;
 
-        // jump handling
-        // if (jump)
-        //     jump();
-        //*******************************************READ THIS PLEASE**********************************************
-        // old code do not suit with double jump!!
-        // lastest jump logic will be called directly in Keyboard.java instead of just set the jump boolean to true
-
         // not in air but nothing being pressed -> do nothing
         if (!inAir){
             countJump = 0;
             timeSinceGrounded = 0;
-            if ((left && !right) || (!left && right)) moving = true;
         }
+            
+        if ((left && !right) || (!left && right)) moving = true;
     
-        // normal moving
-        // d -> move right, a -> move left
         float xSpeed = 0;   // prefer as delta x : to add to player position x (horizontal)
         if (canMove) {
             if (climbing) {
@@ -233,19 +231,32 @@ public class Player extends Entity {
                     firstClimb = true;
                 }
             }
+            // normal moving
+            // d -> move right, a -> move left
             else {
-                if (left) {
-                    isFacingLeft = true;
-                    xSpeed -= playerSpeed;
-                    flipX = width;
-                    flipW = -1;
+                if(moving == true){
+
+                    currentSpeed += accelaration;
+                    if(currentSpeed > maxSpeed) currentSpeed = maxSpeed;
+
+                    if(left){
+                        isFacingLeft = true;
+                        flipX = width;
+                        flipW = -1;
+                    } else {
+                        isFacingLeft = false;
+                        flipX = 0;
+                        flipW = 1;
+                    }
+
+                } else {
+                    // not moving
+                    currentSpeed -= friction;
+                    if(currentSpeed < 0) currentSpeed = 0;
                 }
-                if (right) {
-                    isFacingLeft = false;
-                    xSpeed += playerSpeed;
-                    flipX = 0;
-                    flipW = 1;
-                }
+
+                if(isFacingLeft)    xSpeed = -currentSpeed;
+                else                xSpeed = currentSpeed;
             }
         }
 
