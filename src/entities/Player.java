@@ -123,11 +123,6 @@ public class Player extends Entity {
     private void loadAnimation() {
         BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
         animations = new BufferedImage[15][8];
-        // for (int i = 0; i < animations.length; i++) {
-        //     for (int j = 0; j < animations[i].length; j++) {
-        //         animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
-        //     }
-        // }
         for (int i = 0; i < animations.length - 2; i++) {
             for (int j = 0; j < animations[i].length; j++) {
                 animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
@@ -224,8 +219,7 @@ public class Player extends Entity {
         if (!inAir){
             countJump = 0;
             timeSinceGrounded = 0;
-            if((!left && !right) || (left && right))
-                return;
+            if ((left && !right) || (!left && right)) moving = true;
         }
     
         // normal moving
@@ -233,8 +227,8 @@ public class Player extends Entity {
         float xSpeed = 0;   // prefer as delta x : to add to player position x (horizontal)
         if (canMove) {
             if (climbing) {
-                if ((isFacingLeft && right) || (!isFacingLeft && left)) preWallKick = true;
-                else if (!left && !right) {
+                if ((isClimbingLeft && !left && right) || (!isClimbingLeft && !right && left)) preWallKick = true;
+                else {
                     preWallKick = false;
                     firstClimb = true;
                 }
@@ -307,7 +301,6 @@ public class Player extends Entity {
             updateXPos(xSpeed);
         }
         
-        moving = true;
     }
 
     private void crouch() {
@@ -374,29 +367,9 @@ public class Player extends Entity {
             firstClimb = true;
             isClimbingLeft = isFacingLeft;
         }
-        // if(isFacingLeft == true){
-        //     if(!CanMoveHere(hitbox.x - 3, hitbox.y + hitbox.height / 4, hitbox.width, hitbox.height / 4, levelData)){
-        //         climbing = true;
-        //         firstClimb = true;
-        //         isClimbingLeft = true;
-        //     }
-        // } 
-        // else {
-        //     if(!CanMoveHere(hitbox.x + 3, hitbox.y + hitbox.height / 4, hitbox.width, hitbox.height / 4, levelData)){
-        //         climbing = true;
-        //         firstClimb = true;
-        //         isClimbingLeft = false;
-        //     }
-        // }
     }
 
     private boolean canClimb() {
-        // return ((isFacingLeft &&
-        //         !CanMoveHere(hitbox.x - 3, hitbox.y, hitbox.width, Game.TILE_SIZE / 2, levelData)) &&
-        //         !CanMoveHere(hitbox.x - 3, hitbox.y + hitbox.height - 3, hitbox.width, Game.TILE_SIZE / 2, levelData)
-        //     ||  (!isFacingLeft &&
-        //         !CanMoveHere(hitbox.x + 3, hitbox.y, hitbox.width, Game.TILE_SIZE / 2, levelData)) &&
-        //         !CanMoveHere(hitbox.x + 3, hitbox.y + hitbox.height - 3, hitbox.width, Game.TILE_SIZE / 2, levelData));
         return ((isFacingLeft &&
                 IsSolid(hitbox.x - 3, hitbox.y, levelData) &&
                 IsSolid(hitbox.x - 3, hitbox.y + hitbox.height - 3, levelData))

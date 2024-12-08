@@ -1,6 +1,15 @@
 package utilz;
 
+import java.awt.Color;
+
 public class Constants {
+
+    public static class Environment {
+        public static final int ENV_WIDTH_DEFAULT = 1000;
+        public static final int ENV_HEIGHT_DEFAULT = 234;
+        public static final Color BG_COLOR = new Color(86, 88, 123);
+    }
+
     public static class PlayerConstants {
         public static final int IDLE = 0;
         public static final int JUMP = 1;

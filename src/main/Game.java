@@ -5,6 +5,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import levels.LevelManager;
+import static utilz.Constants.Environment.BG_COLOR;
+import static utilz.Constants.Environment.ENV_HEIGHT_DEFAULT;
+import static utilz.Constants.Environment.ENV_WIDTH_DEFAULT;
 import utilz.LoadSave;
 
 @SuppressWarnings({"FieldMayBeFinal", "unused"})
@@ -60,7 +63,7 @@ public class Game implements Runnable {
     // STATES DRAWER
     private Menu menu;
 
-    private BufferedImage backgroundImg;
+    private BufferedImage frontTree, behindTree;
 
     public Game() {
         // GENERATE GAME WINDOW AND PANEL AND MENU DRAWER
@@ -77,7 +80,8 @@ public class Game implements Runnable {
         player = new Player(100, 350, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE));
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
         menu = new Menu(gamePanel);
-        backgroundImg = LoadSave.GetSpriteAtlas(LoadSave.PLAYING_BG_IMG);
+        frontTree = LoadSave.GetSpriteAtlas(LoadSave.FRONT_TREE);
+        behindTree = LoadSave.GetSpriteAtlas(LoadSave.BEHIND_TREE);
     }
 
     private void initWindowAndPanel() {
@@ -137,14 +141,23 @@ public class Game implements Runnable {
         // RE-DRAW GAME FRAME EVERY GAME FRAME
         // DRAWING METHODS
 
-        g.drawImage(backgroundImg, 0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT, null);
-        
+        // DRAW BACKGROUND
+        g.setColor(BG_COLOR);
+        g.fillRect(0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT);
+
+        drawEnvironment(g);
+
         if(gameState == playingState){
             levelManager.draw(g, xLevelOffset, yLevelOffset);
             player.render(g, xLevelOffset, yLevelOffset);
         }
         else if (menu != null)
             menu.draw((Graphics2D)g);
+    }
+
+    private void drawEnvironment(Graphics g) {
+        g.drawImage(behindTree, - (int) (xLevelOffset * 0.3), - (int) (yLevelOffset * 0.3), TILE_SIZE * levelTileHeight * ENV_WIDTH_DEFAULT / ENV_HEIGHT_DEFAULT,TILE_SIZE * levelTileHeight, null);
+        g.drawImage(frontTree, - (int) (xLevelOffset * 0.7), - (int) (yLevelOffset * 0.7), TILE_SIZE * levelTileHeight * ENV_WIDTH_DEFAULT / ENV_HEIGHT_DEFAULT,TILE_SIZE * levelTileHeight, null);
     }
 
     @Override
