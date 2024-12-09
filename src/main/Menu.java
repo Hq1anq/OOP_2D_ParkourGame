@@ -30,7 +30,7 @@ public class Menu {
 
     private void loadFont(){
         try {
-            file = new File("res/font/PixelifySans-VariableFont_wght.ttf");
+            file = new File("res/font/Pixellari.ttf");
             mainFont = Font.createFont(Font.TRUETYPE_FONT, file).deriveFont(48f);
         } catch (Exception e) {
             e.printStackTrace();
@@ -252,6 +252,7 @@ public class Menu {
     public void drawPausePanel(Graphics2D g2){
         drawMiniWindow(g2, 8 * TILE_SIZE, 4 * TILE_SIZE, 10 * TILE_SIZE, 6 * TILE_SIZE);
         g2.setFont(mainFont);
+        g2.setStroke(mainStroke);
 
         int x = GAME_WIDTH / 2 - getTextLenght(g2, "Game Paused") / 2;
         int y = TILE_SIZE * 5 + 10;
@@ -288,7 +289,7 @@ public class Menu {
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 3)   g2.setColor(Color.yellow);
         else g2.setColor(Color.white);
-        g2.drawString("Quit", x, y);
+        g2.drawString("Main Menu", x, y);
     }
 
     private void drawMiniWindow(Graphics2D g2, int x, int y, int width, int height){

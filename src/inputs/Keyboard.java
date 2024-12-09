@@ -120,6 +120,7 @@ public class Keyboard implements KeyListener {
         if(code == KeyEvent.VK_ENTER){
             if(gamePanel.getGame().selectedOptions == gamePanel.getGame().playingState){
                 gamePanel.getGame().gameState = gamePanel.getGame().playingState;
+                gamePanel.getGame().menu.startingMenuTexts[0] = "Continue";
             }
             else if(gamePanel.getGame().selectedOptions == gamePanel.getGame().settingState){
                 gamePanel.getGame().gameState = gamePanel.getGame().settingState;

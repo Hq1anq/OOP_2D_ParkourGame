@@ -63,7 +63,7 @@ public class Game implements Runnable {
     public boolean changingButton = false;  // DO NOT TOUCH THIS EITHER
 
     // STATES DRAWER
-    private Menu menu;
+    public Menu menu;
 
     // SETTING
     public boolean showFPS = false;

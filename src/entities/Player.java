@@ -288,6 +288,7 @@ public class Player extends Entity {
             // edge climbing handling : detect when climbable and do climbing
             Point ledgePos = GetEntityWhenLedgeClimb(hitbox, levelData, isFacingLeft, ledgeClimbXOffset, ledgeClimbYOffset);
             if (ledgePos != null) {
+                currentSpeed = 0;
                 hitbox.x = ledgePos.x;
                 hitbox.y = ledgePos.y;
                 canMove = false;
@@ -346,6 +347,7 @@ public class Player extends Entity {
         airSpeed = jumpSpeed;
         timeSinceGrounded = coyoteTime;
         climbing = false;
+        preWallKick = false;
     }
 
     public void climb(){
