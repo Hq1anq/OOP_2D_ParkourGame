@@ -20,6 +20,13 @@ public class Menu {
     private Font mainFont;
     private File file;
     private BasicStroke mainStroke;
+
+    // COLOR
+    private Color miniFrameBackgroundColor = Color.decode("#7A9D54");   // background of the mini window
+    private Color miniFrameColor = Color.decode("#8C3333");             // outline of the mini window
+    private Color normalTextColor = Color.decode("#8C3333");            // normal text (not being selected)
+    private Color selectedTextColor = Color.decode("#C2DEDC");          // selected text (but not of the Key Bind being changed by user)
+    private Color changingTextColor = Color.decode("#116A7B");          // text of the Key Bind being changed (Choosing key of Key Adjust)
     
     public Menu(GamePanel gamePanel){
         this.gamePanel = gamePanel;
@@ -76,9 +83,9 @@ public class Menu {
             g2.setColor(Color.gray);
             g2.drawString(startingMenuTexts[i], x + 3, y + 3);
             if(i == gamePanel.getGame().selectedOptions)
-                g2.setColor(Color.yellow);
+                g2.setColor(selectedTextColor);
             else
-                g2.setColor(Color.white);
+                g2.setColor(normalTextColor);
             g2.drawString(startingMenuTexts[i], x, y);
             y += 55;
         }
@@ -91,7 +98,7 @@ public class Menu {
 
         int x = GAME_WIDTH / 2 - getTextLenght(g2, "Settings") / 2;
         int y = TILE_SIZE * 3 + 10;
-        g2.setColor(Color.white);
+        g2.setColor(normalTextColor);
         g2.drawString("Settings", x, y);
 
         g2.setFont(g2.getFont().deriveFont(32f));
@@ -99,20 +106,20 @@ public class Menu {
         x = 9 * TILE_SIZE;
 
         y += TILE_SIZE;
-        if (gamePanel.getGame().selectedOptions == 0)   g2.setColor(Color.yellow);
-        else g2.setColor(Color.white);
+        if (gamePanel.getGame().selectedOptions == 0)   g2.setColor(selectedTextColor);
+        else g2.setColor(normalTextColor);
         g2.drawString("Show FPS", x, y);
-        g2.setColor(Color.white);
+        g2.setColor(normalTextColor);
         if(gamePanel.getGame().showFPS == true)
             g2.fillRect(GAME_WIDTH - 9 * TILE_SIZE - 32, y - 32, 32, 32);
         else
             g2.drawRect(GAME_WIDTH - 9 * TILE_SIZE - 32, y - 32, 32, 32);
 
         y += TILE_SIZE;
-        if (gamePanel.getGame().selectedOptions == 1)   g2.setColor(Color.yellow);
-        else g2.setColor(Color.white);
+        if (gamePanel.getGame().selectedOptions == 1)   g2.setColor(selectedTextColor);
+        else g2.setColor(normalTextColor);
         g2.drawString("Volume", x, y);
-        g2.setColor(Color.white);
+        g2.setColor(normalTextColor);
         g2.drawRect(GAME_WIDTH - (int)(9 * TILE_SIZE) - 32 * 5, y - 32, 32 * 5, 32);
         g2.fillRect(GAME_WIDTH - (int)(9 * TILE_SIZE) - 32 * 5, y - 32, gamePanel.getGame().volume * 32, 32);
 
@@ -120,7 +127,7 @@ public class Menu {
         g2.fillRect(9 * TILE_SIZE, y, 8 * TILE_SIZE, 3);
 
         y += TILE_SIZE + 5;
-        g2.setColor(Color.white);
+        g2.setColor(normalTextColor);
         g2.setFont(mainFont);
         g2.drawString("Key Adjust", GAME_WIDTH / 2 - getTextLenght(g2, "Key Adjust") / 2, y);
         
@@ -130,44 +137,44 @@ public class Menu {
         g2.setFont(mainFont.deriveFont(32f));
         if (gamePanel.getGame().selectedOptions == 2){
             if(gamePanel.getGame().changingButton)
-                g2.setColor(Color.green);
+                g2.setColor(changingTextColor);
             else
-                g2.setColor(Color.yellow);
+                g2.setColor(selectedTextColor);
         }
-        else g2.setColor(Color.white);
+        else g2.setColor(normalTextColor);
         g2.drawString("Up", x, y);
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.upButton), x + 2 * TILE_SIZE, y);
 
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 3){
             if(gamePanel.getGame().changingButton)
-                g2.setColor(Color.green);
+                g2.setColor(changingTextColor);
             else
-                g2.setColor(Color.yellow);
+                g2.setColor(selectedTextColor);
         }
-        else g2.setColor(Color.white);
+        else g2.setColor(normalTextColor);
         g2.drawString("Down", x, y);
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.downButton), x + 2 * TILE_SIZE, y);
 
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 4){
             if(gamePanel.getGame().changingButton)
-                g2.setColor(Color.green);
+                g2.setColor(changingTextColor);
             else
-                g2.setColor(Color.yellow);
+                g2.setColor(selectedTextColor);
         }
-        else g2.setColor(Color.white);
+        else g2.setColor(normalTextColor);
         g2.drawString("Left", x, y);
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.leftButton), x + 2 * TILE_SIZE, y);
 
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 5){
             if(gamePanel.getGame().changingButton)
-                g2.setColor(Color.green);
+                g2.setColor(changingTextColor);
             else
-                g2.setColor(Color.yellow);
+                g2.setColor(selectedTextColor);
         }
-        else g2.setColor(Color.white);
+        else g2.setColor(normalTextColor);
         g2.drawString("Right", x, y);
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.rightButton), x + 2 * TILE_SIZE, y);
 
@@ -175,44 +182,44 @@ public class Menu {
         x += (int)(4.5 * TILE_SIZE);
         if (gamePanel.getGame().selectedOptions == 6){
             if(gamePanel.getGame().changingButton)
-                g2.setColor(Color.green);
+                g2.setColor(changingTextColor);
             else
-                g2.setColor(Color.yellow);
+                g2.setColor(selectedTextColor);
         }
-        else g2.setColor(Color.white);
+        else g2.setColor(normalTextColor);
         g2.drawString("Jump", x, y);
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.jumpButton), x + 2 * TILE_SIZE, y);
 
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 7){
             if(gamePanel.getGame().changingButton)
-                g2.setColor(Color.green);
+                g2.setColor(changingTextColor);
             else
-                g2.setColor(Color.yellow);
+                g2.setColor(selectedTextColor);
         }
-        else g2.setColor(Color.white);
+        else g2.setColor(normalTextColor);
         g2.drawString("Climb", x, y);
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.climbButton), x + 2 * TILE_SIZE, y);
 
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 8){
             if(gamePanel.getGame().changingButton)
-                g2.setColor(Color.green);
+                g2.setColor(changingTextColor);
             else
-                g2.setColor(Color.yellow);
+                g2.setColor(selectedTextColor);
         }
-        else g2.setColor(Color.white);
+        else g2.setColor(normalTextColor);
         g2.drawString("Dash", x, y);
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.dashButton), x + 2 * TILE_SIZE, y);
 
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 9){
             if(gamePanel.getGame().changingButton)
-                g2.setColor(Color.green);
+                g2.setColor(changingTextColor);
             else
-                g2.setColor(Color.yellow);
+                g2.setColor(selectedTextColor);
         }
-        else g2.setColor(Color.white);
+        else g2.setColor(normalTextColor);
         g2.drawString("Run", x, y);
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.runButton), x + 2 * TILE_SIZE, y);
     }
@@ -224,7 +231,7 @@ public class Menu {
 
         int x = GAME_WIDTH / 2 - getTextLenght(g2, "Guides") / 2;
         int y = 150;
-        g2.setColor(Color.white);
+        g2.setColor(normalTextColor);
         g2.drawString("Guides", x, y);
         g2.setFont(g2.getFont().deriveFont(30f));
     }
@@ -236,7 +243,7 @@ public class Menu {
 
         int x = GAME_WIDTH / 2 - getTextLenght(g2, "Are you sure you want to exit?") / 2;
         int y = (int)(6.2 * TILE_SIZE);
-        g2.setColor(Color.white);
+        g2.setColor(normalTextColor);
         g2.drawString("Are you sure you want to exit?", x, y);
 
         g2.setFont(g2.getFont().deriveFont(32f));
@@ -250,52 +257,163 @@ public class Menu {
     }
 
     public void drawPausePanel(Graphics2D g2){
-        drawMiniWindow(g2, 8 * TILE_SIZE, 4 * TILE_SIZE, 10 * TILE_SIZE, 6 * TILE_SIZE);
+        drawMiniWindow(g2, 8 * TILE_SIZE, (int)(3.5 * TILE_SIZE), 10 * TILE_SIZE, 7 * TILE_SIZE);
         g2.setFont(mainFont);
         g2.setStroke(mainStroke);
 
         int x = GAME_WIDTH / 2 - getTextLenght(g2, "Game Paused") / 2;
-        int y = TILE_SIZE * 5 + 10;
+        int y = (int)(TILE_SIZE * 4.5) + 10;
 
-        g2.setColor(Color.white);
+        g2.setColor(normalTextColor);
         g2.drawString("Game Paused", x, y);
 
         g2.setFont(g2.getFont().deriveFont(32f));
         
         x = 9 * TILE_SIZE;
         y += TILE_SIZE;
-        if (gamePanel.getGame().selectedOptions == 0)   g2.setColor(Color.yellow);
-        else g2.setColor(Color.white);
+        if (gamePanel.getGame().selectedOptions == 0)   g2.setColor(selectedTextColor);
+        else g2.setColor(normalTextColor);
         g2.drawString("Continue", x, y);
 
         y += TILE_SIZE;
-        if (gamePanel.getGame().selectedOptions == 1)   g2.setColor(Color.yellow);
-        else g2.setColor(Color.white);
+        if (gamePanel.getGame().selectedOptions == 1)   g2.setColor(selectedTextColor);
+        else g2.setColor(normalTextColor);
         g2.drawString("Show FPS", x, y);
-        g2.setColor(Color.white);
+        g2.setColor(normalTextColor);
         if(gamePanel.getGame().showFPS == true)
             g2.fillRect(GAME_WIDTH - 9 * TILE_SIZE - 32, y - 32, 32, 32);
         else
             g2.drawRect(GAME_WIDTH - 9 * TILE_SIZE - 32, y - 32, 32, 32);
 
         y += TILE_SIZE;
-        if (gamePanel.getGame().selectedOptions == 2)   g2.setColor(Color.yellow);
-        else g2.setColor(Color.white);
+        if (gamePanel.getGame().selectedOptions == 2)   g2.setColor(selectedTextColor);
+        else g2.setColor(normalTextColor);
         g2.drawString("Volume", x, y);
-        g2.setColor(Color.white);
+        g2.setColor(normalTextColor);
         g2.drawRect(GAME_WIDTH - 9 * TILE_SIZE - 32 * 5, y - 32, 32 * 5, 32);
         g2.fillRect(GAME_WIDTH - 9 * TILE_SIZE - 32 * 5, y - 32, gamePanel.getGame().volume * 32, 32);
 
         y += TILE_SIZE;
-        if (gamePanel.getGame().selectedOptions == 3)   g2.setColor(Color.yellow);
-        else g2.setColor(Color.white);
+        if (gamePanel.getGame().selectedOptions == 3)   g2.setColor(selectedTextColor);
+        else g2.setColor(normalTextColor);
+        g2.drawString("Key Adjust", x, y);
+
+        y += TILE_SIZE;
+        if (gamePanel.getGame().selectedOptions == 4)   g2.setColor(selectedTextColor);
+        else g2.setColor(normalTextColor);
         g2.drawString("Main Menu", x, y);
     }
 
+    public void drawInGameKeyAdjustPanel(Graphics2D g2){
+        drawMiniWindow(g2, 8 * TILE_SIZE, 4 * TILE_SIZE, 10 * TILE_SIZE, 6 * TILE_SIZE);
+        g2.setColor(normalTextColor);
+        g2.setFont(mainFont);
+
+        String text = "Key Adjust";
+        int x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        int y = (int)(5.25 * TILE_SIZE);
+        g2.drawString(text, x, y);
+
+        // g2.fillRect(9 * TILE_SIZE, y + 10, 8 * TILE_SIZE, 3);
+
+        g2.fillRect(GAME_WIDTH / 2 - 1, y + 30, 3, 4 * TILE_SIZE - 30);
+
+        y += TILE_SIZE;
+        x = 9 * TILE_SIZE;
+        g2.setFont(mainFont.deriveFont(32f));
+        if (gamePanel.getGame().selectedOptions == 0){
+            if(gamePanel.getGame().changingButton)
+                g2.setColor(changingTextColor);
+            else
+                g2.setColor(selectedTextColor);
+        }
+        else g2.setColor(normalTextColor);
+        g2.drawString("Up", x, y);
+        g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.upButton), x + 2 * TILE_SIZE, y);
+
+        y += TILE_SIZE;
+        if (gamePanel.getGame().selectedOptions == 1){
+            if(gamePanel.getGame().changingButton)
+                g2.setColor(changingTextColor);
+            else
+                g2.setColor(selectedTextColor);
+        }
+        else g2.setColor(normalTextColor);
+        g2.drawString("Down", x, y);
+        g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.downButton), x + 2 * TILE_SIZE, y);
+
+        y += TILE_SIZE;
+        if (gamePanel.getGame().selectedOptions == 2){
+            if(gamePanel.getGame().changingButton)
+                g2.setColor(changingTextColor);
+            else
+                g2.setColor(selectedTextColor);
+        }
+        else g2.setColor(normalTextColor);
+        g2.drawString("Left", x, y);
+        g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.leftButton), x + 2 * TILE_SIZE, y);
+
+        y += TILE_SIZE;
+        if (gamePanel.getGame().selectedOptions == 3){
+            if(gamePanel.getGame().changingButton)
+                g2.setColor(changingTextColor);
+            else
+                g2.setColor(selectedTextColor);
+        }
+        else g2.setColor(normalTextColor);
+        g2.drawString("Right", x, y);
+        g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.rightButton), x + 2 * TILE_SIZE, y);
+
+        y -= 3 * TILE_SIZE;
+        x += (int)(4.5 * TILE_SIZE);
+        if (gamePanel.getGame().selectedOptions == 4){
+            if(gamePanel.getGame().changingButton)
+                g2.setColor(changingTextColor);
+            else
+                g2.setColor(selectedTextColor);
+        }
+        else g2.setColor(normalTextColor);
+        g2.drawString("Jump", x, y);
+        g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.jumpButton), x + 2 * TILE_SIZE, y);
+
+        y += TILE_SIZE;
+        if (gamePanel.getGame().selectedOptions == 5){
+            if(gamePanel.getGame().changingButton)
+                g2.setColor(changingTextColor);
+            else
+                g2.setColor(selectedTextColor);
+        }
+        else g2.setColor(normalTextColor);
+        g2.drawString("Climb", x, y);
+        g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.climbButton), x + 2 * TILE_SIZE, y);
+
+        y += TILE_SIZE;
+        if (gamePanel.getGame().selectedOptions == 6){
+            if(gamePanel.getGame().changingButton)
+                g2.setColor(changingTextColor);
+            else
+                g2.setColor(selectedTextColor);
+        }
+        else g2.setColor(normalTextColor);
+        g2.drawString("Dash", x, y);
+        g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.dashButton), x + 2 * TILE_SIZE, y);
+
+        y += TILE_SIZE;
+        if (gamePanel.getGame().selectedOptions == 7){
+            if(gamePanel.getGame().changingButton)
+                g2.setColor(changingTextColor);
+            else
+                g2.setColor(selectedTextColor);
+        }
+        else g2.setColor(normalTextColor);
+        g2.drawString("Run", x, y);
+        g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.runButton), x + 2 * TILE_SIZE, y);
+    }
+
     private void drawMiniWindow(Graphics2D g2, int x, int y, int width, int height){
-        g2.setColor(Color.white);
+        g2.setColor(miniFrameColor);
         g2.fillRoundRect(x, y, width, height, 20, 20);
-        g2.setColor(Color.black);
+        g2.setColor(miniFrameBackgroundColor);
         g2.fillRoundRect(x + 5, y + 5, width - 10, height - 10, 20, 20);
     }
 
