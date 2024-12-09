@@ -14,7 +14,8 @@ public class Player extends Entity {
     // LOGIC STATISTICS
     // Normal moving
     private boolean moving = false, isFacingLeft = false; 
-    private boolean left, up, right, down, crouch, jump;
+    private boolean left, up, right, down, crouch, jump, climb, isSuper;
+    private boolean performCondition = false;       // handle keypress problem
     // private float playerSpeed = 3.0f;            // no more use after added friction and acceleration
     private int[][] levelData;
 
@@ -211,9 +212,35 @@ public class Player extends Entity {
     // ***IMPORTANT
     private void updatePos() {
         //PLAYER MOVING LOGIC
-
         moving = false;
-
+        if (!jump && !climb) {
+            performCondition = true;
+        }
+        if (performCondition && jump) {
+            performCondition = false;
+            if ((!climbing && countJump == 0 && timeSinceGrounded <= coyoteTime) ||
+                (!climbing && countJump > 0 && countJump < maxNumberOfJumps) ||
+                preWallKick || (climbing && !left && !right)) {
+                    jump();
+            }
+        }
+        if (performCondition && climb && !jump) {
+            performCondition = false;
+            if (climbing) climbing = false;
+            else if (canClimb()) {
+                climbing = true;
+                countJump = 0;
+                firstClimb = true;
+                isClimbingLeft = isFacingLeft;
+            }
+        }
+        if (canMove && climbing) {
+            preWallKick = (left && !isClimbingLeft) || (right && isClimbingLeft);
+            if (!preWallKick) firstClimb = true;
+        }
+        if (canMove && climbing && !preWallKick && jump && (left | right)) {
+            climb();
+        }
         // not in air but nothing being pressed -> do nothing
         if (!inAir){
             countJump = 0;
@@ -224,40 +251,28 @@ public class Player extends Entity {
     
         float xSpeed = 0;   // prefer as delta x : to add to player position x (horizontal)
         if (canMove) {
-            if (climbing) {
-                if ((isClimbingLeft && !left && right) || (!isClimbingLeft && !right && left)) preWallKick = true;
-                else {
-                    preWallKick = false;
-                    firstClimb = true;
-                }
-            }
-            // normal moving
-            // d -> move right, a -> move left
-            else {
-                if(moving == true){
+            if(moving == true && !climbing){
+                currentSpeed += accelaration;
+                if(currentSpeed > maxSpeed) currentSpeed = maxSpeed;
 
-                    currentSpeed += accelaration;
-                    if(currentSpeed > maxSpeed) currentSpeed = maxSpeed;
-
-                    if(left){
-                        isFacingLeft = true;
-                        flipX = width;
-                        flipW = -1;
-                    } else {
-                        isFacingLeft = false;
-                        flipX = 0;
-                        flipW = 1;
-                    }
-
+                if(left){
+                    isFacingLeft = true;
+                    flipX = width;
+                    flipW = -1;
                 } else {
-                    // not moving
-                    currentSpeed -= friction;
-                    if(currentSpeed < 0) currentSpeed = 0;
+                    isFacingLeft = false;
+                    flipX = 0;
+                    flipW = 1;
                 }
 
-                if(isFacingLeft)    xSpeed = -currentSpeed;
-                else                xSpeed = currentSpeed;
+            } else {
+                // not moving
+                currentSpeed -= friction;
+                if(currentSpeed < 0) currentSpeed = 0;
             }
+
+            if(isFacingLeft)    xSpeed = -currentSpeed;
+            else                xSpeed = currentSpeed;
         }
 
         // check if player is still on the floor
@@ -326,65 +341,36 @@ public class Player extends Entity {
     }
 
     public void jump(){
-        if ((countJump >= maxNumberOfJumps) || down) return;
-        if (!climbing && countJump == 0 && timeSinceGrounded > coyoteTime) return;
-        if (!climbing) {
-            countJump++;
-            inAir = true;
-            airSpeed = jumpSpeed;
-            timeSinceGrounded = coyoteTime;
-        } else if (canMove) {
-            if (left && right) return;
-            if ((left && isClimbingLeft) || (right && !isClimbingLeft)) {
-                float nextHeight = hitbox.y - climbOffset;
-                boolean climbed = false;
-                while (hitbox.y > nextHeight &&
-                        CanMoveHere(hitbox.x, hitbox.y - climbingSpeed,
-                                    hitbox.width, hitbox.height, levelData)) {
-                    hitbox.y -= climbingSpeed;
-                    climbed = true;
-                    if (GetEntityWhenLedgeClimb(hitbox, levelData, isFacingLeft, ledgeClimbXOffset, ledgeClimbYOffset) != null) {
-                        canMove = false;
-                        ledgeClimbing = true;
-                        climbing = false;
-                        return;
-                    }
-                }
-                if (CanMoveHere(hitbox.x, hitbox.y - climbingSpeed, hitbox.width, hitbox.height, levelData))
-                    aniIndex = 0;
-                else if (climbed) aniIndex = GetSpriteAmount(WALL_CLIMB) - 4;
-                else aniIndex = GetSpriteAmount(WALL_CLIMB) - 1;
-                firstClimb = false;
-                canMove = false;
-                climbing = true;
-            } else {
-                preWallKick = false;
-                climbing = false;
-                inAir = true;
-                airSpeed = jumpSpeed;
-                countJump = 1;
-            }
-        }
+        countJump++;
+        inAir = true;
+        airSpeed = jumpSpeed;
+        timeSinceGrounded = coyoteTime;
+        climbing = false;
     }
 
     public void climb(){
-        // Manually switching climbing state by user
-        // Called when user press Q in Keyboard.java
-        
-        if(canMove == false) return;
-
-        if(climbing == true){
-            climbing = false;
-            return;
+        float nextHeight = hitbox.y - climbOffset;
+        boolean climbed = false;
+        while (hitbox.y > nextHeight &&
+                CanMoveHere(hitbox.x, hitbox.y - climbingSpeed,
+                            hitbox.width, hitbox.height, levelData)) {
+            hitbox.y -= climbingSpeed;
+            climbed = true;
+            if (GetEntityWhenLedgeClimb(hitbox, levelData, isFacingLeft, ledgeClimbXOffset, ledgeClimbYOffset) != null) {
+                canMove = false;
+                ledgeClimbing = true;
+                climbing = false;
+                return;
+            }
         }
-
+        if (CanMoveHere(hitbox.x, hitbox.y - climbingSpeed, hitbox.width, hitbox.height, levelData))
+            aniIndex = 0;
+        else if (climbed) aniIndex = GetSpriteAmount(WALL_CLIMB) - 4;
+        else aniIndex = GetSpriteAmount(WALL_CLIMB) - 1;
+        firstClimb = false;
+        canMove = false;
+        climbing = true;
         countJump = 0;
-        
-        if (canClimb()) {
-            climbing = true;
-            firstClimb = true;
-            isClimbingLeft = isFacingLeft;
-        }
     }
 
     private boolean canClimb() {
@@ -460,9 +446,17 @@ public class Player extends Entity {
         this.down = down;
     }
 
-    // public void setJump(boolean jump) {
-    //     this.jump = jump;
-    // }
+    public void setSuper(boolean isSuper) {
+        this.isSuper = isSuper;
+    }
+
+    public void setJump(boolean jump) {
+        this.jump = jump;
+    }
+
+    public void setClimb(boolean climb) {
+        this.climb = climb;
+    }
     
     public void setCrouch(boolean crouch) {
         this.crouch = crouch;

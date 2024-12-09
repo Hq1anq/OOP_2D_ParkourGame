@@ -30,6 +30,9 @@ public class Keyboard implements KeyListener {
         if(code == downButton)  gamePanel.getGame().getPlayer().setDown(false);
         if(code == leftButton)  gamePanel.getGame().getPlayer().setLeft(false);
         if(code == rightButton) gamePanel.getGame().getPlayer().setRight(false);
+        if(code == jumpButton)  gamePanel.getGame().getPlayer().setJump(false);
+        if(code == climbButton) gamePanel.getGame().getPlayer().setClimb(false);
+        if(code == runButton) gamePanel.getGame().getPlayer().setSuper(false);
     }
 
     @Override
@@ -38,37 +41,41 @@ public class Keyboard implements KeyListener {
 
         if(gamePanel.getGame().changingButton == true){
             if((code >= KeyEvent.VK_A && code <= KeyEvent.VK_Z) || code == KeyEvent.VK_SPACE){
-                if(gamePanel.getGame().selectedOptions == 2){
-                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
-                    upButton = code;
-                }
-                else if(gamePanel.getGame().selectedOptions == 3){
-                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
-                    downButton = code;
-                }
-                else if(gamePanel.getGame().selectedOptions == 4){
-                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
-                    leftButton = code;
-                }
-                else if(gamePanel.getGame().selectedOptions == 5){
-                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
-                    rightButton = code;
-                }
-                else if(gamePanel.getGame().selectedOptions == 6){
-                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
-                    jumpButton = code;
-                }
-                else if(gamePanel.getGame().selectedOptions == 7){
-                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
-                    climbButton = code;
-                }
-                else if(gamePanel.getGame().selectedOptions == 8){
-                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
-                    dashButton = code;
-                }
-                else if(gamePanel.getGame().selectedOptions == 9){
-                    if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
-                    runButton = code;
+                switch (gamePanel.getGame().selectedOptions) {
+                    case 2 -> {
+                        if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                        upButton = code;
+                    }
+                    case 3 -> {
+                        if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                        downButton = code;
+                    }
+                    case 4 -> {
+                        if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                        leftButton = code;
+                    }
+                    case 5 -> {
+                        if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                        rightButton = code;
+                    }
+                    case 6 -> {
+                        if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                        jumpButton = code;
+                    }
+                    case 7 -> {
+                        if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                        climbButton = code;
+                    }
+                    case 8 -> {
+                        if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                        dashButton = code;
+                    }
+                    case 9 -> {
+                        if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
+                        runButton = code;
+                    }
+                    default -> {
+                    }
                 }
 
                 gamePanel.getGame().changingButton = false;
@@ -135,8 +142,9 @@ public class Keyboard implements KeyListener {
             if(code == downButton)  gamePanel.getGame().getPlayer().setDown(true);
             if(code == leftButton)  gamePanel.getGame().getPlayer().setLeft(true);
             if(code == rightButton) gamePanel.getGame().getPlayer().setRight(true);
-            if(code == jumpButton)  gamePanel.getGame().getPlayer().jump();
-            if(code == climbButton) gamePanel.getGame().getPlayer().climb();
+            if(code == jumpButton)  gamePanel.getGame().getPlayer().setJump(true);
+            if(code == climbButton) gamePanel.getGame().getPlayer().setClimb(true);
+            if(code == runButton) gamePanel.getGame().getPlayer().setSuper(true);
             if(code == KeyEvent.VK_ESCAPE)  gamePanel.getGame().paused = true;
 
         }
@@ -168,12 +176,20 @@ public class Keyboard implements KeyListener {
             }
 
             if(code == KeyEvent.VK_ENTER){
-                if(gamePanel.getGame().selectedOptions == 0)    gamePanel.getGame().paused = false;
-                else if(gamePanel.getGame().selectedOptions == 1)   gamePanel.getGame().showFPS = !gamePanel.getGame().showFPS;
-                else if(gamePanel.getGame().selectedOptions == 3){
-                    gamePanel.getGame().selectedOptions = 0;
-                    gamePanel.getGame().paused = false;
-                    gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+                switch (gamePanel.getGame().selectedOptions) {
+                    case 0:
+                        gamePanel.getGame().paused = false;
+                        break;
+                    case 1:
+                        gamePanel.getGame().showFPS = !gamePanel.getGame().showFPS;
+                        break;
+                    case 3:
+                        gamePanel.getGame().selectedOptions = 0;
+                        gamePanel.getGame().paused = false;
+                        gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+                        break;
+                    default:
+                        break;
                 }
             }
         }
