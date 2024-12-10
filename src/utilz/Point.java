@@ -1,10 +1,10 @@
 package utilz;
 
 public class Point {
-    public float x; // Sử dụng public để truy cập trực tiếp (giảm overhead getter/setter)
-    public float y;
+    public int x; // Sử dụng public để truy cập trực tiếp (giảm overhead getter/setter)
+    public int y;
 
-    public Point(float x, float y) {
+    public Point(int x, int y) {
         this.x = x;
         this.y = y;
     }

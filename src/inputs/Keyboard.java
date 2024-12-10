@@ -16,8 +16,8 @@ public class Keyboard implements KeyListener {
     public int rightButton = KeyEvent.VK_D;
     public int jumpButton = KeyEvent.VK_SPACE;
     public int climbButton = KeyEvent.VK_J;
-    public int dashButton = KeyEvent.VK_V;
-    public int runButton = KeyEvent.VK_B;
+    public int dashButton = KeyEvent.VK_L;
+    public int runButton = KeyEvent.VK_U;
 
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -32,6 +32,7 @@ public class Keyboard implements KeyListener {
         if(code == rightButton) gamePanel.getGame().getPlayer().setRight(false);
         if(code == jumpButton)  gamePanel.getGame().getPlayer().setJump(false);
         if(code == climbButton) gamePanel.getGame().getPlayer().setClimb(false);
+        if(code == dashButton)  gamePanel.getGame().getPlayer().setDash(false);
         if(code == runButton) gamePanel.getGame().getPlayer().setSuper(false);
     }
 
@@ -223,6 +224,7 @@ public class Keyboard implements KeyListener {
             if(code == rightButton) gamePanel.getGame().getPlayer().setRight(true);
             if(code == jumpButton)  gamePanel.getGame().getPlayer().setJump(true);
             if(code == climbButton) gamePanel.getGame().getPlayer().setClimb(true);
+            if(code == dashButton)  gamePanel.getGame().getPlayer().setDash(true);
             if(code == runButton) gamePanel.getGame().getPlayer().setSuper(true);
             if(code == KeyEvent.VK_ESCAPE)  gamePanel.getGame().paused = true;
 

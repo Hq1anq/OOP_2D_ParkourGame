@@ -35,7 +35,7 @@ public class LoadSave {
     }
     public static int[][] getLevelData() {
         InputStream is = LoadSave.class.getResourceAsStream("/" + LEVEL_ONE_CSV);
-        int ROWS = 28, COLLUMS = 52;
+        int ROWS = 56, COLLUMS = 104;
         int[][] levelData = new int[ROWS][COLLUMS];
 
         try (Scanner inputStream = new Scanner(is)) {

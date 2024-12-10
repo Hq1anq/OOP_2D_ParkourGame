@@ -9,6 +9,7 @@ import static utilz.Constants.Environment.BG_COLOR;
 import static utilz.Constants.Environment.ENV_HEIGHT_DEFAULT;
 import static utilz.Constants.Environment.ENV_WIDTH_DEFAULT;
 import utilz.LoadSave;
+import utilz.Point;
 
 @SuppressWarnings({"FieldMayBeFinal", "unused"})
 
@@ -38,12 +39,14 @@ public class Game implements Runnable {
     // STATISTICS
     // VARIABLE
     // Camera feature
+    public static Point camera;
+    private float cameraSpeed = 3.5f;
     private int xLevelOffset;
     private int yLevelOffset;
-    private int leftBorder = (int) (0.3 * Game.GAME_WIDTH);
-    private int rightBorder = (int) (0.7 * Game.GAME_WIDTH);
-    private int topBorder = (int) (0.3 * Game.GAME_HEIGHT);
-    private int bottomBorder = (int) (0.7 * Game.GAME_HEIGHT);
+    private int leftBorder = (int) (0.45 * Game.GAME_WIDTH);
+    private int rightBorder = (int) (0.55 * Game.GAME_WIDTH);
+    private int topBorder = (int) (0.45 * Game.GAME_HEIGHT);
+    private int bottomBorder = (int) (0.55 * Game.GAME_HEIGHT);
     private int levelTileWide = LoadSave.getLevelData()[0].length;
     private int levelTileHeight = LoadSave.getLevelData().length;
     private int maxTileX = levelTileWide - Game.TILES_IN_WIDTH;
@@ -84,7 +87,8 @@ public class Game implements Runnable {
         // INITIATE LEVEL AND PLAYER
 
         levelManager = new LevelManager(this);
-        player = new Player(100, 350, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE));
+        player = new Player(4800, 100, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE));
+        camera = new Point(4800, 100);
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
         menu = new Menu(gamePanel);
         frontTree = LoadSave.GetSpriteAtlas(LoadSave.FRONT_TREE);
@@ -120,10 +124,18 @@ public class Game implements Runnable {
     private void checkCloseToBorder() {
         // CHECK WHETHER IF PLAYER IS CLOSE ENOUGH TO GAME WINDOW BORDERS
 
-        int playerX = (int) player.getHitbox().x;
-        int playerY = (int) player.getHitbox().y;
-        int diffX = playerX - xLevelOffset;
-        int diffY = playerY - yLevelOffset;
+        int targetXCamera = (int) (player.getHitbox().x);
+        int targetYCamera = (int) (player.getHitbox().y);
+
+        double angle = Math.atan2(targetYCamera - camera.y, targetXCamera - camera.x);
+        int cameraXSpeed = (int) (Math.cos(angle) * cameraSpeed);
+        int cameraYSpeed = (int) (Math.sin(angle) * cameraSpeed);
+
+        camera.x += cameraXSpeed;
+        camera.y += cameraYSpeed;
+
+        int diffX = camera.x - xLevelOffset;
+        int diffY = camera.y - yLevelOffset;
 
         if (diffX > rightBorder)
             xLevelOffset += diffX - rightBorder;
@@ -166,8 +178,13 @@ public class Game implements Runnable {
     }
 
     private void drawEnvironment(Graphics g) {
-        g.drawImage(behindTree, - (int) (xLevelOffset * 0.3), - (int) (yLevelOffset * 0.3), TILE_SIZE * levelTileHeight * ENV_WIDTH_DEFAULT / ENV_HEIGHT_DEFAULT,TILE_SIZE * levelTileHeight, null);
-        g.drawImage(frontTree, - (int) (xLevelOffset * 0.7), - (int) (yLevelOffset * 0.7), TILE_SIZE * levelTileHeight * ENV_WIDTH_DEFAULT / ENV_HEIGHT_DEFAULT,TILE_SIZE * levelTileHeight, null);
+        // g.drawImage(behindTree, - (int) (xLevelOffset * 0.3), - (int) (yLevelOffset * 0.3), TILE_SIZE * levelTileHeight * ENV_WIDTH_DEFAULT / ENV_HEIGHT_DEFAULT,TILE_SIZE * levelTileHeight, null);
+        // g.drawImage(frontTree, - (int) (xLevelOffset * 0.7), - (int) (yLevelOffset * 0.7), TILE_SIZE * levelTileHeight * ENV_WIDTH_DEFAULT / ENV_HEIGHT_DEFAULT,TILE_SIZE * levelTileHeight, null);
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++) {
+                g.drawImage(behindTree, - (int) (xLevelOffset * 0.3) + j * 3 * ENV_WIDTH_DEFAULT, - (int) (yLevelOffset * 0.3) + i * 3 * ENV_HEIGHT_DEFAULT, 3 * ENV_WIDTH_DEFAULT, 3 * ENV_HEIGHT_DEFAULT, null);
+                g.drawImage(frontTree, - (int) (xLevelOffset * 0.7) + j * 3 * ENV_WIDTH_DEFAULT, - (int) (yLevelOffset * 0.7) + i * 3 * ENV_HEIGHT_DEFAULT, 3 * ENV_WIDTH_DEFAULT, 3 * ENV_HEIGHT_DEFAULT, null);
+            }
     }
 
     @Override

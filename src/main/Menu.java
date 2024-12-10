@@ -22,11 +22,11 @@ public class Menu {
     private BasicStroke mainStroke;
 
     // COLOR
-    private Color miniFrameBackgroundColor = Color.decode("#7A9D54");   // background of the mini window
-    private Color miniFrameColor = Color.decode("#8C3333");             // outline of the mini window
-    private Color normalTextColor = Color.decode("#8C3333");            // normal text (not being selected)
-    private Color selectedTextColor = Color.decode("#C2DEDC");          // selected text (but not of the Key Bind being changed by user)
-    private Color changingTextColor = Color.decode("#116A7B");          // text of the Key Bind being changed (Choosing key of Key Adjust)
+    private Color miniFrameBackgroundColor = Color.decode("#638A55");   // background of the mini window
+    private Color miniFrameColor = Color.decode("#C48D60");             // outline of the mini window
+    private Color normalTextColor = Color.decode("#CBE54E");            // normal text (not being selected)
+    private Color selectedTextColor = Color.decode("#FFE3B3");          // selected text (but not of the Key Bind being changed by user)
+    private Color changingTextColor = Color.decode("#E1B083");          // text of the Key Bind being changed (Choosing key of Key Adjust)
     
     public Menu(GamePanel gamePanel){
         this.gamePanel = gamePanel;
