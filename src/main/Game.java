@@ -59,11 +59,12 @@ public class Game implements Runnable {
     public final int exitState = 3;
     public int gameState = -1;      // current game state : default when start game : starting menu state
     public int selectedOptions = 0; // current selecting option : to choose option of the next game state
-    public boolean paused = false;          // DO NOT TOUCH THIS
-    public boolean changingButton = false;  // DO NOT TOUCH THIS EITHER
+    public boolean paused = false;              // DO NOT TOUCH THIS
+    public boolean changingButton = false;      // DO NOT TOUCH THIS EITHER
+    public boolean adjustingKeyInGame = false;  // DO NOT TOUCH THIS EITHER
 
     // STATES DRAWER
-    private Menu menu;
+    public Menu menu;
 
     // SETTING
     public boolean showFPS = false;
@@ -157,7 +158,8 @@ public class Game implements Runnable {
             levelManager.draw(g, xLevelOffset, yLevelOffset);
             player.render(g, xLevelOffset, yLevelOffset);
 
-            if(paused == true)  menu.drawPausePanel((Graphics2D)g);
+            if(adjustingKeyInGame == true)  menu.drawInGameKeyAdjustPanel((Graphics2D)g);
+            else if(paused == true)  menu.drawPausePanel((Graphics2D)g);
         }
         else if (menu != null)
             menu.draw((Graphics2D)g);
