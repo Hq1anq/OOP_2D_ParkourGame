@@ -57,6 +57,15 @@ public class Player extends Entity {
     private float timeSinceGrounded = 0;            // count time while not on floor/ground
     private float coyoteTime = 0.1f;                // could be final, 0.15f might be more optimize
 
+    // Dashing
+    private boolean dashing = false;
+    private float dashSpeed = 6.0f;
+    private float dashDuration = 0.2f;
+    private float dashCooldown = 1.0f;
+    private float dashTime = 0;
+    private float dashCooldownTimer = 0;
+    private final int DASH = 2;
+
     // FOR ANIMATIONS
     // Direction flip
     private int flipX = 0;
@@ -139,6 +148,9 @@ public class Player extends Entity {
             animations[WALL_CLIMB][i] = img.getSubimage(i * 32, WALL_CLIMB * 32, 32, 64); // CLIMB 64x32
             animations[LEDGE_CLIMB][i] = img.getSubimage(i * 64, (LEDGE_CLIMB + 1) * 32, 64, 64); // LEDGE CLIMB 64x64
         }
+        for(int i = 0; i < 8; i++) {
+            animations[DASH][i] = img.getSubimage(i * 32, DASH * 32, 32, 32);
+        }
     }
 
     private void updateAnimationTick() {
@@ -173,6 +185,9 @@ public class Player extends Entity {
 
     private void setAnimation() {
         int startAnimation = playerAction;
+        if(dashing) {
+            //playerAction = DASH;
+        }
         if (ledgeClimbing) {
             playerAction = LEDGE_CLIMB;
         } else if (climbing) {
@@ -318,13 +333,58 @@ public class Player extends Entity {
         } else {
             updateXPos(xSpeed);
         }
+        if (dashing) {
+            dashTime += 1.0 / Game.UPS_SET;
         
+            if(isFacingLeft) {
+                xSpeed = -dashSpeed;
+            } else { 
+                xSpeed = dashSpeed;
+            }
+        
+            if (CanMoveHere(hitbox.x + xSpeed, hitbox.y, hitbox.width, hitbox.height, levelData)) {
+                hitbox.x += xSpeed;
+            } else {
+                dashing = false; 
+            }
+        
+            if (dashTime >= dashDuration) {
+                dashing = false;
+                dashCooldownTimer = dashCooldown; 
+            }
+        } else {
+            if (dashCooldownTimer > 0) dashCooldownTimer -= 1.0 / Game.UPS_SET;
+        
+            if ((left && !right) || (!left && right)) moving = true;
+        
+            if (moving) {
+                currentSpeed += accelaration;
+                if (currentSpeed > maxSpeed) currentSpeed = maxSpeed;
+            } else {
+                currentSpeed -= friction;
+                if (currentSpeed < 0) currentSpeed = 0;
+            }
+        
+            //float xSpeed = isFacingLeft ? -currentSpeed : currentSpeed;
+            if(isFacingLeft) {
+                xSpeed = -currentSpeed;
+            } else{ 
+                xSpeed = currentSpeed;
+            }
+            updateXPos(xSpeed);
+        }
     }
 
     private void crouch() {
 
     }
 
+    public void dash() {
+        if(dashing || dashCooldownTimer > 0 || !canMove) return;
+        dashing = true;
+        dashTime = 0;
+        currentSpeed = dashSpeed;
+    }
     public void jump(){
         if ((countJump >= maxNumberOfJumps) || down) return;
         if (!climbing && countJump == 0 && timeSinceGrounded > coyoteTime) return;
@@ -470,5 +530,8 @@ public class Player extends Entity {
 
     public void setClimbing(boolean climbing){
         this.climbing = climbing;
+    }
+    public void setDashing(boolean dashing){
+        this.dashing = dashing;
     }
 }
