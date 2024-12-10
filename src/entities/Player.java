@@ -199,8 +199,10 @@ public class Player extends Entity {
         
         if (startAnimation != playerAction) {
             resetAnimationTick();
-            if (startAnimation == LEDGE_CLIMB)
+            if (startAnimation == LEDGE_CLIMB) {
                 playerAction = IDLE;
+                aniIndex = GetSpriteAmount(IDLE) - 1;
+            }
         }
     }
 
@@ -294,6 +296,8 @@ public class Player extends Entity {
                 canMove = false;
                 ledgeClimbing = true;
                 climbing = false;
+                inAir = false;
+                countJump = 0;
             }
 
             // wall climbing handling
