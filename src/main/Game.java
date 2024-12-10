@@ -8,6 +8,7 @@ import levels.LevelManager;
 import static utilz.Constants.Environment.BG_COLOR;
 import static utilz.Constants.Environment.ENV_HEIGHT_DEFAULT;
 import static utilz.Constants.Environment.ENV_WIDTH_DEFAULT;
+import static utilz.Constants.Menu.DARKEN_BACKGROUND_COLOR;
 import utilz.LoadSave;
 import utilz.Point;
 
@@ -115,9 +116,11 @@ public class Game implements Runnable {
         // UPDATE STATISTICS EVERY FRAME
 
         if(gameState == playingState){
-            player.update();
-            levelManager.update();
-            checkCloseToBorder();
+            if(paused == false){
+                player.update();
+                levelManager.update();
+                checkCloseToBorder();
+            }
         }
     }
 
@@ -169,6 +172,11 @@ public class Game implements Runnable {
         if(gameState == playingState){
             levelManager.draw(g, xLevelOffset, yLevelOffset);
             player.render(g, xLevelOffset, yLevelOffset);
+
+            if(paused == true)  {
+                g.setColor(DARKEN_BACKGROUND_COLOR);
+                g.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            }
 
             if(adjustingKeyInGame == true)  menu.drawInGameKeyAdjustPanel((Graphics2D)g);
             else if(paused == true)  menu.drawPausePanel((Graphics2D)g);

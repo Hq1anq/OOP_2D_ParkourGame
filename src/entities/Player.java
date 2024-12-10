@@ -3,6 +3,7 @@ package entities;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import main.Game;
+import static main.Game.TILE_SIZE;
 import static utilz.Constants.PlayerConstants.*;
 import static utilz.HelpMethods.*;
 import utilz.LoadSave;
@@ -57,6 +58,16 @@ public class Player extends Entity {
     // CoyoteTime
     private float timeSinceGrounded = 0;            // count time while not on floor/ground
     private float coyoteTime = 0.1f;                // could be final, 0.15f might be more optimize
+
+    // Dash
+    private boolean dash = false;                   // true if user is pressing dash, false otherwise
+    private boolean dashing = false;                // true if player is dashing , false otherwise     
+    private long dashCoolDown = 3000;               // time between dashes (ms)
+    private long startDashTime = 0;                 // get the time when start dashing
+    private float positionXAfterDash = 0;
+    private float dashSpeed = 6f;
+    private float dashDistance = 6 * Game.TILE_SIZE;
+    float preY; 
 
     // FOR ANIMATIONS
     // Direction flip
@@ -123,8 +134,8 @@ public class Player extends Entity {
                     (int) (hitbox.x - xDrawOffset) - xLevelOffset,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset),
                     width * flipW, height, null);
-        // g.drawLine(0, 0, Game.camera.x, Game.camera.y);
-        // drawHitbox(g, xLevelOffset, yLevelOffset);
+        // g.drawLine(0, 0, 100, (int) ((hitbox.y + airSpeed) / Game.TILE_SIZE) * Game.TILE_SIZE);
+        drawHitbox(g, xLevelOffset, yLevelOffset);
     }
 
     private void loadAnimation() {
@@ -214,6 +225,18 @@ public class Player extends Entity {
     // ***IMPORTANT
     private void updatePos() {
         //PLAYER MOVING LOGIC
+        // System.out.println(hitbox.x +"  " + hitbox.y);
+
+        if(dashing){
+            dash();
+            return;
+        }
+
+        if(dash && canMove && !climbing && !inAir ){
+            dash();
+            return;
+        }
+
         moving = false;
         if (!jump && !climb) {
             performCondition = true;
@@ -269,7 +292,7 @@ public class Player extends Entity {
 
             } else {
                 // not moving
-                currentSpeed -= friction;
+                currentSpeed -= friction / (inAir ? 3: 1);
                 if(currentSpeed < 0) currentSpeed = 0;
             }
 
@@ -339,6 +362,71 @@ public class Player extends Entity {
             updateXPos(xSpeed);
         }
         
+    }
+
+    public void dash(){
+        if(dashing == false){
+
+            if(isFacingLeft){
+                positionXAfterDash = hitbox.x - dashDistance;
+                while(!CanMoveHere(positionXAfterDash, hitbox.y, hitbox.width, hitbox.height, levelData))
+                positionXAfterDash++;
+            }
+            else{
+                positionXAfterDash = hitbox.x + dashDistance;
+                while(!CanMoveHere(positionXAfterDash, hitbox.y, hitbox.width, hitbox.height, levelData))
+                positionXAfterDash--;
+            }
+            hitbox.y += TILE_SIZE + 5;
+            hitbox.height -= TILE_SIZE + 5;
+            dashing = true;
+            startDashTime = System.currentTimeMillis();
+
+        }
+        else {
+            if(isFacingLeft){
+                if(hitbox.x > positionXAfterDash){
+                    if(CanMoveHere(hitbox.x - dashSpeed, hitbox.y, hitbox.width, hitbox.height, levelData)){
+                        hitbox.x -= dashSpeed;
+                    }
+                    else {
+                        while(CanMoveHere(hitbox.x - 1, hitbox.y, hitbox.width, hitbox.height, levelData)){
+                            hitbox.x--;
+                        }
+                        dashing = false;
+                        hitbox.y -= TILE_SIZE + 5;
+                        hitbox.height += TILE_SIZE + 5;
+                    }
+                }
+                else{
+                    hitbox.x = positionXAfterDash;
+                    dashing = false;
+                    hitbox.y -= TILE_SIZE + 5;
+                    hitbox.height += TILE_SIZE + 5;
+                }
+            }
+            else {
+                if(hitbox.x < positionXAfterDash){
+                    if(CanMoveHere(hitbox.x + dashSpeed, hitbox.y, hitbox.width, hitbox.height, levelData)){
+                        hitbox.x += dashSpeed;
+                    }
+                    else {
+                        while(CanMoveHere(hitbox.x + 1, hitbox.y, hitbox.width, hitbox.height, levelData)){
+                            hitbox.x++;
+                        }
+                        dashing = false;
+                        hitbox.y -= TILE_SIZE + 5;
+                        hitbox.height += TILE_SIZE + 5;
+                    }
+                }
+                else{
+                    hitbox.x = positionXAfterDash;
+                    dashing = false;
+                    hitbox.y -= TILE_SIZE + 5;
+                    hitbox.height += TILE_SIZE + 5;
+                }
+            }
+        }
     }
 
     private void crouch() {
@@ -472,7 +560,7 @@ public class Player extends Entity {
         this.climbing = climbing;
     }
 
-    public void setDash(boolean dash) {
-        // this.dash = dash;
+    public void setDash(boolean dash){
+        this.dash = dash;
     }
 }

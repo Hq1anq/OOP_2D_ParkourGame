@@ -6,13 +6,9 @@ import main.Game;
 public class HelpMethods {
 
     public static boolean CanMoveHere(float x, float y, float width, float height, int[][] levelData) {
-        if (!IsSolid(x, y, levelData))
-            if (!IsSolid(x + width, y + height, levelData))
-                if (!IsSolid(x + width, y, levelData))
-                    if (!IsSolid(x, y + height, levelData))
-                        if (!IsSolid(x, y + height/2, levelData))
-                            if (!IsSolid(x + width, y + height/2, levelData))
-                                return true;
+        if (!IsSolid(x, y, levelData)  && !IsSolid(x + width, y + height, levelData) && !IsSolid(x + width, y, levelData) 
+        && !IsSolid(x, y + height, levelData) && !IsSolid(x, y + height/2, levelData) && !IsSolid(x + width, y + height/2, levelData))
+            return true;
         return false;
     }
 
