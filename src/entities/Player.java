@@ -1,5 +1,6 @@
 package entities;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -9,6 +10,8 @@ import main.Game;
 import static main.Game.TILE_SIZE;
 import static utilz.Constants.PlayerConstants.*;
 import static utilz.HelpMethods.*;
+
+import utilz.HelpMethods;
 import utilz.LoadSave;
 import utilz.Point;
 
@@ -119,57 +122,76 @@ public class Player extends Entity {
         // if (IsTouchingLedge(hitbox, levelData, false)) System.out.println("2");
     }
 
-    public void render(Graphics g, int xLevelOffset, int yLevelOffset) {
+    public void render(Graphics2D g2, int xLevelOffset, int yLevelOffset) {
         // DRAW PLAYER
+        if (unvulerable){
+            float alphaValue;
+            long now = System.currentTimeMillis();
+            now = (now - timeSinceLastUnvulerable) % 1000;
+            if(now < 64)   alphaValue = 0f;
+            else if(now < 31 || now > 968)  alphaValue = 1f;
+            else if(now < 64 || now > 935)  alphaValue = 0.9f;
+            else if(now < 97 || now > 903)  alphaValue = 0.8f;
+            else if(now < 131 || now > 869) alphaValue = 0.7f;
+            else if(now < 167 || now > 833) alphaValue = 0.6f;
+            else if(now < 205 || now > 795) alphaValue = 0.5f;
+            else if(now < 247 || now > 753) alphaValue = 0.4f;
+            else if(now < 295 || now > 704) alphaValue = 0.3f;
+            else if(now < 356 || now > 644) alphaValue = 0.2f;
+            else                            alphaValue = 0.1f;
+
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
+        }
 
         if (playerAction == LEDGE_CLIMB) {
             // g.drawLine(0, 0, (int) (hitbox.x - xLevelOffset), (int) (hitbox.y - yDrawOffset));
             if (isFacingLeft)
-                g.drawImage(animations[playerAction][aniIndex],
+                g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
                     (int) (hitbox.x - xLevelOffset) + (int) hitbox.width + 2 * Game.TILE_SIZE - 21,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset) - 2,
                     -2 * width, 2 * height, null);
             else
-                g.drawImage(animations[playerAction][aniIndex],
+                g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
                     (int) (hitbox.x - xLevelOffset) - Game.TILE_SIZE - 27,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset) - 2,
                     2 * width, 2 * height, null);
         } else if (playerAction == WALL_CLIMB) {
             if (firstClimb) aniIndex = GetSpriteAmount(WALL_CLIMB) - 1;
             if (isClimbingLeft)
-                g.drawImage(animations[playerAction][aniIndex],
+                g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
                     (int) (hitbox.x + hitbox.width + xDrawOffset) - xLevelOffset,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset),
                     width * flipW, 2 * height, null);
             else
-                g.drawImage(animations[playerAction][aniIndex],
+                g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
                     (int) (hitbox.x - xDrawOffset) - xLevelOffset,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset),
                     width * flipW, 2 * height, null);
         } else if (playerAction == START_DASH) {
             if (isFacingLeft)
-                g.drawImage(animations[playerAction][aniIndex],
+                g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
                     (int) (hitbox.x + hitbox.width + xDrawOffset) - xLevelOffset,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset) - TILE_SIZE,
                     width * flipW, height, null);
             else
-                g.drawImage(animations[playerAction][aniIndex],
+                g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
                     (int) (hitbox.x - xDrawOffset) - xLevelOffset,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset) - TILE_SIZE,
                     width * flipW, height, null);
         } else
             if (isFacingLeft)
-                g.drawImage(animations[playerAction][aniIndex],
+                g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
                     (int) (hitbox.x + hitbox.width + xDrawOffset) - xLevelOffset,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset),
                     width * flipW, height, null);
             else
-                g.drawImage(animations[playerAction][aniIndex],
+                g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
                     (int) (hitbox.x - xDrawOffset) - xLevelOffset,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset),
                     width * flipW, height, null);
         // g.drawLine(0, 0, 100, (int) ((hitbox.y + airSpeed) / Game.TILE_SIZE) * Game.TILE_SIZE);
-        drawHitbox(g, xLevelOffset, yLevelOffset);
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        drawHitbox(g2, xLevelOffset, yLevelOffset);
     }
 
     private void loadAnimation() {
@@ -321,11 +343,9 @@ public class Player extends Entity {
 
         if(IsOnIce(hitbox, levelData)){
             setOnIceAccelarations();
-            System.out.println("On ice");
         }
         else if(IsOnMud(hitbox, levelData)){
             setOnMudAccelarations();
-            System.out.println("On mud");
         }
         else
             setDefaultAccelarations();

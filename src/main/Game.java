@@ -175,7 +175,7 @@ public class Game implements Runnable {
         if(gameState == playingState){
             levelManager.draw(g, xLevelOffset, yLevelOffset);
             player.drawHealth((Graphics2D)g);
-            player.render(g, xLevelOffset, yLevelOffset);
+            player.render((Graphics2D)g, xLevelOffset, yLevelOffset);
 
             if(showFPS){
                 menu.drawFPS((Graphics2D)g);

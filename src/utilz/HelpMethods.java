@@ -1,6 +1,11 @@
 package utilz;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+
 import main.Game;
 
 public class HelpMethods {
@@ -102,4 +107,40 @@ public class HelpMethods {
         return levelData[y][x] == 9 || levelData[y][x] == 25 || levelData[y][x] == 41 || levelData[y][x] == 57
             || levelData[y][x] == 73 || levelData[y][x] == 89;
     }
+
+    
+    public static BufferedImage turnWhite(BufferedImage inputImage) {
+        // Create a new image with the same dimensions and type as the input
+        BufferedImage outputImage = new BufferedImage(
+            inputImage.getWidth(),
+            inputImage.getHeight(),
+            BufferedImage.TYPE_INT_ARGB
+        );
+    
+        // Process each pixel
+        for (int x = 0; x < inputImage.getWidth(); x++) {
+            for (int y = 0; y < inputImage.getHeight(); y++) {
+                int pixelColor = inputImage.getRGB(x, y);
+                // Check if the pixel is not fully transparent (alpha != 0)
+                if ((pixelColor >> 24) != 0) {
+                    // Set the pixel to white with full opacity
+                    outputImage.setRGB(x, y, Color.WHITE.getRGB());
+                } else {
+                    // Keep the transparent pixel as-is
+                    outputImage.setRGB(x, y, pixelColor);
+                }
+            }
+        }
+        return outputImage;
+    }
+
+    
+    public static BufferedImage syncWithUnvulerable(BufferedImage input, Graphics2D g2, boolean unvulerable, long timeSinceLastUnvulerable){
+        if(unvulerable && System.currentTimeMillis() - timeSinceLastUnvulerable <= 150){
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            return turnWhite(input);
+        }
+        else return input;
+    }
+    
 }
