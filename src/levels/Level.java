@@ -1,6 +1,6 @@
 package levels;
 
-@SuppressWarnings({"FieldMayBeFinal", "unused"})
+@SuppressWarnings({"FieldMayBeFinal"})
 
 public class Level {
 

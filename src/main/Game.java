@@ -41,7 +41,7 @@ public class Game implements Runnable {
     // VARIABLE
     // Camera feature
     public static Point camera;
-    private float cameraSpeed = 3.5f;
+    private float cameraSpeed = 4f;
     private int xLevelOffset;
     private int yLevelOffset;
     private int leftBorder = (int) (0.45 * Game.GAME_WIDTH);
@@ -61,6 +61,7 @@ public class Game implements Runnable {
     public final int settingState = 1;
     public final int guidesState = 2;
     public final int exitState = 3;
+    public final int choosingLevelState = 4;
     public int gameState = -1;      // current game state : default when start game : starting menu state
     public int selectedOptions = 0; // current selecting option : to choose option of the next game state
     public boolean paused = false;              // DO NOT TOUCH THIS
@@ -69,10 +70,12 @@ public class Game implements Runnable {
 
     // STATES DRAWER
     public Menu menu;
+    public int currentFPS = 120;
 
     // SETTING
     public boolean showFPS = false;
     public int volume = 1;
+    public int currentLevel = 1;
 
     private BufferedImage frontTree, behindTree;
 
@@ -171,7 +174,12 @@ public class Game implements Runnable {
 
         if(gameState == playingState){
             levelManager.draw(g, xLevelOffset, yLevelOffset);
+            player.drawHealth((Graphics2D)g);
             player.render(g, xLevelOffset, yLevelOffset);
+
+            if(showFPS){
+                menu.drawFPS((Graphics2D)g);
+            }
 
             if(paused == true)  {
                 g.setColor(DARKEN_BACKGROUND_COLOR);
@@ -230,6 +238,7 @@ public class Game implements Runnable {
             if (System.currentTimeMillis() - lastCheck >= 1000) {
                 lastCheck = System.currentTimeMillis();
                 // System.out.println("FPS: " + frames + " | UPS: " + updates);
+                currentFPS = frames;
                 frames = 0;
                 updates = 0;
             }

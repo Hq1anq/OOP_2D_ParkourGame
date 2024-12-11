@@ -15,6 +15,8 @@ public class LoadSave {
     // public static final String PLAYING_BG_IMG = "playing_bg_img.png";
     public static final String FRONT_TREE = "front_tree.png";
     public static final String BEHIND_TREE = "behind_tree.png";
+    public static final String EMPTY_HEART = "singleEmptyHeart.png";
+    public static final String FULL_HEART = "singleFullHeart.png";
 
     public static BufferedImage GetSpriteAtlas(String fileName) {
         BufferedImage img = null;

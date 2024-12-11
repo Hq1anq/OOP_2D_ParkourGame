@@ -121,6 +121,8 @@ public class Keyboard implements KeyListener {
         } 
         else if(gamePanel.getGame().gameState == gamePanel.getGame().exitState){
             updateExitState(code);
+        } else if(gamePanel.getGame().gameState == gamePanel.getGame().choosingLevelState){
+            updateChoosingLevelState(code);
         }
         
     }
@@ -141,8 +143,7 @@ public class Keyboard implements KeyListener {
 
         if(code == KeyEvent.VK_ENTER){
             if(gamePanel.getGame().selectedOptions == gamePanel.getGame().playingState){
-                gamePanel.getGame().gameState = gamePanel.getGame().playingState;
-                gamePanel.getGame().menu.startingMenuTexts[0] = "Continue";
+                gamePanel.getGame().gameState = gamePanel.getGame().choosingLevelState;
             }
             else if(gamePanel.getGame().selectedOptions == gamePanel.getGame().settingState){
                 gamePanel.getGame().gameState = gamePanel.getGame().settingState;
@@ -336,6 +337,23 @@ public class Keyboard implements KeyListener {
 
         if(code == KeyEvent.VK_ENTER){
             System.exit(0);
+        }
+    }
+
+    private void updateChoosingLevelState(int code){
+        if(code == KeyEvent.VK_ESCAPE){
+            gamePanel.getGame().selectedOptions = 0;
+            gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+        }
+
+        else if(code == KeyEvent.VK_UP || code == KeyEvent.VK_W || code == KeyEvent.VK_DOWN || code == KeyEvent.VK_S){
+            gamePanel.getGame().selectedOptions = 1 - gamePanel.getGame().selectedOptions;
+        }
+
+        else if(code == KeyEvent.VK_ENTER){
+            gamePanel.getGame().currentLevel = gamePanel.getGame().selectedOptions + 1;
+            gamePanel.getGame().gameState = gamePanel.getGame().playingState;
+            gamePanel.getGame().menu.startingMenuTexts[0] = "Continue";
         }
     }
 

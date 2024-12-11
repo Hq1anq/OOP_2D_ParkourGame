@@ -71,13 +71,16 @@ public class Menu {
         else if(gamePanel.getGame().gameState == gamePanel.getGame().exitState){
             drawExitScreen(g2);
         }
+        else if(gamePanel.getGame().gameState == gamePanel.getGame().choosingLevelState){
+            drawChoosingLevelScreen(g2);
+        }
     }
 
     private void drawStartingMenuScreen(Graphics2D g2){
         g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
         g2.setFont(mainFont);
 
-        int x, y = 10 * TILE_SIZE;
+        int x, y = 8 * TILE_SIZE;
         for(int i = 0 ; i < startingMenuTexts.length; i++){
             x = Game.GAME_WIDTH/2 - getTextLenght(g2, startingMenuTexts[i])/2;
             g2.setColor(Color.gray);
@@ -236,6 +239,34 @@ public class Menu {
         g2.drawString("Press enter again to exit", x, y);
     }
 
+    private void drawChoosingLevelScreen(Graphics2D g2){
+        g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
+        drawMiniWindow(g2, 9 * TILE_SIZE, (int)(4.75 * TILE_SIZE), 8 * TILE_SIZE, 4 * TILE_SIZE);
+
+        g2.setFont(mainFont);
+        g2.setColor(normalTextColor);
+        String text = "Choose Level";
+        int x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        int y = 6 * TILE_SIZE;
+        g2.drawString(text, x, y);
+
+        g2.setFont(mainFont.deriveFont(32f));
+
+        y += TILE_SIZE;
+        text = "Level 1";
+        x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        if(gamePanel.getGame().selectedOptions == 0)    g2.setColor(selectedTextColor);
+        else                                            g2.setColor(normalTextColor);
+        g2.drawString(text, x, y);
+
+        y += TILE_SIZE;
+        text = "Level 2";
+        x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        if(gamePanel.getGame().selectedOptions == 1)    g2.setColor(selectedTextColor);
+        else                                            g2.setColor(normalTextColor);
+        g2.drawString(text, x, y);
+    }
+
     public void drawPausePanel(Graphics2D g2){
         drawMiniWindow(g2, 8 * TILE_SIZE, (int)(3.5 * TILE_SIZE), 10 * TILE_SIZE, 7 * TILE_SIZE);
         g2.setFont(mainFont);
@@ -373,6 +404,16 @@ public class Menu {
         g2.fillRoundRect(x, y, width, height, 20, 20);
         g2.setColor(miniFrameBackgroundColor);
         g2.fillRoundRect(x + 5, y + 5, width - 10, height - 10, 20, 20);
+    }
+
+    public void drawFPS(Graphics2D g2){
+        String text = "FPS: " + gamePanel.getGame().currentFPS;
+        g2.setFont(mainFont.deriveFont(20f));
+        g2.setStroke(mainStroke);
+        g2.setColor(miniFrameBackgroundColor);
+        g2.fillRect(GAME_WIDTH - getTextLenght(g2, text) - 20, 0, getTextLenght(g2, text) + 20, 40);
+        g2.setColor(selectedTextColor);
+        g2.drawString(text, GAME_WIDTH - getTextLenght(g2, text) - 10, 30);
     }
 
     private int getTextLenght(Graphics2D g2, String text){
