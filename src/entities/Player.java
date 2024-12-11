@@ -232,7 +232,7 @@ public class Player extends Entity {
             return;
         }
 
-        if(dash && canMove && !climbing && !inAir ){
+        if(dash && canMove && !climbing && !inAir && System.currentTimeMillis() - startDashTime > dashCoolDown){
             dash();
             return;
         }

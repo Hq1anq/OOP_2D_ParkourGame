@@ -207,7 +207,7 @@ public class Menu {
     private void drawGuidesScreen(Graphics2D g2){
         g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
         g2.setFont(mainFont);
-        drawMiniWindow(g2, 8 * TILE_SIZE, 2 * TILE_SIZE, 10 * TILE_SIZE, 10 * TILE_SIZE);
+        drawMiniWindow(g2, 4 * TILE_SIZE, 2 * TILE_SIZE, 18 * TILE_SIZE, 10 * TILE_SIZE);
 
         int x = GAME_WIDTH / 2 - getTextLenght(g2, "Guides") / 2;
         int y = 150;

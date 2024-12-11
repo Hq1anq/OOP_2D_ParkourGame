@@ -149,6 +149,7 @@ public class Keyboard implements KeyListener {
             }
             else if(gamePanel.getGame().selectedOptions == gamePanel.getGame().guidesState){
                 gamePanel.getGame().gameState = gamePanel.getGame().guidesState;
+                gamePanel.tempLabel.setVisible(true);
             }
             else if(gamePanel.getGame().selectedOptions == gamePanel.getGame().exitState){
                 gamePanel.getGame().gameState = gamePanel.getGame().exitState;
@@ -322,6 +323,7 @@ public class Keyboard implements KeyListener {
         if(code == KeyEvent.VK_ESCAPE){
             gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
             gamePanel.getGame().selectedOptions = 2;
+            gamePanel.tempLabel.setVisible(false);
         }
     }
 
