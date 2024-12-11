@@ -61,11 +61,11 @@ public class Player extends Entity {
 
     // Dash
     private boolean dash = false;                   // true if user is pressing dash, false otherwise
-    private boolean dashing = false;                // true if player is dashing , false otherwise     
-    private long dashCoolDown = 3000;               // time between dashes (ms)
+    private boolean dashing = false;                // true if player is dashing , false otherwise
+    private long dashCoolDown = 2000;               // time between dashes (ms)
     private long startDashTime = 0;                 // get the time when start dashing
     private float positionXAfterDash = 0;
-    private float dashSpeed = 6f;
+    private float dashSpeed = 4f;
     private float dashDistance = 6 * Game.TILE_SIZE;
     float preY; 
 
@@ -123,6 +123,17 @@ public class Player extends Entity {
                     (int) (hitbox.x - xDrawOffset) - xLevelOffset,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset),
                     width * flipW, 2 * height, null);
+        } else if (playerAction == START_DASH) {
+            if (isFacingLeft)
+                g.drawImage(animations[playerAction][aniIndex],
+                    (int) (hitbox.x + hitbox.width + xDrawOffset) - xLevelOffset,
+                    (int) (hitbox.y - yDrawOffset - yLevelOffset) - TILE_SIZE,
+                    width * flipW, height, null);
+            else
+                g.drawImage(animations[playerAction][aniIndex],
+                    (int) (hitbox.x - xDrawOffset) - xLevelOffset,
+                    (int) (hitbox.y - yDrawOffset - yLevelOffset) - TILE_SIZE,
+                    width * flipW, height, null);
         } else
             if (isFacingLeft)
                 g.drawImage(animations[playerAction][aniIndex],
@@ -140,7 +151,7 @@ public class Player extends Entity {
 
     private void loadAnimation() {
         BufferedImage img = LoadSave.GetSpriteAtlas(LoadSave.PLAYER_ATLAS);
-        animations = new BufferedImage[15][8];
+        animations = new BufferedImage[16][16];
         for (int i = 0; i < animations.length - 2; i++) {
             for (int j = 0; j < animations[i].length; j++) {
                 animations[i][j] = img.getSubimage(j * 32, i * 32, 32, 32);
@@ -161,6 +172,7 @@ public class Player extends Entity {
             if (aniIndex >= GetSpriteAmount(playerAction)) {
                 switch (playerAction) {
                     case FALL -> aniIndex --;
+                    case WALKING -> aniIndex -= 8;
                     case FLOOR_SMASH -> {
                         floorSmash = false;
                         canMove = true;
@@ -176,6 +188,9 @@ public class Player extends Entity {
                         canMove = true;
                         aniIndex --;
                         airSpeed = 0;
+                    }
+                    case FINISH_DASH -> {
+                        playerAction = IDLE;
                     }
                     default -> aniIndex = 0;
                 }
@@ -199,13 +214,18 @@ public class Player extends Entity {
             else
                 playerAction = FALL;
         } else {
-            if (floorSmash) {
-                playerAction = FLOOR_SMASH;
-            } else if (moving) {
-                playerAction = WALKING;
-            } else if (crouch) {
-                playerAction = CROUCH;
-            } else playerAction = IDLE;
+            if (dashing) {
+                playerAction = START_DASH;
+            } else if (startAnimation != FINISH_DASH) {
+                if (floorSmash) {
+                    playerAction = FLOOR_SMASH;
+                } else if (moving) {
+                    playerAction = WALKING;
+                } else if (crouch) {
+                    playerAction = CROUCH;
+                } else
+                    playerAction = IDLE;
+            }
         }
         
         if (startAnimation != playerAction) {
@@ -214,6 +234,7 @@ public class Player extends Entity {
                 playerAction = IDLE;
                 aniIndex = GetSpriteAmount(IDLE) - 1;
             }
+            if (startAnimation == START_DASH) playerAction = FINISH_DASH;
         }
     }
 
@@ -226,13 +247,13 @@ public class Player extends Entity {
     private void updatePos() {
         //PLAYER MOVING LOGIC
         // System.out.println(hitbox.x +"  " + hitbox.y);
-
         if(dashing){
             dash();
             return;
         }
+        
 
-        if(dash && canMove && !climbing && !inAir ){
+        if(dash && canMove && !climbing && !inAir && System.currentTimeMillis() - startDashTime > dashCoolDown){
             dash();
             return;
         }
@@ -272,7 +293,7 @@ public class Player extends Entity {
             timeSinceGrounded = 0;
         }
             
-        if ((left && !right) || (!left && right)) moving = true;
+        if (canMove && ((left && !right) || (!left && right))) moving = true;
     
         float xSpeed = 0;   // prefer as delta x : to add to player position x (horizontal)
         if (canMove) {
@@ -366,34 +387,34 @@ public class Player extends Entity {
 
     public void dash(){
         if(dashing == false){
-
             if(isFacingLeft){
                 positionXAfterDash = hitbox.x - dashDistance;
                 while(!CanMoveHere(positionXAfterDash, hitbox.y, hitbox.width, hitbox.height, levelData))
-                positionXAfterDash++;
+                    positionXAfterDash++;
             }
             else{
                 positionXAfterDash = hitbox.x + dashDistance;
                 while(!CanMoveHere(positionXAfterDash, hitbox.y, hitbox.width, hitbox.height, levelData))
-                positionXAfterDash--;
+                    positionXAfterDash--;
             }
             hitbox.y += TILE_SIZE + 5;
             hitbox.height -= TILE_SIZE + 5;
             dashing = true;
             startDashTime = System.currentTimeMillis();
-
         }
         else {
             if(isFacingLeft){
                 if(hitbox.x > positionXAfterDash){
                     if(CanMoveHere(hitbox.x - dashSpeed, hitbox.y, hitbox.width, hitbox.height, levelData)){
                         hitbox.x -= dashSpeed;
+                        canMove = false;
                     }
                     else {
                         while(CanMoveHere(hitbox.x - 1, hitbox.y, hitbox.width, hitbox.height, levelData)){
                             hitbox.x--;
                         }
                         dashing = false;
+                        canMove = true;
                         hitbox.y -= TILE_SIZE + 5;
                         hitbox.height += TILE_SIZE + 5;
                     }
@@ -401,6 +422,7 @@ public class Player extends Entity {
                 else{
                     hitbox.x = positionXAfterDash;
                     dashing = false;
+                    canMove = true;
                     hitbox.y -= TILE_SIZE + 5;
                     hitbox.height += TILE_SIZE + 5;
                 }
@@ -409,12 +431,14 @@ public class Player extends Entity {
                 if(hitbox.x < positionXAfterDash){
                     if(CanMoveHere(hitbox.x + dashSpeed, hitbox.y, hitbox.width, hitbox.height, levelData)){
                         hitbox.x += dashSpeed;
+                        canMove = false;
                     }
                     else {
                         while(CanMoveHere(hitbox.x + 1, hitbox.y, hitbox.width, hitbox.height, levelData)){
                             hitbox.x++;
                         }
                         dashing = false;
+                        canMove = true;
                         hitbox.y -= TILE_SIZE + 5;
                         hitbox.height += TILE_SIZE + 5;
                     }
@@ -422,6 +446,7 @@ public class Player extends Entity {
                 else{
                     hitbox.x = positionXAfterDash;
                     dashing = false;
+                    canMove = true;
                     hitbox.y -= TILE_SIZE + 5;
                     hitbox.height += TILE_SIZE + 5;
                 }

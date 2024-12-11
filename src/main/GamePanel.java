@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import static main.Game.GAME_HEIGHT;
 import static main.Game.GAME_WIDTH;
 
-@SuppressWarnings({"FieldMayBeFinal", "unused"})
+@SuppressWarnings({"FieldMayBeFinal"})
 
 public class GamePanel extends JPanel {
     private Mouse mouse;

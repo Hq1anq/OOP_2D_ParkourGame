@@ -19,14 +19,15 @@ public class Constants {
         public static final int JUMP = 1;
         public static final int FALL = 2;
         public static final int WALKING = 3;
-        public static final int RUNNING = 4;
-        public static final int CROUCH = 6;
-        public static final int AIR_FLIP = 8;
-        public static final int FLOOR_SMASH = 9;
-        public static final int WALL_KICK = 12;
-        public static final int WALL_CLIMB = 13;
-        public static final int LEDGE_CLIMB = 14;
-        // public static final int GROUND = 3;
+        public static final int START_DASH = 4;
+        public static final int FINISH_DASH = 5;
+        public static final int RUNNING = 6;
+        public static final int CROUCH = 7;
+        public static final int AIR_FLIP = 9;
+        public static final int FLOOR_SMASH = 10;
+        public static final int WALL_KICK = 13;
+        public static final int WALL_CLIMB = 14;
+        public static final int LEDGE_CLIMB = 15;
         // public static final int HIT = 5;
 
         public static int GetSpriteAmount(int player_action) {
@@ -34,7 +35,9 @@ public class Constants {
                 case IDLE -> 5;
                 case JUMP -> 2;
                 case FALL -> 4;
-                case WALKING -> 8;
+                case WALKING -> 16;
+                case START_DASH -> 6;
+                case FINISH_DASH -> 4;
                 case RUNNING -> 8;
                 case CROUCH -> 2;
                 case AIR_FLIP -> 8;
@@ -43,7 +46,7 @@ public class Constants {
                 case WALL_CLIMB -> 8;
                 case LEDGE_CLIMB -> 8;
                 default -> 1;
-            }; // case GROUND: return 8;
+            };
             // case HIT: return 8;
         }
     }

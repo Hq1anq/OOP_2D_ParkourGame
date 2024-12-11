@@ -44,10 +44,10 @@ public class Game implements Runnable {
     private float cameraSpeed = 3.5f;
     private int xLevelOffset;
     private int yLevelOffset;
-    private int leftBorder = (int) (0.45 * Game.GAME_WIDTH);
-    private int rightBorder = (int) (0.55 * Game.GAME_WIDTH);
-    private int topBorder = (int) (0.45 * Game.GAME_HEIGHT);
-    private int bottomBorder = (int) (0.55 * Game.GAME_HEIGHT);
+    private int leftBorder = (int) (0.47 * Game.GAME_WIDTH);
+    private int rightBorder = (int) (0.53 * Game.GAME_WIDTH);
+    private int topBorder = (int) (0.47 * Game.GAME_HEIGHT);
+    private int bottomBorder = (int) (0.53 * Game.GAME_HEIGHT);
     private int levelTileWide = LoadSave.getLevelData()[0].length;
     private int levelTileHeight = LoadSave.getLevelData().length;
     private int maxTileX = levelTileWide - Game.TILES_IN_WIDTH;
