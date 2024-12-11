@@ -72,4 +72,34 @@ public class HelpMethods {
             else return null;
         }
     }
+
+    public static boolean IsOnIce(Rectangle2D.Float hitbox, int[][] levelData){
+        float player_bot_left_corner_in_map_X = hitbox.x;
+        float player_bot_right_corner_in_map_X = hitbox.x + hitbox.width;
+        float player_bot_in_map_Y = hitbox.y + hitbox.height + 3;
+
+        int xIndex1 = (int)(player_bot_left_corner_in_map_X / Game.TILE_SIZE);
+        int xIndex2 = (int)(player_bot_right_corner_in_map_X / Game.TILE_SIZE);
+        int yIndex = (int)(player_bot_in_map_Y / Game.TILE_SIZE);
+
+        return levelData[yIndex][xIndex1] >= 96 && levelData[yIndex][xIndex1] <= 100 
+            && levelData[yIndex][xIndex2] >= 96 && levelData[yIndex][xIndex2] <= 100;
+    }
+
+    public static boolean IsOnMud(Rectangle2D.Float hitbox, int[][] levelData){
+        float player_bot_left_corner_in_map_X = hitbox.x;
+        float player_bot_right_corner_in_map_X = hitbox.x + hitbox.width;
+        float player_bot_in_map_Y = hitbox.y + hitbox.height + 3;
+
+        int xIndex1 = (int)(player_bot_left_corner_in_map_X / Game.TILE_SIZE);
+        int xIndex2 = (int)(player_bot_right_corner_in_map_X / Game.TILE_SIZE);
+        int yIndex = (int)(player_bot_in_map_Y / Game.TILE_SIZE);
+
+        return IsMud(xIndex1, yIndex, levelData) && IsMud(xIndex2, yIndex, levelData);
+    }
+
+    public static boolean IsMud(int x, int y, int[][] levelData){
+        return levelData[y][x] == 9 || levelData[y][x] == 25 || levelData[y][x] == 41 || levelData[y][x] == 57
+            || levelData[y][x] == 73 || levelData[y][x] == 89;
+    }
 }

@@ -29,6 +29,12 @@ public class Player extends Entity {
     private float leftCurrentSpeed = 0f;
     private float rightCurrentSpeed = 0f;
     private float maxSpeed = 3f;
+    private final float DEFAULT_ACCELARATION = 1f;
+    private final float DEFAULT_FRICTION = 0.5f;
+    private final float ON_ICE_ACCELARATION = 0.04f;
+    private final float ON_ICE_FRICTION = 0.02f;
+    private final float ON_MUD_ACCELARATION = 0.1f;
+    private final float ON_MUD_FRICTION = 0.07f;
 
     // Jumping
     private float airSpeed = 0f;                    // falling speed: less than 0 if jumping, greater than 0 if falling
@@ -263,6 +269,7 @@ public class Player extends Entity {
     // ***IMPORTANT
     private void updatePos() {
         //PLAYER MOVING LOGIC
+        // System.out.println((int)(hitbox.x / TILE_SIZE) + "  " + (int)((hitbox.y + hitbox.height + 3) / TILE_SIZE));
         if(System.currentTimeMillis() - timeSinceLastUnvulerable > unvulerableTime)
             unvulerable = false;
 
@@ -311,6 +318,17 @@ public class Player extends Entity {
             countJump = 0;
             timeSinceGrounded = 0;
         }
+
+        if(IsOnIce(hitbox, levelData)){
+            setOnIceAccelarations();
+            System.out.println("On ice");
+        }
+        else if(IsOnMud(hitbox, levelData)){
+            setOnMudAccelarations();
+            System.out.println("On mud");
+        }
+        else
+            setDefaultAccelarations();
             
         if (canMove && ((left && !right) || (!left && right))) moving = true;
     
@@ -534,6 +552,24 @@ public class Player extends Entity {
         inAir = false;
         airSpeed = 0;
         // hitbox.y = (int) (hitbox.y / Game.TILE_SIZE) * Game.TILE_SIZE; // Align with the tile grid
+    }
+
+    private void setDefaultAccelarations(){
+        accelaration = DEFAULT_ACCELARATION;
+        friction = DEFAULT_FRICTION;
+        maxSpeed = 3f;
+    }
+
+    private void setOnIceAccelarations(){
+        accelaration = ON_ICE_ACCELARATION;
+        friction = ON_ICE_FRICTION;
+        maxSpeed = 4f;
+    }
+
+    private void setOnMudAccelarations(){
+        accelaration = ON_MUD_ACCELARATION;
+        friction = ON_MUD_FRICTION;
+        maxSpeed = 1f;
     }
 
     public void loadLevelData(int[][] levelData) {
