@@ -440,15 +440,21 @@ public class Keyboard implements KeyListener {
             gamePanel.getGame().currentLevel = gamePanel.getGame().selectedOptions + 1;
 
             if(gamePanel.getGame().currentLevel == 1){
+                if(gamePanel.getGame().playingLevel1 == false){
+                    gamePanel.getGame().loadLevel();
+                }
                 gamePanel.getGame().playingLevel1 = true;
                 gamePanel.getGame().playingLevel2 = false;
             }
             else if(gamePanel.getGame().currentLevel == 2){
+                if(gamePanel.getGame().playingLevel2 == false){
+                    gamePanel.getGame().loadLevel();
+                }
                 gamePanel.getGame().playingLevel1 = false;
                 gamePanel.getGame().playingLevel2 = true;
             }
 
-            gamePanel.getGame().loadLevel();
+            gamePanel.getGame().selectedOptions = 0;
             gamePanel.getGame().menu.startingMenuTexts[0] = "Continue";
             gamePanel.getGame().gameState = gamePanel.getGame().playingState;
         }

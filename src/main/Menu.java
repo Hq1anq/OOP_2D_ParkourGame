@@ -461,13 +461,13 @@ public class Menu {
     }
 
     public void drawWarningPanel(Graphics2D g2){
-        drawMiniWindow(g2, 6 * TILE_SIZE, (int)(5.5 * TILE_SIZE), 14 * TILE_SIZE, 5 * TILE_SIZE);
+        drawMiniWindow(g2, 6 * TILE_SIZE, (int)(4.5 * TILE_SIZE), 14 * TILE_SIZE, 5 * TILE_SIZE);
 
         g2.setFont(mainFont);
         g2.setColor(normalTextColor);
         String text = "Warning! You will lose all";
         int x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
-        int y = (int)(6.75 * TILE_SIZE);
+        int y = (int)(5.75 * TILE_SIZE);
         g2.drawString(text, x, y);
 
         y += TILE_SIZE;
