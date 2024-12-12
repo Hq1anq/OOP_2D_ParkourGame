@@ -37,7 +37,7 @@ public class Menu {
 
     private void loadFont(){
         try {
-            file = new File("res/font/Pixellari.ttf");
+            file = new File("res/font/ThaleahFat.ttf");
             mainFont = Font.createFont(Font.TRUETYPE_FONT, file).deriveFont(48f);
         } catch (Exception e) {
             e.printStackTrace();

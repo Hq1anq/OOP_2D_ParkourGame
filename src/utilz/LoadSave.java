@@ -12,7 +12,6 @@ public class LoadSave {
     public static final String PLAYER_ATLAS = "player_spirites.png";
     public static final String LEVEL_ATLAS = "outside_sprites.png";
     public static final String LEVEL_ONE_CSV = "Level1.csv";
-    // public static final String PLAYING_BG_IMG = "playing_bg_img.png";
     public static final String FRONT_TREE = "front_tree.png";
     public static final String BEHIND_TREE = "behind_tree.png";
     public static final String EMPTY_HEART = "singleEmptyHeart.png";
@@ -25,12 +24,12 @@ public class LoadSave {
         try {
             img = ImageIO.read(is);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error: " + e);
         } finally {
             try {
                 is.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Error: " + e);
             }
         }
         return img;
@@ -51,7 +50,7 @@ public class LoadSave {
                 row++;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error: " + e);
         }
 
         return levelData;
