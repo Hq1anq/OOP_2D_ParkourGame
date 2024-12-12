@@ -67,6 +67,17 @@ public class Game implements Runnable {
     public boolean paused = false;              // DO NOT TOUCH THIS
     public boolean changingButton = false;      // DO NOT TOUCH THIS EITHER
     public boolean adjustingKeyInGame = false;  // DO NOT TOUCH THIS EITHER
+    public boolean gameOver = false;            // AND ALSO THIS
+    public boolean playingLevel1 = false;
+    public boolean playingLevel2 = false;
+    public boolean finishedLevel1 = false;
+    // TODO: after finishing Level 1, remember to set playingLevel1 to false because player have just finished it
+    // TODO: also remember to set finishedLevel1 to true
+    // TODO: after finishing Level 2, remember to set playingLevel2 to false
+    // TODO: after finishing any level, should have the below code at the end (optional)
+    // if(!gamePanel.getGame().playingLevel1 && !gamePanel.getGame().playingLevel2){
+    //      gamePanel.getGame().menu.startingMenuText[0] = "New Game";
+    // }
 
     // STATES DRAWER
     public Menu menu;
@@ -119,10 +130,13 @@ public class Game implements Runnable {
         // UPDATE STATISTICS EVERY FRAME
 
         if(gameState == playingState){
-            if(paused == false){
+            if(paused == false && gameOver == false){
                 player.update();
                 levelManager.update();
                 checkCloseToBorder();
+
+                if(player.getHealth() <= 0)
+                    gameOver = true;
             }
         }
     }
@@ -177,9 +191,13 @@ public class Game implements Runnable {
             player.drawHealth((Graphics2D)g);
             player.render((Graphics2D)g, xLevelOffset, yLevelOffset);
 
-            if(showFPS){
-                menu.drawFPS((Graphics2D)g);
+            if(gameOver){
+                menu.drawGameOverPanel((Graphics2D)g);
+                return;
             }
+
+            if(showFPS)
+                menu.drawFPS((Graphics2D)g);
 
             if(paused == true)  {
                 g.setColor(DARKEN_BACKGROUND_COLOR);

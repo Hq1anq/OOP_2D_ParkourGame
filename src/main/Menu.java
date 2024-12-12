@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import static main.Game.GAME_HEIGHT;
 import static main.Game.GAME_WIDTH;
 import static main.Game.TILE_SIZE;
+import static utilz.Constants.Menu.DARKEN_BACKGROUND_COLOR;
 
 // MAIN USE: DRAWING MENU STATES
 public class Menu {
@@ -264,6 +265,7 @@ public class Menu {
         x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
         if(gamePanel.getGame().selectedOptions == 1)    g2.setColor(selectedTextColor);
         else                                            g2.setColor(normalTextColor);
+        if(!gamePanel.getGame().finishedLevel1)         g2.setColor(Color.gray);
         g2.drawString(text, x, y);
     }
 
@@ -397,6 +399,29 @@ public class Menu {
         else g2.setColor(normalTextColor);
         g2.drawString("Climb", x, y);
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.climbButton), x + 2 * TILE_SIZE, y);
+    }
+
+    public void drawGameOverPanel(Graphics2D g2){
+        g2.setColor(DARKEN_BACKGROUND_COLOR);
+        g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        drawMiniWindow(g2, 6 * TILE_SIZE, 5 * TILE_SIZE, 14 * TILE_SIZE, 4 * TILE_SIZE);
+
+        g2.setFont(mainFont);
+        g2.setColor(normalTextColor);
+        String text = "Game Over!";
+        int x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        int y = (int)(6.25 * TILE_SIZE);
+        g2.drawString(text, x, y);
+
+        text = "You cannot give up just yet!";
+        x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        y += TILE_SIZE;
+        g2.drawString(text, x, y);
+
+        text = "Press Enter to return";
+        x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        y += TILE_SIZE;
+        g2.drawString(text, x, y);
     }
 
     private void drawMiniWindow(Graphics2D g2, int x, int y, int width, int height){
