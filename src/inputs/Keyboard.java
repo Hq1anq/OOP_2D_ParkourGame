@@ -214,6 +214,7 @@ public class Keyboard implements KeyListener {
                 if(!gamePanel.getGame().playingLevel1 && !gamePanel.getGame().playingLevel2){
                     gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
                 }
+                gamePanel.getGame().selectedOptions = 0;
                 gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
             }
 
