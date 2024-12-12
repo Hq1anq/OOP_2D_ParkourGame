@@ -12,6 +12,8 @@ import static main.Game.GAME_HEIGHT;
 import static main.Game.GAME_WIDTH;
 import static main.Game.TILE_SIZE;
 
+@SuppressWarnings("FieldMayBeFinal")
+
 // MAIN USE: DRAWING MENU STATES
 public class Menu {
     private GamePanel gamePanel;
@@ -40,7 +42,7 @@ public class Menu {
             file = new File("res/font/ThaleahFat.ttf");
             mainFont = Font.createFont(Font.TRUETYPE_FONT, file).deriveFont(48f);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error: " + e);
         }
     }
 
@@ -53,7 +55,7 @@ public class Menu {
             file = new File("res/starting_menu_background_main_project.png");
             mainBackground = ImageIO.read(file);
         } catch(Exception e){
-            e.printStackTrace();
+            System.out.println("Error: " + e);
         }
     }
 
