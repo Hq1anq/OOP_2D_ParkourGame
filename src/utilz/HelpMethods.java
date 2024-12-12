@@ -1,5 +1,7 @@
 package utilz;
 
+import static main.Game.TILE_SIZE;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -100,6 +102,83 @@ public class HelpMethods {
         int yIndex = (int)(player_bot_in_map_Y / Game.TILE_SIZE);
 
         return IsMud(xIndex1, yIndex, levelData) && IsMud(xIndex2, yIndex, levelData);
+    }
+
+    public static boolean HitTrap(Rectangle2D.Float hitbox, int[][] levelData){
+        float top_Y = hitbox.y;
+        float bottom_Y = hitbox.y + hitbox.height;
+        float left_X = hitbox.x;
+        float right_X = hitbox.x + hitbox.width;
+
+        int map_left_X = (int)(left_X / TILE_SIZE);
+        int map_right_X = (int)(right_X / TILE_SIZE);
+        int map_top_Y = (int)(top_Y / TILE_SIZE);
+        int map_bottom_Y = (int)(bottom_Y / TILE_SIZE);
+
+        // Chainsaw
+        if((levelData[map_bottom_Y][map_left_X] >= 224 && levelData[map_bottom_Y][map_left_X] <= 231)
+        || (levelData[map_top_Y][map_left_X] >= 224 && levelData[map_top_Y][map_left_X] <= 231)
+        || (levelData[map_bottom_Y][map_right_X] >= 224 && levelData[map_bottom_Y][map_right_X] <= 231)
+        || (levelData[map_top_Y][map_right_X] >= 224 && levelData[map_top_Y][map_right_X] <= 231))
+            return true;
+
+        // Brown-saw
+        if(levelData[map_bottom_Y][map_right_X] >= 208 && levelData[map_bottom_Y][map_right_X] <= 209){
+            return true;
+        }
+
+        if((levelData[map_top_Y][map_left_X] >= 208 && levelData[map_top_Y][map_left_X] <= 209)
+        || (levelData[map_bottom_Y][map_left_X] >= 208 && levelData[map_bottom_Y][map_left_X] <= 209)
+        || (levelData[map_top_Y][map_right_X] >= 208 && levelData[map_top_Y][map_right_X] <= 209)){
+            if(left_X > map_left_X * TILE_SIZE + 28) return false;
+            if(top_Y > map_top_Y * TILE_SIZE + 28) return false;
+            return true;
+        }
+
+        // Spike
+        if((levelData[map_bottom_Y][map_left_X] >= 240 && levelData[map_bottom_Y][map_left_X] <= 241)
+        || (levelData[map_bottom_Y][map_right_X] >= 240 && levelData[map_bottom_Y][map_right_X] <= 241)){
+            if(bottom_Y < map_bottom_Y * TILE_SIZE + 26) return false;
+            return true;
+        }
+        if((levelData[map_bottom_Y][map_left_X] >= 242 && levelData[map_bottom_Y][map_left_X] <= 249)
+        || (levelData[map_bottom_Y][map_right_X] >= 242 && levelData[map_bottom_Y][map_right_X] <= 249)){
+            if(bottom_Y < map_bottom_Y * TILE_SIZE + 19) return false;
+            return true;
+        }
+
+        if((levelData[map_top_Y][map_left_X] >= 240 && levelData[map_top_Y][map_left_X] <= 241)
+        || (levelData[map_top_Y][map_right_X] >= 240 && levelData[map_top_Y][map_right_X] <= 241)
+        || (levelData[map_top_Y][map_left_X] >= 242 && levelData[map_top_Y][map_left_X] <= 249)
+        || (levelData[map_top_Y][map_right_X] >= 242 && levelData[map_top_Y][map_right_X] <= 249)){
+            return true;
+        }
+
+        // Fire
+        if((levelData[map_bottom_Y][map_left_X] >= 192 && levelData[map_bottom_Y][map_left_X] <= 195)
+        || (levelData[map_top_Y][map_left_X] >= 192 && levelData[map_top_Y][map_left_X] <= 195)){
+            if(left_X < map_left_X * TILE_SIZE + 7) return false;
+            return true;
+        }
+
+        if((levelData[map_bottom_Y][map_right_X] >= 192 && levelData[map_bottom_Y][map_right_X] <= 195)
+        || (levelData[map_top_Y][map_right_X] >= 192 && levelData[map_top_Y][map_right_X] <= 195)){
+            if(left_X > map_left_X * TILE_SIZE + 26) return false;
+            return true;
+        }
+        
+        // Sword trap
+        if((levelData[map_bottom_Y][map_left_X] >= 112 && levelData[map_bottom_Y][map_left_X] <= 116)
+        || (levelData[map_bottom_Y][map_right_X] >= 112 && levelData[map_bottom_Y][map_right_X] <= 116)){
+            if(bottom_Y < map_bottom_Y * TILE_SIZE + 8) return false;
+            return true;
+        }
+
+        if((levelData[map_top_Y][map_left_X] >= 112 && levelData[map_top_Y][map_left_X] <= 116)
+        || (levelData[map_top_Y][map_right_X] >= 112 && levelData[map_top_Y][map_right_X] <= 116))
+            return true;
+
+        return false;
     }
 
     public static boolean IsMud(int x, int y, int[][] levelData){

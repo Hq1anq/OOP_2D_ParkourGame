@@ -121,7 +121,8 @@ public class Keyboard implements KeyListener {
         } 
         else if(gamePanel.getGame().gameState == gamePanel.getGame().exitState){
             updateExitState(code);
-        } else if(gamePanel.getGame().gameState == gamePanel.getGame().choosingLevelState){
+        } 
+        else if(gamePanel.getGame().gameState == gamePanel.getGame().choosingLevelState){
             updateChoosingLevelState(code);
         }
         
@@ -194,6 +195,27 @@ public class Keyboard implements KeyListener {
                     gamePanel.getGame().selectedOptions++;
                 else
                     gamePanel.getGame().selectedOptions -= 2;
+            }
+
+            return;
+        }
+        
+        if(gamePanel.getGame().gameOver){
+            if(code == KeyEvent.VK_ENTER){
+                gamePanel.getGame().gameOver = false;
+                if(gamePanel.getGame().currentLevel == 1){
+                    gamePanel.getGame().playingLevel1 = false;
+                    gamePanel.getGame().getPlayer().resetLevel1Statistics();
+                }
+                else {
+                    gamePanel.getGame().playingLevel2 = false;
+                    gamePanel.getGame().getPlayer().resetLevel2Statistics();
+                }
+                if(!gamePanel.getGame().playingLevel1 && !gamePanel.getGame().playingLevel2){
+                    gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
+                }
+                gamePanel.getGame().selectedOptions = 0;
+                gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
             }
 
             return;
@@ -347,13 +369,28 @@ public class Keyboard implements KeyListener {
         }
 
         else if(code == KeyEvent.VK_UP || code == KeyEvent.VK_W || code == KeyEvent.VK_DOWN || code == KeyEvent.VK_S){
+            if(gamePanel.getGame().finishedLevel1)
             gamePanel.getGame().selectedOptions = 1 - gamePanel.getGame().selectedOptions;
         }
 
         else if(code == KeyEvent.VK_ENTER){
             gamePanel.getGame().currentLevel = gamePanel.getGame().selectedOptions + 1;
+
+            if(!gamePanel.getGame().playingLevel1 && !gamePanel.getGame().playingLevel2){
+                gamePanel.getGame().menu.startingMenuTexts[0] = "Continue";
+            }
+
+            if(gamePanel.getGame().currentLevel == 1 && !gamePanel.getGame().playingLevel1){
+                gamePanel.getGame().getPlayer().resetLevel1Statistics();
+                gamePanel.getGame().playingLevel1 = true;
+            }
+
+            if(gamePanel.getGame().currentLevel == 2 && !gamePanel.getGame().playingLevel2){
+                gamePanel.getGame().getPlayer().resetLevel2Statistics();
+                gamePanel.getGame().playingLevel2 = true;
+            }
+
             gamePanel.getGame().gameState = gamePanel.getGame().playingState;
-            gamePanel.getGame().menu.startingMenuTexts[0] = "Continue";
         }
     }
 

@@ -8,6 +8,7 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import main.Game;
 import static main.Game.TILE_SIZE;
+import static main.Game.camera;
 import static utilz.Constants.PlayerConstants.*;
 import static utilz.HelpMethods.*;
 
@@ -291,7 +292,8 @@ public class Player extends Entity {
     // ***IMPORTANT
     private void updatePos() {
         //PLAYER MOVING LOGIC
-        // System.out.println((int)(hitbox.x / TILE_SIZE) + "  " + (int)((hitbox.y + hitbox.height + 3) / TILE_SIZE));
+        if(HitTrap(hitbox, levelData) && !unvulerable)  gotHit();
+
         if(System.currentTimeMillis() - timeSinceLastUnvulerable > unvulerableTime)
             unvulerable = false;
 
@@ -606,6 +608,34 @@ public class Player extends Entity {
         right = false;
         up = false;
         down = false;
+    }
+
+    public int getHealth(){
+        return currentHealth;
+    }
+
+    public void resetLevel1Statistics(){
+        currentHealth = 5;
+        hitbox.x = 4800;
+        hitbox.y = 100;
+        camera.x = 4800;
+        camera.y = 100;
+        unvulerable = false;
+        airSpeed = 0;
+        dashing = false;
+        climbing = false;
+    }
+
+    public void resetLevel2Statistics(){
+        currentHealth = 5;
+        hitbox.x = 4800;
+        hitbox.y = 100;
+        camera.x = 4800;
+        camera.y = 100;
+        unvulerable = false;
+        airSpeed = 0;
+        dashing = false;
+        climbing = false;
     }
 
     public void setLeft(boolean left) {
