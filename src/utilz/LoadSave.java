@@ -16,6 +16,9 @@ public class LoadSave {
     public static final String LEVEL_TWO_CSV = "Level2.csv";
     public static final String FRONT_TREE = "front_tree.png";
     public static final String BEHIND_TREE = "behind_tree.png";
+    public static final String FRONT_ROCK = "front_rock.png";
+    public static final String BEHIND_ROCK = "behind_rock.png";
+    public static final String CAVE = "cave.png";
     public static final String EMPTY_HEART = "singleEmptyHeart.png";
     public static final String FULL_HEART = "singleFullHeart.png";
 

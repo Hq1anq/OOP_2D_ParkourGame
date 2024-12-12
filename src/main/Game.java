@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import levels.LevelManager;
 import utilz.Constants.Level1;
+import utilz.Constants.Level2;
 import static utilz.Constants.Menu.DARKEN_BACKGROUND_COLOR;
 import utilz.LoadSave;
 import utilz.Point;
@@ -81,7 +82,7 @@ public class Game implements Runnable {
     public int volume = 1;
     public int currentLevel = 1;
 
-    private BufferedImage frontTree, behindTree;
+    private BufferedImage frontTree, behindTree, frontRock, behindRock;
 
     public Game() {
         // GENERATE GAME WINDOW AND PANEL AND MENU DRAWER
@@ -110,6 +111,8 @@ public class Game implements Runnable {
         menu = new Menu(gamePanel);
         frontTree = LoadSave.GetSpriteAtlas(LoadSave.FRONT_TREE);
         behindTree = LoadSave.GetSpriteAtlas(LoadSave.BEHIND_TREE);
+        frontRock = LoadSave.GetSpriteAtlas(LoadSave.FRONT_ROCK);
+        behindRock = LoadSave.GetSpriteAtlas(LoadSave.BEHIND_ROCK);
     }
 
     private void initWindowAndPanel() {
@@ -243,11 +246,20 @@ public class Game implements Runnable {
     }
 
     private void drawEnvironment(Graphics g) {
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++) {
-                g.drawImage(behindTree, - (int) (xLevelOffset * 0.3) + j * 3 * Level1.ENV_WIDTH_DEFAULT, - (int) (yLevelOffset * 0.3) + i * 3 * Level1.ENV_HEIGHT_DEFAULT, 3 * Level1.ENV_WIDTH_DEFAULT, 3 * Level1.ENV_HEIGHT_DEFAULT, null);
-                g.drawImage(frontTree, - (int) (xLevelOffset * 0.7) + j * 3 * Level1.ENV_WIDTH_DEFAULT, - (int) (yLevelOffset * 0.7) + i * 3 * Level1.ENV_HEIGHT_DEFAULT, 3 * Level1.ENV_WIDTH_DEFAULT, 3 * Level1.ENV_HEIGHT_DEFAULT, null);
-            }
+        if (levelManager != null) {
+            if (levelManager.getCurrentLevel().getId() == 1)
+                for (int i = 0; i < 4; i++)
+                    for (int j = 0; j < 4; j++) {
+                        g.drawImage(behindTree, - (int) (xLevelOffset * 0.3) + j * 3 * Level1.ENV_WIDTH_DEFAULT, - (int) (yLevelOffset * 0.3) + i * 3 * Level1.ENV_HEIGHT_DEFAULT, 3 * Level1.ENV_WIDTH_DEFAULT, 3 * Level1.ENV_HEIGHT_DEFAULT, null);
+                        g.drawImage(frontTree, - (int) (xLevelOffset * 0.7) + j * 3 * Level1.ENV_WIDTH_DEFAULT, - (int) (yLevelOffset * 0.7) + i * 3 * Level1.ENV_HEIGHT_DEFAULT, 3 * Level1.ENV_WIDTH_DEFAULT, 3 * Level1.ENV_HEIGHT_DEFAULT, null);
+                    }
+            else if (levelManager.getCurrentLevel().getId() == 2)
+                for (int i = 0; i < 4; i++)
+                    for (int j = 0; j < 4; j++) {
+                        g.drawImage(behindRock, - (int) (xLevelOffset * 0.3) + j * 1 * Level2.ENV_WIDTH_DEFAULT - 5, - (int) (yLevelOffset * 0.7) + i * 2 * Level2.ENV_HEIGHT_DEFAULT - 5, 1 * Level2.ENV_WIDTH_DEFAULT, 2 * Level2.ENV_HEIGHT_DEFAULT, null);
+                        g.drawImage(frontRock, - (int) (xLevelOffset * 0.7) + j * 1 * Level2.ENV_WIDTH_DEFAULT - 5, - (int) (yLevelOffset * 0.7) + i * 2 * Level2.ENV_HEIGHT_DEFAULT - 5, 1 * Level2.ENV_WIDTH_DEFAULT, 2 * Level2.ENV_HEIGHT_DEFAULT, null);
+                    }
+        }
     }
 
     @Override
