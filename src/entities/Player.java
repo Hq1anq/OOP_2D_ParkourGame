@@ -73,7 +73,7 @@ public class Player extends Entity {
     // Dash
     private boolean dash = false;                   // true if user is pressing dash, false otherwise
     private boolean dashing = false;                // true if player is dashing , false otherwise
-    private long dashCoolDown = 2000;               // time between dashes (ms)
+    private long dashCoolDown = 1500;               // time between dashes (ms)
     private long startDashTime = 0;                 // get the time when start dashing
     private float positionXAfterDash = 0;
     private float dashSpeed = 4f;
@@ -85,6 +85,8 @@ public class Player extends Entity {
     private boolean unvulerable = false;            // turn true when just got hit, false after unvulerableTime
     private long timeSinceLastUnvulerable = 0;
     private long unvulerableTime = 2000;            // (ms)
+    private boolean winning = false;
+    public boolean finishWinning = false;
 
     // FOR ANIMATIONS
     // Direction flip
@@ -233,6 +235,13 @@ public class Player extends Entity {
                     case FINISH_DASH -> {
                         playerAction = IDLE;
                     }
+                    case WIN_POSE -> {
+                        winning = false;
+                        finishWinning = true;
+                        canMove = true;
+                        playerAction = IDLE;
+                        aniIndex = 0;
+                    }
                     default -> aniIndex = 0;
                 }
             }
@@ -254,6 +263,9 @@ public class Player extends Entity {
                 playerAction = JUMP;
             else
                 playerAction = FALL;
+        } else if (winning) {
+            playerAction = WIN_POSE;
+            canMove = false;
         } else {
             if (dashing) {
                 playerAction = START_DASH;
@@ -458,6 +470,7 @@ public class Player extends Entity {
             hitbox.y += TILE_SIZE + 5;
             hitbox.height -= TILE_SIZE + 5;
             dashing = true;
+            canMove = false;
             startDashTime = System.currentTimeMillis();
         }
         else {
@@ -465,7 +478,6 @@ public class Player extends Entity {
                 if(hitbox.x > positionXAfterDash){
                     if(CanMoveHere(hitbox.x - dashSpeed, hitbox.y, hitbox.width, hitbox.height, levelData)){
                         hitbox.x -= dashSpeed;
-                        canMove = false;
                     }
                     else {
                         while(CanMoveHere(hitbox.x - 1, hitbox.y, hitbox.width, hitbox.height, levelData)){
@@ -666,6 +678,10 @@ public class Player extends Entity {
 
     public void setDash(boolean dash){
         this.dash = dash;
+    }
+
+    public void setWinning(boolean winning){
+        this.winning = winning;
     }
 
     public void drawHealth(Graphics2D g2){

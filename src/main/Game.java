@@ -151,9 +151,10 @@ public class Game implements Runnable {
                     player.getHitbox().y > levelManager.getCurrentLevel().getWinPos().y - 10 &&
                     player.getHitbox().y < levelManager.getCurrentLevel().getWinPos().y + 10) {
                         if (levelManager.getCurrentLevel().getId() == 1) {
-                            levelManager.loadNextLevel();
                             playingLevel1 = false;
                             finishedLevel1 = true;
+                            player.setWinning(true);
+                            
                         }
                         else if (levelManager.getCurrentLevel().getId() == 2) {
                             playingLevel2 = false;
@@ -161,6 +162,11 @@ public class Game implements Runnable {
                         if(!playingLevel1 && !playingLevel2) {
                             gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
                         }
+                }
+                if (player.finishWinning) {
+                    player.finishWinning = false;
+                    player.setWinning(false);
+                    levelManager.loadNextLevel();
                 }
             }
         }
