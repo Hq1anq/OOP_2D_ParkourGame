@@ -95,6 +95,12 @@ public class Menu {
             g2.drawString(startingMenuTexts[i], x, y);
             y += 55;
         }
+
+        if(gamePanel.getGame().finishedLevel2){
+            g2.setFont(mainFont.deriveFont(10f));
+            g2.setColor(normalTextColor);
+            g2.drawString("Well played", 10, GAME_HEIGHT - 10);
+        }
     }
 
     private void drawSettingScreen(Graphics2D g2){
@@ -269,9 +275,14 @@ public class Menu {
         else                                            g2.setColor(normalTextColor);
         if(!gamePanel.getGame().finishedLevel1)         g2.setColor(Color.gray);
         g2.drawString(text, x, y);
+
+        if(gamePanel.getGame().warning)
+            drawWarningPanel(g2);
     }
 
     public void drawPausePanel(Graphics2D g2){
+        g2.setColor(DARKEN_BACKGROUND_COLOR);
+        g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
         drawMiniWindow(g2, 8 * TILE_SIZE, (int)(3.5 * TILE_SIZE), 10 * TILE_SIZE, 7 * TILE_SIZE);
         g2.setFont(mainFont);
         g2.setStroke(mainStroke);
@@ -320,6 +331,8 @@ public class Menu {
     }
 
     public void drawInGameKeyAdjustPanel(Graphics2D g2){
+        g2.setColor(DARKEN_BACKGROUND_COLOR);
+        g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
         drawMiniWindow(g2, 8 * TILE_SIZE, 5 * TILE_SIZE, 10 * TILE_SIZE, 5 * TILE_SIZE);
         g2.setColor(normalTextColor);
         g2.setFont(mainFont);
@@ -423,6 +436,54 @@ public class Menu {
         text = "Press Enter to return";
         x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
         y += TILE_SIZE;
+        g2.drawString(text, x, y);
+    }
+
+    public void drawCongratulationPanel(Graphics2D g2){
+        drawMiniWindow(g2, 6 * TILE_SIZE, 5 * TILE_SIZE, 14 * TILE_SIZE, 4 * TILE_SIZE);
+
+        g2.setFont(mainFont);
+        g2.setColor(normalTextColor);
+        String text = "Congratulation!";
+        int x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        int y = (int)(6.25 * TILE_SIZE);
+        g2.drawString(text, x, y);
+
+        y += TILE_SIZE;
+        text = "Level " + gamePanel.getGame().currentLevel + " completed!";
+        x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        g2.drawString(text, x, y);
+
+        y += TILE_SIZE;
+        text = "Press Enter to continue";
+        x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        g2.drawString(text, x, y);
+    }
+
+    public void drawWarningPanel(Graphics2D g2){
+        drawMiniWindow(g2, 6 * TILE_SIZE, (int)(4.5 * TILE_SIZE), 14 * TILE_SIZE, 5 * TILE_SIZE);
+
+        g2.setFont(mainFont);
+        g2.setColor(normalTextColor);
+        String text = "Warning! You will lose all";
+        int x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        int y = (int)(5.75 * TILE_SIZE);
+        g2.drawString(text, x, y);
+
+        y += TILE_SIZE;
+        text = "of your previous progress";
+        x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        g2.drawString(text, x, y);
+
+        y += TILE_SIZE;
+        g2.setFont(mainFont.deriveFont(40f));
+        text = "Press Enter to process";
+        x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
+        g2.drawString(text, x, y);
+
+        y += TILE_SIZE;
+        text = "Press Escape to cancel";
+        x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
         g2.drawString(text, x, y);
     }
 

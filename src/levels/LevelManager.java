@@ -42,6 +42,7 @@ public class LevelManager {
                 levelSprite[index] = img.getSubimage(j*32, i*32, 32, 32);
             }
     }
+
     public void draw(Graphics g, int xLevelOffset, int yLevelOffset) {
         for (int i = 0; i < level.getLevelData().length; i++)
             for (int j = 0; j < level.getLevelData()[0].length; j++) {
@@ -80,12 +81,17 @@ public class LevelManager {
 
             }
     }
-    public void loadNextLevel() {
-        currentLevel = 2;
+    
+    public void loadLevel(int levelNumber) {
+        currentLevel = levelNumber;
         level = new Level(currentLevel);
         game.getPlayer().loadLevelData(level.getLevelData());
+        if(currentLevel == 2)
         game.getPlayer().resetLevel2Statistics();
+        else if(currentLevel == 1)
+        game.getPlayer().resetLevel1Statistics();
     }
+
     public void update() {
 
     }

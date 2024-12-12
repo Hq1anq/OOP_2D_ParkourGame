@@ -62,16 +62,12 @@ public class Game implements Runnable {
     public boolean changingButton = false;      // DO NOT TOUCH THIS EITHER
     public boolean adjustingKeyInGame = false;  // DO NOT TOUCH THIS EITHER
     public boolean gameOver = false;            // AND ALSO THIS
+    public boolean winning = false;
     public boolean playingLevel1 = false;
     public boolean playingLevel2 = false;
     public boolean finishedLevel1 = false;
-    // TODO: after finishing Level 1, remember to set playingLevel1 to false because player have just finished it
-    // TODO: also remember to set finishedLevel1 to true
-    // TODO: after finishing Level 2, remember to set playingLevel2 to false
-    // TODO: after finishing any level, should have the below code at the end (optional)
-    // if(!gamePanel.getGame().playingLevel1 && !gamePanel.getGame().playingLevel2){
-    //      gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
-    // }
+    public boolean finishedLevel2 = true;
+    public boolean warning = false;
 
     // STATES DRAWER
     public Menu menu;
@@ -131,11 +127,9 @@ public class Game implements Runnable {
         gameThread.start();
     }
 
-    public void loadNextLevel() {
-        resetAll();
-        levelManager.loadNextLevel();
-        // player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
-        player.resetLevel2Statistics();
+    public void loadLevel() {
+        levelManager.loadLevel(currentLevel);
+        player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
     }
 
     public void update() {
@@ -147,29 +141,17 @@ public class Game implements Runnable {
                 levelManager.update();
                 checkCloseToBorder();
 
-                if (player.getHealth() <= 0)
+                if (player.getHealth() <= 0){
                     gameOver = true;
+                    return;
+                }
+                
                 if (player.getHitbox().x > levelManager.getCurrentLevel().getWinPos().x - 10 &&
                     player.getHitbox().x < levelManager.getCurrentLevel().getWinPos().x + 10 &&
                     player.getHitbox().y > levelManager.getCurrentLevel().getWinPos().y - 10 &&
                     player.getHitbox().y < levelManager.getCurrentLevel().getWinPos().y + 10) {
-                        if (levelManager.getCurrentLevel().getId() == 1) {
-                            playingLevel1 = false;
-                            finishedLevel1 = true;
-                            player.setWinning(true);
-                            
-                        }
-                        else if (levelManager.getCurrentLevel().getId() == 2) {
-                            playingLevel2 = false;
-                        }
-                        if(!playingLevel1 && !playingLevel2) {
-                            gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
-                        }
-                }
-                if (player.finishWinning) {
-                    player.finishWinning = false;
-                    player.setWinning(false);
-                    levelManager.loadNextLevel();
+                        winning = true;
+                        player.activateWin();
                 }
             }
         }
@@ -225,6 +207,11 @@ public class Game implements Runnable {
             player.drawHealth((Graphics2D)g);
             player.render((Graphics2D)g, xLevelOffset, yLevelOffset);
 
+            if(winning){
+                menu.drawCongratulationPanel((Graphics2D)g);
+                return;
+            }
+
             if(gameOver){
                 menu.drawGameOverPanel((Graphics2D)g);
                 return;
@@ -232,11 +219,6 @@ public class Game implements Runnable {
 
             if(showFPS)
                 menu.drawFPS((Graphics2D)g);
-
-            if(paused == true)  {
-                g.setColor(DARKEN_BACKGROUND_COLOR);
-                g.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-            }
 
             if(adjustingKeyInGame == true)  menu.drawInGameKeyAdjustPanel((Graphics2D)g);
             else if(paused == true)  menu.drawPausePanel((Graphics2D)g);
@@ -302,12 +284,6 @@ public class Game implements Runnable {
                 updates = 0;
             }
         }
-    }
-
-    public void resetAll() {
-        gameOver = false;
-        paused = false;
-        player.resetAll();
     }
 
     public void windowFocusLost() {

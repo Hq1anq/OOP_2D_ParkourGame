@@ -86,7 +86,6 @@ public class Player extends Entity {
     private long timeSinceLastUnvulerable = 0;
     private long unvulerableTime = 2000;            // (ms)
     private boolean winning = false;
-    public boolean finishWinning = false;
 
     // FOR ANIMATIONS
     // Direction flip
@@ -236,10 +235,6 @@ public class Player extends Entity {
                         playerAction = IDLE;
                     }
                     case WIN_POSE -> {
-                        winning = false;
-                        finishWinning = true;
-                        canMove = true;
-                        playerAction = IDLE;
                         aniIndex = 0;
                     }
                     default -> aniIndex = 0;
@@ -627,7 +622,11 @@ public class Player extends Entity {
         airSpeed = 0;
         dashing = false;
         climbing = false;
+        winning = false;
+        canMove = true;
+        playerAction = IDLE;
     }
+
     public void resetLevel1Statistics(){
         hitbox.x = 4800;
         hitbox.y = 100;
@@ -718,5 +717,9 @@ public class Player extends Entity {
 
     public void showDetail() {
         System.out.println("Player position: " + hitbox.x + " " + hitbox.y);
+    }
+
+    public void activateWin(){
+        winning = true;
     }
 }
