@@ -121,7 +121,7 @@ public class Player extends Entity {
 
     public void render(Graphics2D g2, int xLevelOffset, int yLevelOffset) {
         // DRAW PLAYER
-        if (unvulerable){
+        if (unvulerable && currentHealth > 0){
             float alphaValue;
             long now = System.currentTimeMillis();
             now = (now - timeSinceLastUnvulerable) % 1000;
@@ -188,7 +188,7 @@ public class Player extends Entity {
                     width * flipW, height, null);
         // g.drawLine(0, 0, 100, (int) ((hitbox.y + airSpeed) / Game.TILE_SIZE) * Game.TILE_SIZE);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-        drawHitbox(g2, xLevelOffset, yLevelOffset);
+        // drawHitbox(g2, xLevelOffset, yLevelOffset);
     }
 
     private void loadAnimation() {

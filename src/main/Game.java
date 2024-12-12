@@ -49,6 +49,7 @@ public class Game implements Runnable {
     private int maxLevelOffsetX, maxLevelOffsetY;
 
     // GAME STATES
+    // Main game states
     public final int startingMenuState = -1;    // for easier code handling than to remember which state to which number
     public final int playingState = 0;
     public final int settingState = 1;
@@ -57,6 +58,7 @@ public class Game implements Runnable {
     public final int choosingLevelState = 4;
     public int gameState = -1;      // current game state : default when start game : starting menu state
     public int selectedOptions = 0; // current selecting option : to choose option of the next game state
+    // Sub game state
     public boolean paused = false;              // DO NOT TOUCH THIS
     public boolean changingButton = false;      // DO NOT TOUCH THIS EITHER
     public boolean adjustingKeyInGame = false;  // DO NOT TOUCH THIS EITHER

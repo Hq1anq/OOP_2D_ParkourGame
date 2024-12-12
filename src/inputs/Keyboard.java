@@ -178,6 +178,7 @@ public class Keyboard implements KeyListener {
                 }
 
                 gamePanel.getGame().selectedOptions = 0;
+                gamePanel.getGame().menu.resetAnimationTick();
                 gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
                 gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
             }
@@ -236,9 +237,9 @@ public class Keyboard implements KeyListener {
                     gamePanel.getGame().getPlayer().resetLevel2Statistics();
                 }
 
-                gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
-
                 gamePanel.getGame().selectedOptions = 0;
+                gamePanel.getGame().menu.resetAnimationTick();
+                gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
                 gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
             }
 
