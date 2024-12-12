@@ -5,9 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import levels.LevelManager;
-import static utilz.Constants.Environment.BG_COLOR;
-import static utilz.Constants.Environment.ENV_HEIGHT_DEFAULT;
-import static utilz.Constants.Environment.ENV_WIDTH_DEFAULT;
+import utilz.Constants.Level1;
 import static utilz.Constants.Menu.DARKEN_BACKGROUND_COLOR;
 import utilz.LoadSave;
 import utilz.Point;
@@ -48,12 +46,7 @@ public class Game implements Runnable {
     private int rightBorder = (int) (0.55 * Game.GAME_WIDTH);
     private int topBorder = (int) (0.45 * Game.GAME_HEIGHT);
     private int bottomBorder = (int) (0.55 * Game.GAME_HEIGHT);
-    private int levelTileWide = LoadSave.getLevelData()[0].length;
-    private int levelTileHeight = LoadSave.getLevelData().length;
-    private int maxTileX = levelTileWide - Game.TILES_IN_WIDTH;
-    private int maxTileY = levelTileHeight - Game.TILES_IN_HEIGHT;
-    private int maxLevelOffsetX = maxTileX * Game.TILE_SIZE;
-    private int maxLevelOffsetY = maxTileY * Game.TILE_SIZE;
+    private int maxLevelOffsetX, maxLevelOffsetY;
 
     // GAME STATES
     public final int startingMenuState = -1;    // for easier code handling than to remember which state to which number
@@ -76,7 +69,7 @@ public class Game implements Runnable {
     // TODO: after finishing Level 2, remember to set playingLevel2 to false
     // TODO: after finishing any level, should have the below code at the end (optional)
     // if(!gamePanel.getGame().playingLevel1 && !gamePanel.getGame().playingLevel2){
-    //      gamePanel.getGame().menu.startingMenuText[0] = "New Game";
+    //      gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
     // }
 
     // STATES DRAWER
@@ -92,10 +85,19 @@ public class Game implements Runnable {
 
     public Game() {
         // GENERATE GAME WINDOW AND PANEL AND MENU DRAWER
-
         initWindowAndPanel();
         initClasses();
+
+        calcOffset();
+        
         startGameLoop();
+    }
+
+    private void calcOffset() {
+        int maxTileX = levelManager.getCurrentLevel().getLevelTileWide() - Game.TILES_IN_WIDTH;
+        int maxTileY = levelManager.getCurrentLevel().getLevelTileHeight() - Game.TILES_IN_HEIGHT;
+        maxLevelOffsetX = maxTileX * Game.TILE_SIZE;
+        maxLevelOffsetY = maxTileY * Game.TILE_SIZE;
     }
 
     private void initClasses() {
@@ -126,17 +128,40 @@ public class Game implements Runnable {
         gameThread.start();
     }
 
+    public void loadNextLevel() {
+        resetAll();
+        levelManager.loadNextLevel();
+        // player.setSpawn(levelManager.getCurrentLevel().getPlayerSpawn());
+        player.resetLevel2Statistics();
+    }
+
     public void update() {
         // UPDATE STATISTICS EVERY FRAME
 
         if(gameState == playingState){
-            if(paused == false && gameOver == false){
+            if(paused == false && gameOver == false) {
                 player.update();
                 levelManager.update();
                 checkCloseToBorder();
 
-                if(player.getHealth() <= 0)
+                if (player.getHealth() <= 0)
                     gameOver = true;
+                if (player.getHitbox().x > levelManager.getCurrentLevel().getWinPos().x - 10 &&
+                    player.getHitbox().x < levelManager.getCurrentLevel().getWinPos().x + 10 &&
+                    player.getHitbox().y > levelManager.getCurrentLevel().getWinPos().y - 10 &&
+                    player.getHitbox().y < levelManager.getCurrentLevel().getWinPos().y + 10) {
+                        if (levelManager.getCurrentLevel().getId() == 1) {
+                            levelManager.loadNextLevel();
+                            playingLevel1 = false;
+                            finishedLevel1 = true;
+                        }
+                        else if (levelManager.getCurrentLevel().getId() == 2) {
+                            playingLevel2 = false;
+                        }
+                        if(!playingLevel1 && !playingLevel2) {
+                            gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
+                        }
+                }
             }
         }
     }
@@ -181,7 +206,7 @@ public class Game implements Runnable {
         // DRAWING METHODS
 
         // DRAW BACKGROUND
-        g.setColor(BG_COLOR);
+        g.setColor(Level1.BG_COLOR);
         g.fillRect(0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT);
 
         drawEnvironment(g);
@@ -212,12 +237,10 @@ public class Game implements Runnable {
     }
 
     private void drawEnvironment(Graphics g) {
-        // g.drawImage(behindTree, - (int) (xLevelOffset * 0.3), - (int) (yLevelOffset * 0.3), TILE_SIZE * levelTileHeight * ENV_WIDTH_DEFAULT / ENV_HEIGHT_DEFAULT,TILE_SIZE * levelTileHeight, null);
-        // g.drawImage(frontTree, - (int) (xLevelOffset * 0.7), - (int) (yLevelOffset * 0.7), TILE_SIZE * levelTileHeight * ENV_WIDTH_DEFAULT / ENV_HEIGHT_DEFAULT,TILE_SIZE * levelTileHeight, null);
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++) {
-                g.drawImage(behindTree, - (int) (xLevelOffset * 0.3) + j * 3 * ENV_WIDTH_DEFAULT, - (int) (yLevelOffset * 0.3) + i * 3 * ENV_HEIGHT_DEFAULT, 3 * ENV_WIDTH_DEFAULT, 3 * ENV_HEIGHT_DEFAULT, null);
-                g.drawImage(frontTree, - (int) (xLevelOffset * 0.7) + j * 3 * ENV_WIDTH_DEFAULT, - (int) (yLevelOffset * 0.7) + i * 3 * ENV_HEIGHT_DEFAULT, 3 * ENV_WIDTH_DEFAULT, 3 * ENV_HEIGHT_DEFAULT, null);
+                g.drawImage(behindTree, - (int) (xLevelOffset * 0.3) + j * 3 * Level1.ENV_WIDTH_DEFAULT, - (int) (yLevelOffset * 0.3) + i * 3 * Level1.ENV_HEIGHT_DEFAULT, 3 * Level1.ENV_WIDTH_DEFAULT, 3 * Level1.ENV_HEIGHT_DEFAULT, null);
+                g.drawImage(frontTree, - (int) (xLevelOffset * 0.7) + j * 3 * Level1.ENV_WIDTH_DEFAULT, - (int) (yLevelOffset * 0.7) + i * 3 * Level1.ENV_HEIGHT_DEFAULT, 3 * Level1.ENV_WIDTH_DEFAULT, 3 * Level1.ENV_HEIGHT_DEFAULT, null);
             }
     }
 
@@ -261,6 +284,12 @@ public class Game implements Runnable {
                 updates = 0;
             }
         }
+    }
+
+    public void resetAll() {
+        gameOver = false;
+        paused = false;
+        player.resetAll();
     }
 
     public void windowFocusLost() {

@@ -1,18 +1,15 @@
 package entities;
 
 import java.awt.AlphaComposite;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import javax.imageio.ImageIO;
 import main.Game;
 import static main.Game.TILE_SIZE;
 import static main.Game.camera;
 import static utilz.Constants.PlayerConstants.*;
-import static utilz.HelpMethods.*;
-
 import utilz.HelpMethods;
+import static utilz.HelpMethods.*;
 import utilz.LoadSave;
 import utilz.Point;
 
@@ -119,8 +116,6 @@ public class Player extends Entity {
         updatePos();
         updateAnimationTick();
         setAnimation();
-        // if (IsTouchingLedge(hitbox, levelData, true)) System.out.println("1");
-        // if (IsTouchingLedge(hitbox, levelData, false)) System.out.println("2");
     }
 
     public void render(Graphics2D g2, int xLevelOffset, int yLevelOffset) {
@@ -614,28 +609,27 @@ public class Player extends Entity {
         return currentHealth;
     }
 
-    public void resetLevel1Statistics(){
+    public void resetAll() {
         currentHealth = 5;
-        hitbox.x = 4800;
-        hitbox.y = 100;
-        camera.x = 4800;
-        camera.y = 100;
         unvulerable = false;
         airSpeed = 0;
         dashing = false;
         climbing = false;
     }
-
-    public void resetLevel2Statistics(){
-        currentHealth = 5;
+    public void resetLevel1Statistics(){
         hitbox.x = 4800;
         hitbox.y = 100;
         camera.x = 4800;
         camera.y = 100;
-        unvulerable = false;
-        airSpeed = 0;
-        dashing = false;
-        climbing = false;
+        resetAll();
+    }
+
+    public void resetLevel2Statistics(){
+        hitbox.x = 4800;
+        hitbox.y = 100;
+        camera.x = 4800;
+        camera.y = 100;
+        resetAll();
     }
 
     public void setLeft(boolean left) {
@@ -704,5 +698,9 @@ public class Player extends Entity {
         unvulerable = true;
         timeSinceLastUnvulerable = System.currentTimeMillis();
         currentHealth--;
+    }
+
+    public void showDetail() {
+        System.out.println("Player position: " + hitbox.x + " " + hitbox.y);
     }
 }

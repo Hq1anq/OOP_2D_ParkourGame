@@ -230,6 +230,7 @@ public class Keyboard implements KeyListener {
             if(code == rightButton) gamePanel.getGame().getPlayer().setRight(true);
             if(code == climbButton) gamePanel.getGame().getPlayer().setClimb(true);
             if(code == dashButton)  gamePanel.getGame().getPlayer().setDash(true);
+            // if(code == KeyEvent.VK_Q)   gamePanel.getGame().getPlayer().showDetail();
             if(code == KeyEvent.VK_ESCAPE)  gamePanel.getGame().paused = true;
 
         }

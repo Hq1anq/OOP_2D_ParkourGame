@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
+import levels.Level;
 
 public class LoadSave {
 
     public static final String PLAYER_ATLAS = "player_spirites.png";
     public static final String LEVEL_ATLAS = "outside_sprites.png";
     public static final String LEVEL_ONE_CSV = "Level1.csv";
+    public static final String LEVEL_TWO_CSV = "Level2.csv";
     public static final String FRONT_TREE = "front_tree.png";
     public static final String BEHIND_TREE = "behind_tree.png";
     public static final String EMPTY_HEART = "singleEmptyHeart.png";
@@ -34,9 +36,15 @@ public class LoadSave {
         }
         return img;
     }
-    public static int[][] getLevelData() {
-        InputStream is = LoadSave.class.getResourceAsStream("/" + LEVEL_ONE_CSV);
-        int ROWS = 56, COLLUMS = 104;
+    public static int[][] getLevelData(Level level) {
+        InputStream is = null;
+        if (level.getId() == 1) {
+            is = LoadSave.class.getResourceAsStream("/" + LEVEL_ONE_CSV);
+        } else if (level.getId() == 2) {
+            is = LoadSave.class.getResourceAsStream("/" + LEVEL_TWO_CSV);
+        }
+        int ROWS = level.getLevelTileHeight();
+        int COLLUMS = level.getLevelTileWide();
         int[][] levelData = new int[ROWS][COLLUMS];
 
         try (Scanner inputStream = new Scanner(is)) {

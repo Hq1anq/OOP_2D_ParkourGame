@@ -8,7 +8,13 @@ public class Constants {
         public static final Color DARKEN_BACKGROUND_COLOR = new Color(0, 0, 0, 0.5f);
     }
 
-    public static class Environment {
+    public static class Level1 {
+        public static final int ENV_WIDTH_DEFAULT = 1152;
+        public static final int ENV_HEIGHT_DEFAULT = 324;
+        public static final Color BG_COLOR = new Color(86, 88, 123);
+    }
+
+    public static class Level2 {
         public static final int ENV_WIDTH_DEFAULT = 1152;
         public static final int ENV_HEIGHT_DEFAULT = 324;
         public static final Color BG_COLOR = new Color(86, 88, 123);
