@@ -268,7 +268,6 @@ public class Keyboard implements KeyListener {
         // HANDLING INPUT LOGIC IN PLAYING STATE
         if(gamePanel.getGame().paused == false){
 
-
             if(code == upButton)    gamePanel.getGame().getPlayer().setJump(true);
             if(code == downButton)  gamePanel.getGame().getPlayer().setDown(true);
             if(code == leftButton)  gamePanel.getGame().getPlayer().setLeft(true);

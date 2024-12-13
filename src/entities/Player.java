@@ -391,7 +391,8 @@ public class Player extends Entity {
                 }
             }
 
-        } else {
+        }
+        if (!IsInLadder(hitbox, levelData)) {
             toggleLadderClimb = true;
             ladderClimb = false;
         }
