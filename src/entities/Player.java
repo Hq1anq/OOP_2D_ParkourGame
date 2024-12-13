@@ -636,10 +636,10 @@ public class Player extends Entity {
     }
 
     public void resetLevel2Statistics(){
-        hitbox.x = 4800;
-        hitbox.y = 100;
-        camera.x = 4800;
-        camera.y = 100;
+        hitbox.x = 126;
+        hitbox.y = 624;
+        camera.x = 126;
+        camera.y = 624;
         resetAll();
     }
 

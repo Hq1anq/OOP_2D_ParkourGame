@@ -1,13 +1,12 @@
 package utilz;
 
-import static main.Game.TILE_SIZE;
-
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import main.Game;
+import static main.Game.TILE_SIZE;
 
 public class HelpMethods {
 
@@ -29,7 +28,7 @@ public class HelpMethods {
         int yIndex = (int) (y / Game.TILE_SIZE);
 
         int value = levelData[yIndex][xIndex];
-        return (value != -1 && (value >= 0 && value < 101));
+        return (value != -1 && (value >= 0 && value < 130));
     }
 
     public static float GetEntityXPosNextToWall(Rectangle2D.Float hitbox, float xSpeed) {
@@ -88,8 +87,8 @@ public class HelpMethods {
         int xIndex2 = (int)(player_bot_right_corner_in_map_X / Game.TILE_SIZE);
         int yIndex = (int)(player_bot_in_map_Y / Game.TILE_SIZE);
 
-        return levelData[yIndex][xIndex1] >= 96 && levelData[yIndex][xIndex1] <= 100 
-            && levelData[yIndex][xIndex2] >= 96 && levelData[yIndex][xIndex2] <= 100;
+        return levelData[yIndex][xIndex1] >= 114 && levelData[yIndex][xIndex1] <= 118 
+            && levelData[yIndex][xIndex2] >= 114 && levelData[yIndex][xIndex2] <= 118;
     }
 
     public static boolean IsOnMud(Rectangle2D.Float hitbox, int[][] levelData){
@@ -104,6 +103,14 @@ public class HelpMethods {
         return IsMud(xIndex1, yIndex, levelData) && IsMud(xIndex2, yIndex, levelData);
     }
 
+    public static boolean IsInLadder(Rectangle2D.Float hitbox, int[][] levelData) {
+        int xIndex1 = (int) (hitbox.x / Game.TILE_SIZE);
+        int yIndex1 = (int) (hitbox.y / Game.TILE_SIZE);
+        int xIndex2 = (int) (hitbox.x + hitbox.width) / Game.TILE_SIZE;
+        int yIndex2 =  (int) (hitbox.y + hitbox.height) / Game.TILE_SIZE;
+        return (levelData[yIndex1][xIndex1] == 209 || levelData[yIndex1][xIndex1] == 211 || levelData[yIndex1][xIndex1] == 213) &&
+                (levelData[yIndex2][xIndex2] == 210 || levelData[yIndex2][xIndex2] == 212 || levelData[yIndex2][xIndex2] == 214);
+    }
     public static boolean HitTrap(Rectangle2D.Float hitbox, int[][] levelData){
         float top_Y = hitbox.y;
         float bottom_Y = hitbox.y + hitbox.height;
@@ -116,74 +123,74 @@ public class HelpMethods {
         int map_bottom_Y = (int)(bottom_Y / TILE_SIZE);
 
         // Chainsaw
-        if((levelData[map_bottom_Y][map_left_X] >= 224 && levelData[map_bottom_Y][map_left_X] <= 231)
-        || (levelData[map_top_Y][map_left_X] >= 224 && levelData[map_top_Y][map_left_X] <= 231)
-        || (levelData[map_bottom_Y][map_right_X] >= 224 && levelData[map_bottom_Y][map_right_X] <= 231)
-        || (levelData[map_top_Y][map_right_X] >= 224 && levelData[map_top_Y][map_right_X] <= 231))
+        if((levelData[map_bottom_Y][map_left_X] >= 266 && levelData[map_bottom_Y][map_left_X] <= 273)
+        || (levelData[map_top_Y][map_left_X] >= 266 && levelData[map_top_Y][map_left_X] <= 273)
+        || (levelData[map_bottom_Y][map_right_X] >= 266 && levelData[map_bottom_Y][map_right_X] <= 273)
+        || (levelData[map_top_Y][map_right_X] >= 266 && levelData[map_top_Y][map_right_X] <= 273))
             return true;
 
         // Brown-saw
-        if(levelData[map_bottom_Y][map_right_X] >= 208 && levelData[map_bottom_Y][map_right_X] <= 209){
+        if(levelData[map_bottom_Y][map_right_X] >= 247 && levelData[map_bottom_Y][map_right_X] <= 248){
             return true;
         }
 
-        if((levelData[map_top_Y][map_left_X] >= 208 && levelData[map_top_Y][map_left_X] <= 209)
-        || (levelData[map_bottom_Y][map_left_X] >= 208 && levelData[map_bottom_Y][map_left_X] <= 209)
-        || (levelData[map_top_Y][map_right_X] >= 208 && levelData[map_top_Y][map_right_X] <= 209)){
+        if((levelData[map_top_Y][map_left_X] >= 247 && levelData[map_top_Y][map_left_X] <= 248)
+        || (levelData[map_bottom_Y][map_left_X] >= 247 && levelData[map_bottom_Y][map_left_X] <= 248)
+        || (levelData[map_top_Y][map_right_X] >= 247 && levelData[map_top_Y][map_right_X] <= 248)){
             if(left_X > map_left_X * TILE_SIZE + 28) return false;
             if(top_Y > map_top_Y * TILE_SIZE + 28) return false;
             return true;
         }
 
         // Spike
-        if((levelData[map_bottom_Y][map_left_X] >= 240 && levelData[map_bottom_Y][map_left_X] <= 241)
-        || (levelData[map_bottom_Y][map_right_X] >= 240 && levelData[map_bottom_Y][map_right_X] <= 241)){
+        if((levelData[map_bottom_Y][map_left_X] >= 285 && levelData[map_bottom_Y][map_left_X] <= 286)
+        || (levelData[map_bottom_Y][map_right_X] >= 285 && levelData[map_bottom_Y][map_right_X] <= 286)){
             if(bottom_Y < map_bottom_Y * TILE_SIZE + 26) return false;
             return true;
         }
-        if((levelData[map_bottom_Y][map_left_X] >= 242 && levelData[map_bottom_Y][map_left_X] <= 249)
-        || (levelData[map_bottom_Y][map_right_X] >= 242 && levelData[map_bottom_Y][map_right_X] <= 249)){
+        if((levelData[map_bottom_Y][map_left_X] >= 287 && levelData[map_bottom_Y][map_left_X] <= 294)
+        || (levelData[map_bottom_Y][map_right_X] >= 287 && levelData[map_bottom_Y][map_right_X] <= 294)){
             if(bottom_Y < map_bottom_Y * TILE_SIZE + 19) return false;
             return true;
         }
 
-        if((levelData[map_top_Y][map_left_X] >= 240 && levelData[map_top_Y][map_left_X] <= 241)
-        || (levelData[map_top_Y][map_right_X] >= 240 && levelData[map_top_Y][map_right_X] <= 241)
-        || (levelData[map_top_Y][map_left_X] >= 242 && levelData[map_top_Y][map_left_X] <= 249)
-        || (levelData[map_top_Y][map_right_X] >= 242 && levelData[map_top_Y][map_right_X] <= 249)){
+        if((levelData[map_top_Y][map_left_X] >= 285 && levelData[map_top_Y][map_left_X] <= 286)
+        || (levelData[map_top_Y][map_right_X] >= 285 && levelData[map_top_Y][map_right_X] <= 286)
+        || (levelData[map_top_Y][map_left_X] >= 287 && levelData[map_top_Y][map_left_X] <= 294)
+        || (levelData[map_top_Y][map_right_X] >= 287 && levelData[map_top_Y][map_right_X] <= 294)){
             return true;
         }
 
         // Fire
-        if((levelData[map_bottom_Y][map_left_X] >= 192 && levelData[map_bottom_Y][map_left_X] <= 195)
-        || (levelData[map_top_Y][map_left_X] >= 192 && levelData[map_top_Y][map_left_X] <= 195)){
+        if((levelData[map_bottom_Y][map_left_X] >= 228 && levelData[map_bottom_Y][map_left_X] <= 231)
+        || (levelData[map_top_Y][map_left_X] >= 228 && levelData[map_top_Y][map_left_X] <= 231)){
             if(left_X < map_left_X * TILE_SIZE + 7) return false;
             return true;
         }
 
-        if((levelData[map_bottom_Y][map_right_X] >= 192 && levelData[map_bottom_Y][map_right_X] <= 195)
-        || (levelData[map_top_Y][map_right_X] >= 192 && levelData[map_top_Y][map_right_X] <= 195)){
+        if((levelData[map_bottom_Y][map_right_X] >= 228 && levelData[map_bottom_Y][map_right_X] <= 231)
+        || (levelData[map_top_Y][map_right_X] >= 228 && levelData[map_top_Y][map_right_X] <= 231)){
             if(left_X > map_left_X * TILE_SIZE + 26) return false;
             return true;
         }
         
         // Sword trap
-        if((levelData[map_bottom_Y][map_left_X] >= 112 && levelData[map_bottom_Y][map_left_X] <= 116)
-        || (levelData[map_bottom_Y][map_right_X] >= 112 && levelData[map_bottom_Y][map_right_X] <= 116)){
+        if((levelData[map_bottom_Y][map_left_X] >= 133 && levelData[map_bottom_Y][map_left_X] <= 137)
+        || (levelData[map_bottom_Y][map_right_X] >= 133 && levelData[map_bottom_Y][map_right_X] <= 137)){
             if(bottom_Y < map_bottom_Y * TILE_SIZE + 8) return false;
             return true;
         }
 
-        if((levelData[map_top_Y][map_left_X] >= 112 && levelData[map_top_Y][map_left_X] <= 116)
-        || (levelData[map_top_Y][map_right_X] >= 112 && levelData[map_top_Y][map_right_X] <= 116))
+        if((levelData[map_top_Y][map_left_X] >= 133 && levelData[map_top_Y][map_left_X] <= 137)
+        || (levelData[map_top_Y][map_right_X] >= 133 && levelData[map_top_Y][map_right_X] <= 137))
             return true;
 
         return false;
     }
 
     public static boolean IsMud(int x, int y, int[][] levelData){
-        return levelData[y][x] == 9 || levelData[y][x] == 25 || levelData[y][x] == 41 || levelData[y][x] == 57
-            || levelData[y][x] == 73 || levelData[y][x] == 89;
+        return levelData[y][x] == 9 || levelData[y][x] == 28 || levelData[y][x] == 47 || levelData[y][x] == 66
+            || levelData[y][x] == 85;
     }
 
     

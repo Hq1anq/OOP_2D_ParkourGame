@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import levels.LevelManager;
 import utilz.Constants.Level1;
 import utilz.Constants.Level2;
-import static utilz.Constants.Menu.DARKEN_BACKGROUND_COLOR;
 import utilz.LoadSave;
 import utilz.Point;
 
@@ -80,6 +79,12 @@ public class Game implements Runnable {
 
     private BufferedImage frontTree, behindTree, frontRock, behindRock;
 
+    // Camera shake variables
+    private boolean shaking = false;
+    private long shakeStartTime;
+    private long shakeDuration = 500; // Shake duration in milliseconds
+    private int shakeIntensity = 10; // Shake intensity in pixels
+
     public Game() {
         // GENERATE GAME WINDOW AND PANEL AND MENU DRAWER
         initWindowAndPanel();
@@ -140,6 +145,7 @@ public class Game implements Runnable {
                 player.update();
                 levelManager.update();
                 checkCloseToBorder();
+                updateCameraShake();
 
                 if (player.getHealth() <= 0){
                     gameOver = true;
@@ -241,6 +247,25 @@ public class Game implements Runnable {
                         g.drawImage(behindRock, - (int) (xLevelOffset * 0.3) + j * 1 * Level2.ENV_WIDTH_DEFAULT - 5, - (int) (yLevelOffset * 0.7) + i * 2 * Level2.ENV_HEIGHT_DEFAULT - 5, 1 * Level2.ENV_WIDTH_DEFAULT, 2 * Level2.ENV_HEIGHT_DEFAULT, null);
                         g.drawImage(frontRock, - (int) (xLevelOffset * 0.7) + j * 1 * Level2.ENV_WIDTH_DEFAULT - 5, - (int) (yLevelOffset * 0.7) + i * 2 * Level2.ENV_HEIGHT_DEFAULT - 5, 1 * Level2.ENV_WIDTH_DEFAULT, 2 * Level2.ENV_HEIGHT_DEFAULT, null);
                     }
+        }
+    }
+
+    public void startCameraShake() {
+        shaking = true;
+        shakeStartTime = System.currentTimeMillis();
+    }
+
+    private void updateCameraShake() {
+        if (shaking) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - shakeStartTime < shakeDuration) {
+                int shakeX = (int) (Math.random() * shakeIntensity * 2 - shakeIntensity);
+                int shakeY = (int) (Math.random() * shakeIntensity * 2 - shakeIntensity);
+                xLevelOffset += shakeX;
+                yLevelOffset += shakeY;
+            } else {
+                shaking = false;
+            }
         }
     }
 
