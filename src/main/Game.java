@@ -68,7 +68,7 @@ public class Game implements Runnable {
     public boolean playingLevel1 = false;
     public boolean playingLevel2 = false;
     public boolean finishedLevel1 = false;
-    public boolean finishedLevel2 = true;
+    public boolean finishedLevel2 = false;
     public boolean warning = false;
 
     // STATES DRAWER
@@ -90,6 +90,8 @@ public class Game implements Runnable {
         calcOffset();
         
         startGameLoop();
+
+        gameWindow.activateVisible();
     }
 
     private void calcOffset() {
@@ -225,7 +227,7 @@ public class Game implements Runnable {
             if(adjustingKeyInGame == true)  menu.drawInGameKeyAdjustPanel((Graphics2D)g);
             else if(paused == true)  menu.drawPausePanel((Graphics2D)g);
         }
-        else if (menu != null)
+        else // if (menu != null)
             menu.draw((Graphics2D)g);
     }
 
