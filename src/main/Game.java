@@ -79,7 +79,8 @@ public class Game implements Runnable {
 
     // SETTING
     public boolean showFPS = false;
-    public int volume = 1;
+    public int musicVolume = 1;
+    public int soundEffectVolume = 1;
     public int currentLevel = 1;
 
     private BufferedImage frontTree, behindTree, frontRock, behindRock;

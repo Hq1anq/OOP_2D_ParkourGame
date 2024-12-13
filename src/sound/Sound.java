@@ -95,7 +95,7 @@ public class Sound {
 
     public void updateMusic(){
         float trueVolume = -80f;
-        switch (game.volume) {
+        switch (game.musicVolume) {
             case 0: trueVolume = -80f;  break;
             case 1: trueVolume = -20f;  break;
             case 2: trueVolume = -12f;  break;
@@ -108,7 +108,7 @@ public class Sound {
 
     public void updateSoundEffect(){
         float trueVolume = -80f;
-        switch (game.volume) {
+        switch (game.soundEffectVolume) {
             case 0: trueVolume = -80f;  break;
             case 1: trueVolume = -20f;  break;
             case 2: trueVolume = -12f;  break;

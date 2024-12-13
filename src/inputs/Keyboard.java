@@ -289,30 +289,42 @@ public class Keyboard implements KeyListener {
 
             if(code == KeyEvent.VK_W || code == KeyEvent.VK_UP){
                 gamePanel.getGame().selectedOptions--;
-                if(gamePanel.getGame().selectedOptions < 0) gamePanel.getGame().selectedOptions = 4;
+                if(gamePanel.getGame().selectedOptions < 0) gamePanel.getGame().selectedOptions = 5;
                 gamePanel.getGame().playSoundEffect(6);
             }
     
             if(code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN){
                 gamePanel.getGame().selectedOptions++;
-                if(gamePanel.getGame().selectedOptions > 4) gamePanel.getGame().selectedOptions = 0;
+                if(gamePanel.getGame().selectedOptions > 5) gamePanel.getGame().selectedOptions = 0;
                 gamePanel.getGame().playSoundEffect(6);
             }
 
             if(code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT){
                 if(gamePanel.getGame().selectedOptions == 2){
-                    if(gamePanel.getGame().volume < 5)
-                    gamePanel.getGame().volume++;
-                    gamePanel.getGame().sound.update();
+                    if(gamePanel.getGame().musicVolume < 5)
+                    gamePanel.getGame().musicVolume++;
+                    gamePanel.getGame().sound.updateMusic();
+                    gamePanel.getGame().playSoundEffect(6);
+                }
+                else if(gamePanel.getGame().selectedOptions == 3){
+                    if(gamePanel.getGame().soundEffectVolume < 5)
+                    gamePanel.getGame().soundEffectVolume++;
+                    gamePanel.getGame().sound.updateSoundEffect();
                     gamePanel.getGame().playSoundEffect(6);
                 }
             }
 
             if(code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT){
                 if(gamePanel.getGame().selectedOptions == 2){
-                    if(gamePanel.getGame().volume > 0)
-                    gamePanel.getGame().volume--;
-                    gamePanel.getGame().sound.update();
+                    if(gamePanel.getGame().musicVolume > 0)
+                    gamePanel.getGame().musicVolume--;
+                    gamePanel.getGame().sound.updateMusic();
+                    gamePanel.getGame().playSoundEffect(6);
+                }
+                else if(gamePanel.getGame().selectedOptions == 3){
+                    if(gamePanel.getGame().soundEffectVolume > 0)
+                    gamePanel.getGame().soundEffectVolume--;
+                    gamePanel.getGame().sound.updateSoundEffect();
                     gamePanel.getGame().playSoundEffect(6);
                 }
             }
@@ -326,12 +338,12 @@ public class Keyboard implements KeyListener {
                         gamePanel.getGame().showFPS = !gamePanel.getGame().showFPS;
                         gamePanel.getGame().playSoundEffect(6);
                         break;
-                    case 3:
+                    case 4:
                         gamePanel.getGame().adjustingKeyInGame = true;
                         gamePanel.getGame().selectedOptions = 0;
                         gamePanel.getGame().playSoundEffect(6);
                         break;
-                    case 4:
+                    case 5:
                         gamePanel.getGame().selectedOptions = 0;
                         gamePanel.getGame().paused = false;
                         gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
@@ -356,16 +368,16 @@ public class Keyboard implements KeyListener {
 
         if(code == KeyEvent.VK_W || code == KeyEvent.VK_UP){
             if(gamePanel.getGame().selectedOptions == 0)
-                gamePanel.getGame().selectedOptions = 4;
-            else if(gamePanel.getGame().selectedOptions == 5)
-                gamePanel.getGame().selectedOptions = 1;
+                gamePanel.getGame().selectedOptions = 5;
+            else if(gamePanel.getGame().selectedOptions == 6)
+                gamePanel.getGame().selectedOptions = 2;
             else
                 gamePanel.getGame().selectedOptions--;
             gamePanel.getGame().playSoundEffect(6);
         }
 
         if(code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN){
-            if(gamePanel.getGame().selectedOptions == 4 || gamePanel.getGame().selectedOptions == 7)
+            if(gamePanel.getGame().selectedOptions == 5 || gamePanel.getGame().selectedOptions == 8)
                 gamePanel.getGame().selectedOptions = 0;
             else
                 gamePanel.getGame().selectedOptions++;
@@ -374,16 +386,22 @@ public class Keyboard implements KeyListener {
 
         if(code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT){
             if(gamePanel.getGame().selectedOptions == 1){
-                if(gamePanel.getGame().volume > 0)
-                gamePanel.getGame().volume--;
-                gamePanel.getGame().sound.update();
+                if(gamePanel.getGame().musicVolume > 0)
+                gamePanel.getGame().musicVolume--;
+                gamePanel.getGame().sound.updateMusic();
                 gamePanel.getGame().playSoundEffect(6);
             }
-            else if(gamePanel.getGame().selectedOptions >= 5){
+            else if(gamePanel.getGame().selectedOptions == 2){
+                if(gamePanel.getGame().soundEffectVolume > 0)
+                gamePanel.getGame().soundEffectVolume--;
+                gamePanel.getGame().sound.updateSoundEffect();
+                gamePanel.getGame().playSoundEffect(6);
+            }
+            else if(gamePanel.getGame().selectedOptions >= 6){
                 gamePanel.getGame().selectedOptions -= 3;
                 gamePanel.getGame().playSoundEffect(6);
             } 
-            else if(gamePanel.getGame().selectedOptions >= 2 && gamePanel.getGame().selectedOptions <= 4){
+            else if(gamePanel.getGame().selectedOptions >= 3 && gamePanel.getGame().selectedOptions <= 5){
                 gamePanel.getGame().selectedOptions += 3;
                 gamePanel.getGame().playSoundEffect(6);
             }
@@ -391,16 +409,22 @@ public class Keyboard implements KeyListener {
 
         if(code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT){
             if(gamePanel.getGame().selectedOptions == 1){
-                if(gamePanel.getGame().volume < 5)
-                gamePanel.getGame().volume++;
-                gamePanel.getGame().sound.update();
+                if(gamePanel.getGame().musicVolume < 5)
+                gamePanel.getGame().musicVolume++;
+                gamePanel.getGame().sound.updateMusic();
                 gamePanel.getGame().playSoundEffect(6);
             }
-            else if(gamePanel.getGame().selectedOptions >= 2 && gamePanel.getGame().selectedOptions <= 4){
+            else if(gamePanel.getGame().selectedOptions == 2){
+                if(gamePanel.getGame().soundEffectVolume < 5)
+                gamePanel.getGame().soundEffectVolume++;
+                gamePanel.getGame().sound.updateSoundEffect();
+                gamePanel.getGame().playSoundEffect(6);
+            }
+            else if(gamePanel.getGame().selectedOptions >= 3 && gamePanel.getGame().selectedOptions <= 5){
                 gamePanel.getGame().selectedOptions += 3;
                 gamePanel.getGame().playSoundEffect(6);
             } 
-            else if(gamePanel.getGame().selectedOptions >= 5){
+            else if(gamePanel.getGame().selectedOptions >= 6){
                 gamePanel.getGame().selectedOptions -= 3;
                 gamePanel.getGame().playSoundEffect(6);
             }
