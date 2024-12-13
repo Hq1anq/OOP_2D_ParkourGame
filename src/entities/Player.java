@@ -5,8 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import main.Game;
-import sound.Sound;
-
 import static main.Game.TILE_SIZE;
 import static main.Game.camera;
 import static utilz.Constants.PlayerConstants.*;
@@ -64,6 +62,11 @@ public class Player extends Entity {
     private boolean isClimbingLeft = false;         // true if player is climbing left, false otherwise
     private float climbingSpeed = 1f;               // prefer as delta x, the amount will change of player position
     private float climbOffset = 2 * Game.TILE_SIZE;
+    
+    private boolean ladderClimb = false;
+    private boolean toggleLadderClimb = true;
+    private int climbFPS = 20;
+    private float climbCountAni = 0;
     
     // Ledge climbing
     private boolean ledgeClimbing = false;          // true if player can climb ledge, false otherwise
@@ -220,6 +223,11 @@ public class Player extends Entity {
         aniTick++;
         if (aniTick >= aniSpeed) {
             aniTick = 0;
+            if (playerAction == LADDER_CLIMB) {
+                if (aniIndex >= GetSpriteAmount(playerAction))
+                    aniIndex = 0;
+                else return;
+            }
             aniIndex++;
             if (aniIndex >= GetSpriteAmount(playerAction)) {
                 switch (playerAction) {
@@ -261,6 +269,8 @@ public class Player extends Entity {
             if (!preWallKick)
                 playerAction = WALL_CLIMB;
             else playerAction = WALL_KICK;
+        } else if (ladderClimb && toggleLadderClimb) {
+            playerAction = LADDER_CLIMB;
         } else if (inAir) {
             if (countJump == 2)
                 playerAction = AIR_FLIP;
@@ -314,7 +324,6 @@ public class Player extends Entity {
             return;
         }
         
-
         if(dash && canMove && !climbing && !inAir && System.currentTimeMillis() - startDashTime > dashCoolDown){
             dash();
             return;
@@ -341,6 +350,7 @@ public class Player extends Entity {
                 firstClimb = true;
                 isClimbingLeft = isFacingLeft;
             }
+            if (ladderClimb) toggleLadderClimb = false;
         }
         if (canMove && climbing) {
             preWallKick = (left && !isClimbingLeft) || (right && isClimbingLeft);
@@ -348,6 +358,42 @@ public class Player extends Entity {
         }
         if (canMove && climbing && !preWallKick && jump && (left | right)) {
             climb();
+        }
+        if (canMove && toggleLadderClimb && IsInLadder(hitbox, levelData)) {
+            ladderClimb = true;
+            airSpeed = 0;
+            hitbox.x = (int) (hitbox.x / TILE_SIZE) * TILE_SIZE  + xDrawOffset;
+            if (down) {
+                hitbox.y += climbingSpeed;
+                climbCountAni += 1.0/climbFPS;
+                if (climbCountAni > 1) {
+                    climbCountAni = 0;
+                    aniIndex++;
+                }
+            }
+            if (jump) {
+                if (!left && !right) {
+                    hitbox.y -= climbingSpeed;
+                    climbCountAni += 1.0/climbFPS;
+                    if (climbCountAni > 1) {
+                        climbCountAni = 0;
+                        aniIndex++;
+                    }
+                    if (!IsLadder(hitbox.x, hitbox.y - 3, levelData)) {
+                        toggleLadderClimb = false;
+                        ladderClimb = false;
+                        jump();
+                    }
+                }
+                else {
+                    toggleLadderClimb = false;
+                    jump();
+                }
+            }
+
+        } else {
+            toggleLadderClimb = true;
+            ladderClimb = false;
         }
         // not in air but nothing being pressed -> do nothing
         if (!inAir){
@@ -650,6 +696,10 @@ public class Player extends Entity {
         hitbox.y = 100;
         camera.x = 4800;
         camera.y = 100;
+        // hitbox.x = 1970;
+        // hitbox.y = 192;
+        // camera.x = 1970;
+        // camera.y = 192;
         resetAll();
     }
 
@@ -731,6 +781,7 @@ public class Player extends Entity {
         unvulerable = true;
         timeSinceLastUnvulerable = System.currentTimeMillis();
         currentHealth--;
+        game.startCameraShake();
         game.playSoundEffect(9);
     }
 

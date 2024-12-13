@@ -10,12 +10,12 @@ public class Keyboard implements KeyListener {
     public Keyboard(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }
-    public int upButton = KeyEvent.VK_W;
+    public int upButton = KeyEvent.VK_K;
     public int downButton = KeyEvent.VK_S;
     public int leftButton = KeyEvent.VK_A;
     public int rightButton = KeyEvent.VK_D;
     public int climbButton = KeyEvent.VK_J;
-    public int dashButton = KeyEvent.VK_SPACE;
+    public int dashButton = KeyEvent.VK_L;
 
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -275,7 +275,7 @@ public class Keyboard implements KeyListener {
             if(code == rightButton) gamePanel.getGame().getPlayer().setRight(true);
             if(code == climbButton) gamePanel.getGame().getPlayer().setClimb(true);
             if(code == dashButton)  gamePanel.getGame().getPlayer().setDash(true);
-            // if(code == KeyEvent.VK_Q)   gamePanel.getGame().getPlayer().showDetail();
+            if(code == KeyEvent.VK_Q)   gamePanel.getGame().getPlayer().showDetail();
             if(code == KeyEvent.VK_ESCAPE)  {
                 gamePanel.getGame().paused = true;
                 gamePanel.getGame().playSoundEffect(6);

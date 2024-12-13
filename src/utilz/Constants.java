@@ -31,6 +31,7 @@ public class Constants {
         public static final int CROUCH = 7;
         public static final int AIR_FLIP = 9;
         public static final int FLOOR_SMASH = 10;
+        public static final int LADDER_CLIMB = 11;
         public static final int WIN_POSE = 12;
         public static final int WALL_KICK = 13;
         public static final int WALL_CLIMB = 14;
@@ -49,6 +50,7 @@ public class Constants {
                 case CROUCH -> 2;
                 case AIR_FLIP -> 8;
                 case FLOOR_SMASH -> 3;
+                case LADDER_CLIMB -> 4;
                 case WIN_POSE -> 12;
                 case WALL_KICK -> 1;
                 case WALL_CLIMB -> 8;

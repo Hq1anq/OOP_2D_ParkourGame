@@ -31,6 +31,12 @@ public class HelpMethods {
         return (value != -1 && (value >= 0 && value < 130));
     }
 
+    public static boolean IsLadder(float x, float y, int[][] levelData) {
+        int xIndex = (int) (x / Game.TILE_SIZE);
+        int yIndex = (int) (y / Game.TILE_SIZE);
+        return (levelData[yIndex][xIndex] == 209 || levelData[yIndex][xIndex] == 211 || levelData[yIndex][xIndex] == 213);
+    }
+
     public static float GetEntityXPosNextToWall(Rectangle2D.Float hitbox, float xSpeed) {
         int currentTile = (int) (hitbox.x / Game.TILE_SIZE);
         if (xSpeed > 0) { // Move to Right
