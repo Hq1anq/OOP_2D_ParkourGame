@@ -23,6 +23,7 @@ public class Menu {
     private Font mainFont;
     private File file;
     private BasicStroke mainStroke;
+    private int animationTick = 0;
 
     // COLOR
     private Color miniFrameBackgroundColor = Color.decode("#638A55");   // background of the mini window
@@ -417,15 +418,17 @@ public class Menu {
     }
 
     public void drawGameOverPanel(Graphics2D g2){
-        g2.setColor(DARKEN_BACKGROUND_COLOR);
+        if(animationTick > 600) animationTick = 600;
+        g2.setColor(new Color(0, 0, 0, animationTick / 6));
         g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-        drawMiniWindow(g2, 6 * TILE_SIZE, 5 * TILE_SIZE, 14 * TILE_SIZE, 4 * TILE_SIZE);
+        int y = animationTick - 4 * TILE_SIZE > 5 * TILE_SIZE ? 5 * TILE_SIZE : animationTick - 4 * TILE_SIZE;
+        drawMiniWindow(g2, 6 * TILE_SIZE, y, 14 * TILE_SIZE, 4 * TILE_SIZE);
 
         g2.setFont(mainFont);
         g2.setColor(normalTextColor);
         String text = "Game Over!";
         int x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
-        int y = (int)(6.25 * TILE_SIZE);
+        y += (int)(1.25 * TILE_SIZE);
         g2.drawString(text, x, y);
 
         text = "You cannot give up just yet!";
@@ -437,16 +440,22 @@ public class Menu {
         x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
         y += TILE_SIZE;
         g2.drawString(text, x, y);
+
+        animationTick += 20;
     }
 
     public void drawCongratulationPanel(Graphics2D g2){
-        drawMiniWindow(g2, 6 * TILE_SIZE, 5 * TILE_SIZE, 14 * TILE_SIZE, 4 * TILE_SIZE);
+        if(animationTick > 600) animationTick = 600;
+        g2.setColor(new Color(0, 0, 0, animationTick / 6));
+        g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        int y = animationTick - 4 * TILE_SIZE > 5 * TILE_SIZE ? 5 * TILE_SIZE : animationTick - 4 * TILE_SIZE;
+        drawMiniWindow(g2, 6 * TILE_SIZE, y, 14 * TILE_SIZE, 4 * TILE_SIZE);
 
         g2.setFont(mainFont);
         g2.setColor(normalTextColor);
         String text = "Congratulation!";
         int x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
-        int y = (int)(6.25 * TILE_SIZE);
+        y += (int)(1.25 * TILE_SIZE);
         g2.drawString(text, x, y);
 
         y += TILE_SIZE;
@@ -458,6 +467,8 @@ public class Menu {
         text = "Press Enter to continue";
         x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
         g2.drawString(text, x, y);
+
+        animationTick += 20;
     }
 
     public void drawWarningPanel(Graphics2D g2){
@@ -506,5 +517,9 @@ public class Menu {
 
     private int getTextLenght(Graphics2D g2, String text){
         return (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+    }
+
+    public void resetAnimationTick(){
+        animationTick = 0;
     }
 }

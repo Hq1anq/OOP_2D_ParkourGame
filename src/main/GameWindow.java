@@ -13,7 +13,7 @@ public class GameWindow {
         jframe.add(gamePanel);
         jframe.pack(); // Thay đổi kích thước của frame dượt vào những phần tử trong nó (trong TH này là 1 gamePanel)
         jframe.setLocationRelativeTo(null); // căn vị trí cửa số ở chính giữa bàn hình (thay vì góc trên bên phải)
-        jframe.setVisible(true);
+        // jframe.setVisible(true);
         jframe.addWindowFocusListener(new WindowFocusListener() {
 
             @Override
@@ -27,5 +27,9 @@ public class GameWindow {
             }
             
         });
+    }
+
+    public void activateVisible(){
+        jframe.setVisible(true);
     }
 }
