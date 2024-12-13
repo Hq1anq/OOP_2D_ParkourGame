@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import levels.LevelManager;
+import sound.Sound;
 import utilz.Constants.Level1;
 import utilz.Constants.Level2;
 import static utilz.Constants.Menu.DARKEN_BACKGROUND_COLOR;
@@ -20,6 +21,7 @@ public class Game implements Runnable {
     private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameThread;
+    public Sound sound;
     private final int FPS_SET = 60;
     public final static int UPS_SET = 150;
 
@@ -91,6 +93,8 @@ public class Game implements Runnable {
         
         startGameLoop();
 
+        playMusic(0);
+
         gameWindow.activateVisible();
     }
 
@@ -105,10 +109,11 @@ public class Game implements Runnable {
         // INITIATE LEVEL AND PLAYER
 
         levelManager = new LevelManager(this);
-        player = new Player(4800, 100, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE));
+        player = new Player(4800, 100, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE), this);
         camera = new Point(4800, 100);
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
         menu = new Menu(gamePanel);
+        sound = new Sound(this);
         frontTree = LoadSave.GetSpriteAtlas(LoadSave.FRONT_TREE);
         behindTree = LoadSave.GetSpriteAtlas(LoadSave.BEHIND_TREE);
         frontRock = LoadSave.GetSpriteAtlas(LoadSave.FRONT_ROCK);
@@ -146,6 +151,11 @@ public class Game implements Runnable {
                 checkCloseToBorder();
 
                 if (player.getHealth() <= 0){
+                    if(gameOver == false){
+                        stopMusic();
+                        playSoundEffect(5);
+                        playMusic(3);
+                    }
                     gameOver = true;
                     return;
                 }
@@ -154,6 +164,10 @@ public class Game implements Runnable {
                     player.getHitbox().x < levelManager.getCurrentLevel().getWinPos().x + 10 &&
                     player.getHitbox().y > levelManager.getCurrentLevel().getWinPos().y - 10 &&
                     player.getHitbox().y < levelManager.getCurrentLevel().getWinPos().y + 10) {
+                        if(winning == false){
+                            gamePanel.getGame().stopMusic();
+                            gamePanel.getGame().playMusic(4);
+                        }
                         winning = true;
                         player.activateWin();
                 }
@@ -288,6 +302,25 @@ public class Game implements Runnable {
                 updates = 0;
             }
         }
+    }
+
+    public void playMusic(int soundNumber){
+        sound.setMusic(soundNumber);
+        sound.playMusic();
+        sound.loop();
+    }
+
+    public void playSoundEffect(int soundNumber){
+        sound.setSoundEffect(soundNumber);
+        sound.playSoundEffect();
+    }
+
+    public void stopMusic(){
+        sound.stopMusic();
+    }
+
+    public void stopSoundEffect(){
+        sound.stopSoundEffect();
     }
 
     public void windowFocusLost() {

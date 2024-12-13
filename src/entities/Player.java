@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import main.Game;
+import sound.Sound;
+
 import static main.Game.TILE_SIZE;
 import static main.Game.camera;
 import static utilz.Constants.PlayerConstants.*;
@@ -15,6 +17,9 @@ import utilz.Point;
 
 @SuppressWarnings({"FieldMayBeFinal", "unused"})
 public class Player extends Entity {
+
+    // SYSTEM
+    private Game game;                              // need this to play sound effect
 
     // LOGIC STATISTICS
     // Normal moving
@@ -102,13 +107,18 @@ public class Player extends Entity {
     private long timeSinceLastShake = 0;
     private int delta_shaking = 0;
 
-    public Player(float x, float y, int width, int height) {
+    // SOUND EFFECT
+    private long timeSinceLastPlayedFootstepsSoundEffect = 0;
+
+    public Player(float x, float y, int width, int height, Game game) {
         super(x, y, width, height);
         loadAnimation();
         initHitbox(x, y, 22 * 2 * Game.SCALE, 31 * 2 * Game.SCALE);
 
         healthImages[0] = LoadSave.GetSpriteAtlas(LoadSave.EMPTY_HEART);
         healthImages[1] = LoadSave.GetSpriteAtlas(LoadSave.FULL_HEART);
+
+        this.game = game;
     }
 
     public void update() {
@@ -374,6 +384,11 @@ public class Player extends Entity {
                     flipW = 1;
                 }
 
+                if(System.currentTimeMillis() - timeSinceLastPlayedFootstepsSoundEffect >= 500 && IsEntityOnFloor(hitbox, levelData)){
+                    game.playSoundEffect(10);
+                    timeSinceLastPlayedFootstepsSoundEffect = System.currentTimeMillis();
+                }
+
             }
         }
 
@@ -467,6 +482,7 @@ public class Player extends Entity {
             dashing = true;
             canMove = false;
             startDashTime = System.currentTimeMillis();
+            game.playSoundEffect(8);
         }
         else {
             if(isFacingLeft){
@@ -526,6 +542,7 @@ public class Player extends Entity {
         timeSinceGrounded = coyoteTime;
         climbing = false;
         preWallKick = false;
+        game.playSoundEffect(7);
     }
 
     public void climb(){
@@ -551,6 +568,7 @@ public class Player extends Entity {
         canMove = false;
         climbing = true;
         countJump = 0;
+        game.playSoundEffect(11);
     }
 
     private boolean canClimb() {
@@ -713,6 +731,7 @@ public class Player extends Entity {
         unvulerable = true;
         timeSinceLastUnvulerable = System.currentTimeMillis();
         currentHealth--;
+        game.playSoundEffect(9);
     }
 
     public void showDetail() {
