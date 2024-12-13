@@ -23,6 +23,7 @@ public class Menu {
     private Font mainFont;
     private File file;
     private BasicStroke mainStroke;
+    private int animationTick = 0;
 
     // COLOR
     private Color miniFrameBackgroundColor = Color.decode("#638A55");   // background of the mini window
@@ -96,20 +97,27 @@ public class Menu {
             y += 55;
         }
 
-        if(gamePanel.getGame().finishedLevel2){
-            g2.setFont(mainFont.deriveFont(10f));
+        if(gamePanel.getGame().finishedLevel1){
+            g2.setFont(mainFont.deriveFont(15f));
             g2.setColor(normalTextColor);
-            g2.drawString("Well played", 10, GAME_HEIGHT - 10);
+            String text;
+            if(gamePanel.getGame().finishedLevel2){
+                text = "Well Played!";
+            }
+            else {
+                text = "Level 2 Unlocked!";
+            }
+            g2.drawString(text, 10, GAME_HEIGHT - 10);
         }
     }
 
     private void drawSettingScreen(Graphics2D g2){
         g2.drawImage(mainBackground, 0, 0, GAME_WIDTH, GAME_HEIGHT, null);
         g2.setFont(mainFont);
-        drawMiniWindow(g2, 8 * TILE_SIZE, 3 * TILE_SIZE, 10 * TILE_SIZE, 8 * TILE_SIZE);
+        drawMiniWindow(g2, 8 * TILE_SIZE, (int)(2.5 * TILE_SIZE), 10 * TILE_SIZE, 9 * TILE_SIZE);
 
         int x = GAME_WIDTH / 2 - getTextLenght(g2, "Settings") / 2;
-        int y = TILE_SIZE * 4;
+        int y = (int)(3.5 * TILE_SIZE);
         g2.setColor(normalTextColor);
         g2.drawString("Settings", x, y);
 
@@ -130,10 +138,18 @@ public class Menu {
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 1)   g2.setColor(selectedTextColor);
         else g2.setColor(normalTextColor);
-        g2.drawString("Volume", x, y);
+        g2.drawString("Music", x, y);
         // g2.setColor(normalTextColor);
         g2.drawRect(GAME_WIDTH - (int)(9 * TILE_SIZE) - 32 * 5, y - 32, 32 * 5, 32);
-        g2.fillRect(GAME_WIDTH - (int)(9 * TILE_SIZE) - 32 * 5, y - 32, gamePanel.getGame().volume * 32, 32);
+        g2.fillRect(GAME_WIDTH - (int)(9 * TILE_SIZE) - 32 * 5, y - 32, gamePanel.getGame().musicVolume * 32, 32);
+
+        y += TILE_SIZE;
+        if (gamePanel.getGame().selectedOptions == 2)   g2.setColor(selectedTextColor);
+        else g2.setColor(normalTextColor);
+        g2.drawString("Sound Effect", x, y);
+        // g2.setColor(normalTextColor);
+        g2.drawRect(GAME_WIDTH - (int)(9 * TILE_SIZE) - 32 * 5, y - 32, 32 * 5, 32);
+        g2.fillRect(GAME_WIDTH - (int)(9 * TILE_SIZE) - 32 * 5, y - 32, gamePanel.getGame().soundEffectVolume * 32, 32);
 
         y += 15;
         g2.setColor(normalTextColor);
@@ -148,7 +164,7 @@ public class Menu {
 
         y += TILE_SIZE;
         g2.setFont(mainFont.deriveFont(32f));
-        if (gamePanel.getGame().selectedOptions == 2){
+        if (gamePanel.getGame().selectedOptions == 3){
             if(gamePanel.getGame().changingButton)
                 g2.setColor(changingTextColor);
             else
@@ -159,7 +175,7 @@ public class Menu {
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.upButton), x + 2 * TILE_SIZE, y);
 
         y += TILE_SIZE;
-        if (gamePanel.getGame().selectedOptions == 3){
+        if (gamePanel.getGame().selectedOptions == 4){
             if(gamePanel.getGame().changingButton)
                 g2.setColor(changingTextColor);
             else
@@ -170,7 +186,7 @@ public class Menu {
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.leftButton), x + 2 * TILE_SIZE, y);
 
         y += TILE_SIZE;
-        if (gamePanel.getGame().selectedOptions == 4){
+        if (gamePanel.getGame().selectedOptions == 5){
             if(gamePanel.getGame().changingButton)
                 g2.setColor(changingTextColor);
             else
@@ -182,7 +198,7 @@ public class Menu {
 
         y -= 2 * TILE_SIZE;
         x += (int)(4.5 * TILE_SIZE);
-        if (gamePanel.getGame().selectedOptions == 5){
+        if (gamePanel.getGame().selectedOptions == 6){
             if(gamePanel.getGame().changingButton)
                 g2.setColor(changingTextColor);
             else
@@ -193,7 +209,7 @@ public class Menu {
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.downButton), x + 2 * TILE_SIZE, y);
 
         y += TILE_SIZE;
-        if (gamePanel.getGame().selectedOptions == 6){
+        if (gamePanel.getGame().selectedOptions == 7){
             if(gamePanel.getGame().changingButton)
                 g2.setColor(changingTextColor);
             else
@@ -204,7 +220,7 @@ public class Menu {
         g2.drawString(KeyEvent.getKeyText(gamePanel.keyboard.rightButton), x + 2 * TILE_SIZE, y);
 
         y += TILE_SIZE;
-        if (gamePanel.getGame().selectedOptions == 7){
+        if (gamePanel.getGame().selectedOptions == 8){
             if(gamePanel.getGame().changingButton)
                 g2.setColor(changingTextColor);
             else
@@ -283,12 +299,12 @@ public class Menu {
     public void drawPausePanel(Graphics2D g2){
         g2.setColor(DARKEN_BACKGROUND_COLOR);
         g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-        drawMiniWindow(g2, 8 * TILE_SIZE, (int)(3.5 * TILE_SIZE), 10 * TILE_SIZE, 7 * TILE_SIZE);
+        drawMiniWindow(g2, 8 * TILE_SIZE, (int)(3.25 * TILE_SIZE), 10 * TILE_SIZE, (int)(7.5 * TILE_SIZE));
         g2.setFont(mainFont);
         g2.setStroke(mainStroke);
 
         int x = GAME_WIDTH / 2 - getTextLenght(g2, "Game Paused") / 2;
-        int y = (int)(TILE_SIZE * 4.5) + 10;
+        int y = (int)(TILE_SIZE * 4.25) - 5;
 
         g2.setColor(normalTextColor);
         g2.drawString("Game Paused", x, y);
@@ -314,18 +330,26 @@ public class Menu {
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 2)   g2.setColor(selectedTextColor);
         else g2.setColor(normalTextColor);
-        g2.drawString("Volume", x, y);
+        g2.drawString("Music", x, y);
         // g2.setColor(normalTextColor);
         g2.drawRect(GAME_WIDTH - 9 * TILE_SIZE - 32 * 5, y - 32, 32 * 5, 32);
-        g2.fillRect(GAME_WIDTH - 9 * TILE_SIZE - 32 * 5, y - 32, gamePanel.getGame().volume * 32, 32);
+        g2.fillRect(GAME_WIDTH - 9 * TILE_SIZE - 32 * 5, y - 32, gamePanel.getGame().musicVolume * 32, 32);
 
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 3)   g2.setColor(selectedTextColor);
         else g2.setColor(normalTextColor);
-        g2.drawString("Key Adjust", x, y);
+        g2.drawString("Sound Effect", x, y);
+        // g2.setColor(normalTextColor);
+        g2.drawRect(GAME_WIDTH - (int)(9 * TILE_SIZE) - 32 * 5, y - 32, 32 * 5, 32);
+        g2.fillRect(GAME_WIDTH - (int)(9 * TILE_SIZE) - 32 * 5, y - 32, gamePanel.getGame().soundEffectVolume * 32, 32);
 
         y += TILE_SIZE;
         if (gamePanel.getGame().selectedOptions == 4)   g2.setColor(selectedTextColor);
+        else g2.setColor(normalTextColor);
+        g2.drawString("Key Adjust", x, y);
+
+        y += TILE_SIZE;
+        if (gamePanel.getGame().selectedOptions == 5)   g2.setColor(selectedTextColor);
         else g2.setColor(normalTextColor);
         g2.drawString("Main Menu", x, y);
     }
@@ -417,15 +441,17 @@ public class Menu {
     }
 
     public void drawGameOverPanel(Graphics2D g2){
-        g2.setColor(DARKEN_BACKGROUND_COLOR);
+        if(animationTick > 600) animationTick = 600;
+        g2.setColor(new Color(0, 0, 0, animationTick / 6));
         g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-        drawMiniWindow(g2, 6 * TILE_SIZE, 5 * TILE_SIZE, 14 * TILE_SIZE, 4 * TILE_SIZE);
+        int y = animationTick - 4 * TILE_SIZE > 5 * TILE_SIZE ? 5 * TILE_SIZE : animationTick - 4 * TILE_SIZE;
+        drawMiniWindow(g2, 6 * TILE_SIZE, y, 14 * TILE_SIZE, 4 * TILE_SIZE);
 
         g2.setFont(mainFont);
         g2.setColor(normalTextColor);
         String text = "Game Over!";
         int x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
-        int y = (int)(6.25 * TILE_SIZE);
+        y += (int)(1.25 * TILE_SIZE);
         g2.drawString(text, x, y);
 
         text = "You cannot give up just yet!";
@@ -437,16 +463,22 @@ public class Menu {
         x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
         y += TILE_SIZE;
         g2.drawString(text, x, y);
+
+        animationTick += 20;
     }
 
     public void drawCongratulationPanel(Graphics2D g2){
-        drawMiniWindow(g2, 6 * TILE_SIZE, 5 * TILE_SIZE, 14 * TILE_SIZE, 4 * TILE_SIZE);
+        if(animationTick > 600) animationTick = 600;
+        g2.setColor(new Color(0, 0, 0, animationTick / 6));
+        g2.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        int y = animationTick - 4 * TILE_SIZE > 5 * TILE_SIZE ? 5 * TILE_SIZE : animationTick - 4 * TILE_SIZE;
+        drawMiniWindow(g2, 6 * TILE_SIZE, y, 14 * TILE_SIZE, 4 * TILE_SIZE);
 
         g2.setFont(mainFont);
         g2.setColor(normalTextColor);
         String text = "Congratulation!";
         int x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
-        int y = (int)(6.25 * TILE_SIZE);
+        y += (int)(1.25 * TILE_SIZE);
         g2.drawString(text, x, y);
 
         y += TILE_SIZE;
@@ -458,6 +490,8 @@ public class Menu {
         text = "Press Enter to continue";
         x = GAME_WIDTH / 2 - getTextLenght(g2, text) / 2;
         g2.drawString(text, x, y);
+
+        animationTick += 20;
     }
 
     public void drawWarningPanel(Graphics2D g2){
@@ -506,5 +540,9 @@ public class Menu {
 
     private int getTextLenght(Graphics2D g2, String text){
         return (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+    }
+
+    public void resetAnimationTick(){
+        animationTick = 0;
     }
 }

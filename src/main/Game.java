@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import levels.LevelManager;
+import sound.Sound;
 import utilz.Constants.Level1;
 import utilz.Constants.Level2;
 import utilz.LoadSave;
@@ -19,6 +20,7 @@ public class Game implements Runnable {
     private GameWindow gameWindow;
     private GamePanel gamePanel;
     private Thread gameThread;
+    public Sound sound;
     private final int FPS_SET = 60;
     public final static int UPS_SET = 150;
 
@@ -49,6 +51,7 @@ public class Game implements Runnable {
     private int maxLevelOffsetX, maxLevelOffsetY;
 
     // GAME STATES
+    // Main game states
     public final int startingMenuState = -1;    // for easier code handling than to remember which state to which number
     public final int playingState = 0;
     public final int settingState = 1;
@@ -57,6 +60,7 @@ public class Game implements Runnable {
     public final int choosingLevelState = 4;
     public int gameState = -1;      // current game state : default when start game : starting menu state
     public int selectedOptions = 0; // current selecting option : to choose option of the next game state
+    // Sub game state
     public boolean paused = false;              // DO NOT TOUCH THIS
     public boolean changingButton = false;      // DO NOT TOUCH THIS EITHER
     public boolean adjustingKeyInGame = false;  // DO NOT TOUCH THIS EITHER
@@ -65,7 +69,7 @@ public class Game implements Runnable {
     public boolean playingLevel1 = false;
     public boolean playingLevel2 = false;
     public boolean finishedLevel1 = false;
-    public boolean finishedLevel2 = true;
+    public boolean finishedLevel2 = false;
     public boolean warning = false;
 
     // STATES DRAWER
@@ -74,7 +78,8 @@ public class Game implements Runnable {
 
     // SETTING
     public boolean showFPS = false;
-    public int volume = 1;
+    public int musicVolume = 1;
+    public int soundEffectVolume = 1;
     public int currentLevel = 1;
 
     private BufferedImage frontTree, behindTree, frontRock, behindRock;
@@ -93,6 +98,10 @@ public class Game implements Runnable {
         calcOffset();
         
         startGameLoop();
+
+        playMusic(0);
+
+        gameWindow.activateVisible();
     }
 
     private void calcOffset() {
@@ -106,10 +115,11 @@ public class Game implements Runnable {
         // INITIATE LEVEL AND PLAYER
 
         levelManager = new LevelManager(this);
-        player = new Player(4800, 100, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE));
+        player = new Player(4800, 100, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE), this);
         camera = new Point(4800, 100);
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
         menu = new Menu(gamePanel);
+        sound = new Sound(this);
         frontTree = LoadSave.GetSpriteAtlas(LoadSave.FRONT_TREE);
         behindTree = LoadSave.GetSpriteAtlas(LoadSave.BEHIND_TREE);
         frontRock = LoadSave.GetSpriteAtlas(LoadSave.FRONT_ROCK);
@@ -148,6 +158,11 @@ public class Game implements Runnable {
                 updateCameraShake();
 
                 if (player.getHealth() <= 0){
+                    if(gameOver == false){
+                        stopMusic();
+                        playSoundEffect(5);
+                        playMusic(3);
+                    }
                     gameOver = true;
                     return;
                 }
@@ -156,6 +171,10 @@ public class Game implements Runnable {
                     player.getHitbox().x < levelManager.getCurrentLevel().getWinPos().x + 10 &&
                     player.getHitbox().y > levelManager.getCurrentLevel().getWinPos().y - 10 &&
                     player.getHitbox().y < levelManager.getCurrentLevel().getWinPos().y + 10) {
+                        if(winning == false){
+                            gamePanel.getGame().stopMusic();
+                            gamePanel.getGame().playMusic(4);
+                        }
                         winning = true;
                         player.activateWin();
                 }
@@ -229,7 +248,7 @@ public class Game implements Runnable {
             if(adjustingKeyInGame == true)  menu.drawInGameKeyAdjustPanel((Graphics2D)g);
             else if(paused == true)  menu.drawPausePanel((Graphics2D)g);
         }
-        else if (menu != null)
+        else // if (menu != null)
             menu.draw((Graphics2D)g);
     }
 
@@ -309,6 +328,25 @@ public class Game implements Runnable {
                 updates = 0;
             }
         }
+    }
+
+    public void playMusic(int soundNumber){
+        sound.setMusic(soundNumber);
+        sound.playMusic();
+        sound.loop();
+    }
+
+    public void playSoundEffect(int soundNumber){
+        sound.setSoundEffect(soundNumber);
+        sound.playSoundEffect();
+    }
+
+    public void stopMusic(){
+        sound.stopMusic();
+    }
+
+    public void stopSoundEffect(){
+        sound.stopSoundEffect();
     }
 
     public void windowFocusLost() {
