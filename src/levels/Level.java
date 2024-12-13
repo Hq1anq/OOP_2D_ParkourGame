@@ -28,8 +28,9 @@ public class Level {
         } else if (id == 2) {
             levelTileHeight = 56;
             levelTileWide = 104;
-            playerSpawn = new Point(4800, 100);
-            winPos = new Point(121, 2208);
+            // playerSpawn = new Point(4700, 1344);
+            playerSpawn = new Point(126, 624);
+            winPos = new Point(4795, 1344);
         }
         levelData = LoadSave.getLevelData(this);
     }
