@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import static main.Game.GAME_HEIGHT;
 import static main.Game.GAME_WIDTH;
 import static main.Game.TILE_SIZE;
+import static utilz.Constants.GAME_NAME;
 import static utilz.Constants.Menu.DARKEN_BACKGROUND_COLOR;
 
 @SuppressWarnings("FieldMayBeFinal")
@@ -86,6 +87,15 @@ public class Menu {
         g2.setFont(mainFont);
 
         int x, y = 8 * TILE_SIZE;
+
+        g2.setFont(mainFont.deriveFont(120f)); // Set a larger font size for the game name
+        g2.setColor(Color.gray);
+        int x1 = Game.GAME_WIDTH/2 - getTextLenght(g2, GAME_NAME) / 2, y1 = y - 4 * TILE_SIZE;
+        g2.drawString(GAME_NAME, x1 + 5, y1 + 5);
+        g2.setColor(normalTextColor);
+        g2.drawString(GAME_NAME, x1, y1);
+
+        g2.setFont(mainFont.deriveFont(48f));
         for(int i = 0 ; i < startingMenuTexts.length; i++){
             x = Game.GAME_WIDTH/2 - getTextLenght(g2, startingMenuTexts[i])/2;
             g2.setColor(Color.gray);

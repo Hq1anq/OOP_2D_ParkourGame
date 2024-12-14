@@ -122,7 +122,7 @@ public class Player extends Entity {
     private float checkBP;
     private boolean isOnBP = false;
     private boolean toggleBreakablePlatform = true;
-    private long timeForBP = 1500;
+    private long timeForBP = 1000;
 
     public Player(float x, float y, int width, int height, Game game) {
         super(x, y, width, height);
@@ -357,7 +357,6 @@ public class Player extends Entity {
             if (levelData[row][col] == 119) {
                 long currentTime = System.currentTimeMillis();
                 if (currentTime - timeFromBP >= timeForBP) {
-                    game.shakeStartTime = currentTime;
                     levelData[row][col] = -1;
                     PosOnBP.poll();
                     timeOnBP.poll();

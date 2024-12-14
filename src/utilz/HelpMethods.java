@@ -170,6 +170,11 @@ public class HelpMethods {
             return true;
         }
 
+        if((levelData[map_top_Y][map_left_X] >= 190 && levelData[map_top_Y][map_left_X] <= 195)
+        || (levelData[map_top_Y][map_right_X] >= 190 && levelData[map_top_Y][map_right_X] <= 195)) {
+            return true;
+        }
+
         // Fire
         if((levelData[map_bottom_Y][map_left_X] >= 228 && levelData[map_bottom_Y][map_left_X] <= 231)
         || (levelData[map_top_Y][map_left_X] >= 228 && levelData[map_top_Y][map_left_X] <= 231)){

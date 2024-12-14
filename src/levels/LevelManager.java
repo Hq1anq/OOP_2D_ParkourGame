@@ -24,6 +24,7 @@ public class LevelManager {
     private float swordtrap1Index = 133;
     private float swordtrap2Index = 152;
     private float brownsawIndex = 247;
+    private float cellSpikeIndex = 190;
 
     private int trapFPU = 40; // 1 frame for 40 updates
 
@@ -59,6 +60,10 @@ public class LevelManager {
                     g.drawImage(levelSprite[(int) spikeIndex], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     spikeIndex += 1.0/(10 * trapFPU);
                     if (spikeIndex > 287) spikeIndex = 285;
+                } else if (index == 190) {
+                    g.drawImage(levelSprite[(int) cellSpikeIndex], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
+                    cellSpikeIndex += 1.0/(10 * trapFPU);
+                    if (cellSpikeIndex > 192) cellSpikeIndex = 190;
                 } else if (index == 289) {
                     g.drawImage(levelSprite[(int) spike2Index], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     spike2Index += 5.0/trapFPU;

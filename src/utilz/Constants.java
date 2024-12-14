@@ -4,6 +4,7 @@ import java.awt.Color;
 
 public class Constants {
 
+    public static final String GAME_NAME = "Squirrel 's adventure";
     public static final int ANI_SPEED = 15;
 
     public static class ObjectConstants {
