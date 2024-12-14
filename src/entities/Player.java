@@ -712,10 +712,6 @@ public class Player extends Entity {
         hitbox.y = 100;
         camera.x = 4800;
         camera.y = 100;
-        // hitbox.x = 1970;
-        // hitbox.y = 192;
-        // camera.x = 1970;
-        // camera.y = 192;
         resetAll();
     }
 

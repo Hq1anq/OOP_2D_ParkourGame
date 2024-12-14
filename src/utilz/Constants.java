@@ -9,15 +9,15 @@ public class Constants {
     }
 
     public static class Level1 {
-        public static final int ENV_WIDTH_DEFAULT = 1152;
-        public static final int ENV_HEIGHT_DEFAULT = 324;
+        public static final int ENV_WIDTH_DEFAULT = 1280;
+        public static final int ENV_HEIGHT_DEFAULT = 750;
         public static final Color BG_COLOR = new Color(86, 88, 123);
     }
 
     public static class Level2 {
-        public static final int ENV_WIDTH_DEFAULT = 1152;
-        public static final int ENV_HEIGHT_DEFAULT = 324;
-        public static final Color BG_COLOR = new Color(86, 88, 123);
+        public static final int ENV_WIDTH_DEFAULT = 1280;
+        public static final int ENV_HEIGHT_DEFAULT = 750;
+        public static final Color BG_COLOR = new Color(166, 172, 186);
     }
 
     public static class PlayerConstants {

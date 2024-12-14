@@ -10,17 +10,16 @@ import levels.Level;
 
 public class LoadSave {
 
-    public static final String PLAYER_ATLAS = "player_spirites.png";
-    public static final String LEVEL_ATLAS = "outside_sprites.png";
+    public static final String PLAYER_ATLAS = "images/player_spirites.png";
+    public static final String LEVEL_ATLAS = "images/outside_sprites.png";
     public static final String LEVEL_ONE_CSV = "Level1.csv";
     public static final String LEVEL_TWO_CSV = "Level2.csv";
-    public static final String FRONT_TREE = "front_tree.png";
-    public static final String BEHIND_TREE = "behind_tree.png";
-    public static final String FRONT_ROCK = "front_rock.png";
-    public static final String BEHIND_ROCK = "behind_rock.png";
-    public static final String CAVE = "cave.png";
-    public static final String EMPTY_HEART = "singleEmptyHeart.png";
-    public static final String FULL_HEART = "singleFullHeart.png";
+    public static final String FRONT_TREE = "images/front_tree.png";
+    public static final String BEHIND_TREE = "images/behind_tree.png";
+    public static final String FRONT_ROCK = "images/front_rock.png";
+    public static final String BEHIND_ROCK = "images/behind_rock.png";
+    public static final String EMPTY_HEART = "images/singleEmptyHeart.png";
+    public static final String FULL_HEART = "images/singleFullHeart.png";
 
     public static BufferedImage GetSpriteAtlas(String fileName) {
         BufferedImage img = null;

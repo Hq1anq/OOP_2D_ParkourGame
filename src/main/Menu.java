@@ -54,7 +54,7 @@ public class Menu {
 
     private void loadImage() {
         try{
-            file = new File("res/starting_menu_background_main_project.png");
+            file = new File("res/images/starting_menu_background_main_project.png");
             mainBackground = ImageIO.read(file);
         } catch(Exception e){
             System.out.println("Error: " + e);
