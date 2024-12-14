@@ -157,7 +157,7 @@ public class Keyboard implements KeyListener {
             }
             else if(gamePanel.getGame().selectedOptions == gamePanel.getGame().guidesState){
                 gamePanel.getGame().gameState = gamePanel.getGame().guidesState;
-                gamePanel.tempLabel.setVisible(true);
+                gamePanel.setGifVisible(0);
             }
             else if(gamePanel.getGame().selectedOptions == gamePanel.getGame().exitState){
                 gamePanel.getGame().gameState = gamePanel.getGame().exitState;
@@ -447,7 +447,21 @@ public class Keyboard implements KeyListener {
         if(code == KeyEvent.VK_ESCAPE){
             gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
             gamePanel.getGame().selectedOptions = 2;
-            gamePanel.tempLabel.setVisible(false);
+            gamePanel.setAllGifUnvisible();
+            gamePanel.getGame().playSoundEffect(6);
+        }
+
+        else if(code == KeyEvent.VK_UP || code == KeyEvent.VK_W){
+            gamePanel.getGame().selectedOptions--;
+            if(gamePanel.getGame().selectedOptions < 0) gamePanel.getGame().selectedOptions = 6;
+            gamePanel.setGifVisible(gamePanel.getGame().selectedOptions);
+            gamePanel.getGame().playSoundEffect(6);
+        }
+
+        else if(code == KeyEvent.VK_DOWN || code == KeyEvent.VK_S){
+            gamePanel.getGame().selectedOptions++;
+            if(gamePanel.getGame().selectedOptions > 6) gamePanel.getGame().selectedOptions = 0;
+            gamePanel.setGifVisible(gamePanel.getGame().selectedOptions);
             gamePanel.getGame().playSoundEffect(6);
         }
     }
