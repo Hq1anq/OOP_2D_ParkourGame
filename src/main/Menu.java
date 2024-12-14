@@ -24,6 +24,7 @@ public class Menu {
     private File file;
     private BasicStroke mainStroke;
     private int animationTick = 0;
+    private String[] guidesTexts = {"Dash", "Double Jump", "Jump Cutting", "Laddle Climb", "Ledge Climb", "Wall Climb", "Wall Kick"};
 
     // COLOR
     private Color miniFrameBackgroundColor = Color.decode("#638A55");   // background of the mini window
@@ -238,10 +239,19 @@ public class Menu {
         drawMiniWindow(g2, 4 * TILE_SIZE, 2 * TILE_SIZE, 18 * TILE_SIZE, 10 * TILE_SIZE);
 
         int x = GAME_WIDTH / 2 - getTextLenght(g2, "Guides") / 2;
-        int y = 150;
+        int y = (int)(3.0 * TILE_SIZE);
         g2.setColor(normalTextColor);
         g2.drawString("Guides", x, y);
-        g2.setFont(g2.getFont().deriveFont(30f));
+        // g2.setFont(g2.getFont().deriveFont(30f));
+
+        x = 5 * TILE_SIZE;
+        y += (int)(1.5 * TILE_SIZE);
+        for(int i = 0; i < guidesTexts.length; i++){
+            if(i == gamePanel.getGame().selectedOptions)    g2.setColor(selectedTextColor);
+            else                                            g2.setColor(normalTextColor);
+            g2.drawString(guidesTexts[i], x, y);
+            y += TILE_SIZE;
+        }
     }
 
     private void drawExitScreen(Graphics2D g2){
