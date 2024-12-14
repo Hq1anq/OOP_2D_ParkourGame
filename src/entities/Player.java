@@ -177,6 +177,17 @@ public class Player extends Entity {
                     (int) (hitbox.x - xDrawOffset) - xLevelOffset,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset),
                     width * flipW, 2 * height, null);
+        } else if (playerAction == LADDER_CLIMB) {
+            if (isFacingLeft)
+                g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
+                    (int) (hitbox.x + hitbox.width + xDrawOffset) - xLevelOffset + 10,
+                    (int) (hitbox.y - yDrawOffset - yLevelOffset),
+                    width * flipW, height, null);
+            else
+                g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
+                    (int) (hitbox.x - xDrawOffset) - xLevelOffset,
+                    (int) (hitbox.y - yDrawOffset - yLevelOffset),
+                    width * flipW, height, null);
         } else if (playerAction == START_DASH) {
             if (isFacingLeft)
                 g2.drawImage(HelpMethods.syncWithUnvulerable(animations[playerAction][aniIndex], g2, unvulerable, timeSinceLastUnvulerable),
@@ -223,11 +234,7 @@ public class Player extends Entity {
         aniTick++;
         if (aniTick >= aniSpeed) {
             aniTick = 0;
-            if (playerAction == LADDER_CLIMB) {
-                if (aniIndex >= GetSpriteAmount(playerAction))
-                    aniIndex = 0;
-                else return;
-            }
+            if (playerAction == LADDER_CLIMB) return;
             aniIndex++;
             if (aniIndex >= GetSpriteAmount(playerAction)) {
                 switch (playerAction) {
@@ -314,7 +321,7 @@ public class Player extends Entity {
     // ***IMPORTANT
     private void updatePos() {
         //PLAYER MOVING LOGIC
-        if(HitTrap(hitbox, levelData) && !unvulerable)  gotHit();
+        if(HitTrap(hitbox, levelData) && !unvulerable) gotHit();
 
         if(System.currentTimeMillis() - timeSinceLastUnvulerable > unvulerableTime)
             unvulerable = false;
@@ -361,6 +368,7 @@ public class Player extends Entity {
         }
         if (canMove && toggleLadderClimb && IsInLadder(hitbox, levelData)) {
             ladderClimb = true;
+            countJump = 0;
             airSpeed = 0;
             hitbox.x = (int) (hitbox.x / TILE_SIZE) * TILE_SIZE  + xDrawOffset;
             if (down) {
@@ -368,7 +376,9 @@ public class Player extends Entity {
                 climbCountAni += 1.0/climbFPS;
                 if (climbCountAni > 1) {
                     climbCountAni = 0;
-                    aniIndex++;
+                    if (aniIndex < GetSpriteAmount(LADDER_CLIMB) - 1)
+                        aniIndex++;
+                    else aniIndex = 0;
                 }
             }
             if (jump) {
@@ -377,7 +387,9 @@ public class Player extends Entity {
                     climbCountAni += 1.0/climbFPS;
                     if (climbCountAni > 1) {
                         climbCountAni = 0;
-                        aniIndex++;
+                        if (aniIndex < GetSpriteAmount(LADDER_CLIMB) - 1)
+                            aniIndex++;
+                        else aniIndex = 0;
                     }
                     if (!IsLadder(hitbox.x, hitbox.y - 3, levelData)) {
                         toggleLadderClimb = false;
@@ -498,7 +510,10 @@ public class Player extends Entity {
                     } else {
                         hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
                         if (airSpeed > 0) {
-                            floorSmash = (airSpeed > 9);
+                            if (airSpeed > 9) {
+                                floorSmash = true;
+                                // game.startCameraShake();
+                            } else floorSmash = false;
                             resetInAir();
                         }
                         else

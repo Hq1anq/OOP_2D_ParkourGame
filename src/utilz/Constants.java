@@ -50,7 +50,7 @@ public class Constants {
                 case CROUCH -> 2;
                 case AIR_FLIP -> 8;
                 case FLOOR_SMASH -> 3;
-                case LADDER_CLIMB -> 4;
+                case LADDER_CLIMB -> 6;
                 case WIN_POSE -> 12;
                 case WALL_KICK -> 1;
                 case WALL_CLIMB -> 8;
