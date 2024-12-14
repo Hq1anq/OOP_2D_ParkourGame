@@ -5,8 +5,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import main.Game;
 import static main.Game.TILE_SIZE;
+import objects.BreakablePlatform;
+import static utilz.Constants.ObjectConstants.BREAKABLE_PLATFORM;
 
 public class HelpMethods {
 
@@ -234,4 +237,14 @@ public class HelpMethods {
         else return input;
     }
     
+    public static ArrayList<BreakablePlatform> GetBreakablePlatforms(int[][] levelData){
+        ArrayList<BreakablePlatform> breakablePlatforms = new ArrayList<>();
+        for (int i = 0; i < levelData.length; i++)
+            for (int j = 0; j < levelData[0].length; j++) {
+                if (levelData[i][j] == BREAKABLE_PLATFORM) {
+                    breakablePlatforms.add(new BreakablePlatform(j * TILE_SIZE, i * TILE_SIZE, BREAKABLE_PLATFORM));
+                }
+            }
+        return breakablePlatforms;
+    }
 }

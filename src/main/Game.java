@@ -3,8 +3,10 @@ package main;
 import entities.Player;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import levels.LevelManager;
+import objects.ObjectManager;
 import sound.Sound;
 import utilz.Constants.Level1;
 import utilz.Constants.Level2;
@@ -26,6 +28,7 @@ public class Game implements Runnable {
 
     private Player player;
     private LevelManager levelManager;
+    private ObjectManager objectManager;
 
     // STATISTICS
     // CONST
@@ -86,7 +89,7 @@ public class Game implements Runnable {
 
     // Camera shake variables
     private boolean shaking = false;
-    private long shakeStartTime;
+    public long shakeStartTime;
     private long shakeDuration = 250; // Shake duration in milliseconds
     private int shakeIntensity = 5; // Shake intensity in pixels
 
@@ -100,6 +103,8 @@ public class Game implements Runnable {
         startGameLoop();
 
         playMusic(0);
+
+        objectManager.loadObjects(levelManager.getCurrentLevel());
 
         gameWindow.activateVisible();
     }
@@ -115,6 +120,7 @@ public class Game implements Runnable {
         // INITIATE LEVEL AND PLAYER
 
         levelManager = new LevelManager(this);
+        objectManager = new ObjectManager(this);
         player = new Player(4800, 100, (int) (32 * 2 * SCALE), (int) (32 * 2 * SCALE), this);
         camera = new Point(4800, 100);
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
@@ -154,6 +160,7 @@ public class Game implements Runnable {
             if(paused == false && gameOver == false) {
                 player.update();
                 levelManager.update();
+                objectManager.update();
                 checkCloseToBorder();
                 updateCameraShake();
 
@@ -229,6 +236,8 @@ public class Game implements Runnable {
             player.drawHealth((Graphics2D)g);
             player.render((Graphics2D)g, xLevelOffset, yLevelOffset);
 
+            objectManager.draw(g, xLevelOffset, yLevelOffset);
+
             if(winning){
                 menu.drawCongratulationPanel((Graphics2D)g);
                 return;
@@ -285,6 +294,10 @@ public class Game implements Runnable {
                 shaking = false;
             }
         }
+    }
+
+    public float checkBreakablePlatformStepped(Rectangle2D.Float playerHitbox) {
+        return objectManager.checkObjectStepped(playerHitbox);
     }
 
     @Override
@@ -358,5 +371,11 @@ public class Game implements Runnable {
         // GETTER METHOD
 
         return player;
+    }
+
+    public ObjectManager getObjectManager() {
+        // GETTER METHOD
+
+        return objectManager;
     }
 }

@@ -4,9 +4,12 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.LinkedList;
+import java.util.Queue;
 import main.Game;
 import static main.Game.TILE_SIZE;
 import static main.Game.camera;
+import static utilz.Constants.ANI_SPEED;
 import static utilz.Constants.PlayerConstants.*;
 import utilz.HelpMethods;
 import static utilz.HelpMethods.*;
@@ -102,7 +105,7 @@ public class Player extends Entity {
     // For drawing
     private float xDrawOffset = 3 * 2 * Game.SCALE;
     private float yDrawOffset = 0 * 2 * Game.SCALE;
-    private int aniTick, aniIndex, aniSpeed = 15;
+    private int aniTick, aniIndex;
     private BufferedImage[][] animations;
     private int playerAction = IDLE;
     private File file;
@@ -112,6 +115,14 @@ public class Player extends Entity {
 
     // SOUND EFFECT
     private long timeSinceLastPlayedFootstepsSoundEffect = 0;
+
+    // Breakable Platform
+    private Queue<Point> PosOnBP = new LinkedList<>(); // y position on breakable platform
+    private Queue<Long> timeOnBP = new LinkedList<>();
+    private float checkBP;
+    private boolean isOnBP = false;
+    private boolean toggleBreakablePlatform = true;
+    private long timeForBP = 1500;
 
     public Player(float x, float y, int width, int height, Game game) {
         super(x, y, width, height);
@@ -232,7 +243,7 @@ public class Player extends Entity {
 
     private void updateAnimationTick() {
         aniTick++;
-        if (aniTick >= aniSpeed) {
+        if (aniTick >= ANI_SPEED) {
             aniTick = 0;
             if (playerAction == LADDER_CLIMB) return;
             aniIndex++;
@@ -279,6 +290,10 @@ public class Player extends Entity {
         } else if (ladderClimb && toggleLadderClimb) {
             playerAction = LADDER_CLIMB;
         } else if (inAir) {
+            if (isOnBP) {
+                if (moving) playerAction = WALKING;
+                else playerAction = IDLE;
+            } else
             if (countJump == 2)
                 playerAction = AIR_FLIP;
             else if (airSpeed < 0)
@@ -323,6 +338,37 @@ public class Player extends Entity {
         //PLAYER MOVING LOGIC
         if(HitTrap(hitbox, levelData) && !unvulerable) gotHit();
 
+        checkBP = game.checkBreakablePlatformStepped(hitbox);
+        if(checkBP != -1 && toggleBreakablePlatform) {
+            toggleBreakablePlatform = false;
+            isOnBP = true;
+            int row = (int) (checkBP / TILE_SIZE);
+            int col = (int) (hitbox.x / TILE_SIZE);
+            levelData[row][col] = 119;
+            PosOnBP.add(new Point(col, row));
+            timeOnBP.add(System.currentTimeMillis());
+            hitbox.y = checkBP - hitbox.height;
+        }
+        if (!PosOnBP.isEmpty()) {
+            Point point = PosOnBP.peek();
+            long timeFromBP = timeOnBP.peek();
+            int row = point.y;
+            int col = point.x;
+            if (levelData[row][col] == 119) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - timeFromBP >= timeForBP) {
+                    game.shakeStartTime = currentTime;
+                    levelData[row][col] = -1;
+                    PosOnBP.poll();
+                    timeOnBP.poll();
+                    game.startCameraShake();
+                }
+            }
+        }
+        if (checkBP == -1) {
+            toggleBreakablePlatform = true;
+            isOnBP = false;
+        }
         if(System.currentTimeMillis() - timeSinceLastUnvulerable > unvulerableTime)
             unvulerable = false;
 
@@ -527,7 +573,7 @@ public class Player extends Entity {
         
     }
 
-    public void dash(){
+    public void dash() {
         if(dashing == false){
             if(isFacingLeft){
                 positionXAfterDash = hitbox.x - dashDistance;

@@ -75,7 +75,7 @@ public class LevelManager {
                     g.drawImage(levelSprite[(int) brownsawIndex], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     brownsawIndex += 1.0/(5 * trapFPU);
                     if (brownsawIndex > 249) brownsawIndex = 247;
-                } else if (index != -1) {
+                } else if (index != -1 && (index < 304 || index > 336)) {
                     g.drawImage(levelSprite[index], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                 }
 
@@ -86,6 +86,8 @@ public class LevelManager {
         currentLevel = levelNumber;
         level = new Level(currentLevel);
         game.getPlayer().loadLevelData(level.getLevelData());
+        game.getObjectManager().resetAllObjects();
+        game.getObjectManager().loadObjects(level);
         if(currentLevel == 2)
         game.getPlayer().resetLevel2Statistics();
         else if(currentLevel == 1)

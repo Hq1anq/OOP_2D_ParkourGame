@@ -4,6 +4,17 @@ import java.awt.Color;
 
 public class Constants {
 
+    public static final int ANI_SPEED = 15;
+
+    public static class ObjectConstants {
+        public static final int BREAKABLE_PLATFORM = 304;
+        public static int GetSpriteAmount(int objType) {
+            return switch (objType) {
+                case BREAKABLE_PLATFORM -> 15;
+                default -> 1;
+            };
+        }
+    }
     public static class Menu {
         public static final Color DARKEN_BACKGROUND_COLOR = new Color(0, 0, 0, 0.5f);
     }
