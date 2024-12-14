@@ -40,27 +40,27 @@ public class Keyboard implements KeyListener {
             if((code >= KeyEvent.VK_A && code <= KeyEvent.VK_Z) || code == KeyEvent.VK_SPACE){
                 if(gamePanel.getGame().gameState == gamePanel.getGame().settingState){
                     switch (gamePanel.getGame().selectedOptions) {
-                        case 2 -> {
+                        case 3 -> {
                             if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
                             upButton = code;
                         }
-                        case 3 -> {
+                        case 4 -> {
                             if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
                             leftButton = code;
                         }
-                        case 4 -> {
+                        case 5 -> {
                             if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
                             dashButton = code;
                         }
-                        case 5 -> {
+                        case 6 -> {
                             if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
                             downButton = code;
                         }
-                        case 6 -> {
+                        case 7 -> {
                             if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
                             rightButton = code;
                         }
-                        case 7 -> {
+                        case 8 -> {
                             if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
                             climbButton = code;
                         }
