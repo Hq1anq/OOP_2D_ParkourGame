@@ -87,8 +87,8 @@ public class Game implements Runnable {
     // Camera shake variables
     private boolean shaking = false;
     private long shakeStartTime;
-    private long shakeDuration = 500; // Shake duration in milliseconds
-    private int shakeIntensity = 10; // Shake intensity in pixels
+    private long shakeDuration = 250; // Shake duration in milliseconds
+    private int shakeIntensity = 5; // Shake intensity in pixels
 
     public Game() {
         // GENERATE GAME WINDOW AND PANEL AND MENU DRAWER
