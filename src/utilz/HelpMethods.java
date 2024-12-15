@@ -10,14 +10,22 @@ import main.Game;
 import static main.Game.TILE_SIZE;
 import objects.BreakablePlatform;
 import static utilz.Constants.ObjectConstants.BREAKABLE_PLATFORM;
+import static utilz.Constants.ObjectConstants.BROWNSAW;
+import static utilz.Constants.ObjectConstants.CELL_SPIKE;
+import static utilz.Constants.ObjectConstants.CHAINSAW;
+import static utilz.Constants.ObjectConstants.FIRE;
+import static utilz.Constants.ObjectConstants.GetSpriteAmount;
+import static utilz.Constants.ObjectConstants.SPIKE;
+import static utilz.Constants.ObjectConstants.SPIKE2;
+import static utilz.Constants.ObjectConstants.SWORDTRAP1;
 
 public class HelpMethods {
 
     public static boolean CanMoveHere(float x, float y, float width, float height, int[][] levelData) {
-        if (!IsSolid(x, y, levelData)  && !IsSolid(x + width, y + height, levelData) && !IsSolid(x + width, y, levelData) 
-        && !IsSolid(x, y + height, levelData) && !IsSolid(x, y + height/2, levelData) && !IsSolid(x + width, y + height/2, levelData))
-            return true;
-        return false;
+        return !IsSolid(x, y, levelData)  && !IsSolid(x + width, y + height, levelData) &&
+            !IsSolid(x + width, y, levelData) && !IsSolid(x, y + height, levelData) &&
+            !IsSolid(x, y + height/2, levelData) && !IsSolid(x + width, y + height/2, levelData) &&
+            !IsSolid(x + width/2, y, levelData) && !IsSolid(x + width/2, y + height, levelData);
     }
 
     public static boolean IsSolid(float x, float y, int[][] levelData) {
@@ -53,9 +61,10 @@ public class HelpMethods {
 
     public static boolean IsEntityOnFloor(Rectangle2D.Float hitbox, int[][] levelData) {
         // Check pixels below the bottom-left and bottom-right corners of the hitbox
-        return (IsSolid(hitbox.x, hitbox.y + hitbox.height + 3, levelData) ||
-                IsSolid(hitbox.x + hitbox.width / 2, hitbox.y + hitbox.height + 3, levelData) ||
-                IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 3, levelData));
+        return (IsSolid(hitbox.x, hitbox.y + hitbox.height + 4, levelData) ||
+                IsSolid(hitbox.x + hitbox.width / 3, hitbox.y + hitbox.height + 4, levelData) ||
+                IsSolid(hitbox.x + 2/3 * hitbox.width, hitbox.y + hitbox.height + 4, levelData) ||
+                IsSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 4, levelData));
     }
 
     public static float GetEntityYPosUnderRoofOrAboveFloor(Rectangle2D.Float hitbox, float airSpeed) {
@@ -113,12 +122,7 @@ public class HelpMethods {
     }
 
     public static boolean IsInLadder(Rectangle2D.Float hitbox, int[][] levelData) {
-        int xIndex1 = (int) (hitbox.x / Game.TILE_SIZE);
-        int yIndex1 = (int) (hitbox.y / Game.TILE_SIZE);
-        int xIndex2 = (int) (hitbox.x + hitbox.width) / Game.TILE_SIZE;
-        int yIndex2 =  (int) (hitbox.y + hitbox.height) / Game.TILE_SIZE;
-        return (levelData[yIndex1][xIndex1] == 209 || levelData[yIndex1][xIndex1] == 211 || levelData[yIndex1][xIndex1] == 213) &&
-                (levelData[yIndex2][xIndex2] == 210 || levelData[yIndex2][xIndex2] == 212 || levelData[yIndex2][xIndex2] == 214);
+        return IsLadder(hitbox.x, hitbox.y, levelData) && IsLadder(hitbox.x, hitbox.y + hitbox.height, levelData);
     }
     public static boolean HitTrap(Rectangle2D.Float hitbox, int[][] levelData){
         float top_Y = hitbox.y;
@@ -132,77 +136,68 @@ public class HelpMethods {
         int map_bottom_Y = (int)(bottom_Y / TILE_SIZE);
 
         // Chainsaw
-        if((levelData[map_bottom_Y][map_left_X] >= 266 && levelData[map_bottom_Y][map_left_X] <= 273)
-        || (levelData[map_top_Y][map_left_X] >= 266 && levelData[map_top_Y][map_left_X] <= 273)
-        || (levelData[map_bottom_Y][map_right_X] >= 266 && levelData[map_bottom_Y][map_right_X] <= 273)
-        || (levelData[map_top_Y][map_right_X] >= 266 && levelData[map_top_Y][map_right_X] <= 273))
+        if((levelData[map_bottom_Y][map_left_X] >= CHAINSAW && levelData[map_bottom_Y][map_left_X] < CHAINSAW + GetSpriteAmount(CHAINSAW))
+        || (levelData[map_top_Y][map_left_X] >= CHAINSAW && levelData[map_top_Y][map_left_X] < CHAINSAW + GetSpriteAmount(CHAINSAW))
+        || (levelData[map_bottom_Y][map_right_X] >= CHAINSAW && levelData[map_bottom_Y][map_right_X] < CHAINSAW + GetSpriteAmount(CHAINSAW))
+        || (levelData[map_top_Y][map_right_X] >= CHAINSAW && levelData[map_top_Y][map_right_X] < CHAINSAW + GetSpriteAmount(CHAINSAW)))
             return true;
 
         // Brown-saw
-        if(levelData[map_bottom_Y][map_right_X] >= 247 && levelData[map_bottom_Y][map_right_X] <= 248){
+        if(levelData[map_bottom_Y][map_right_X] >= BROWNSAW && levelData[map_bottom_Y][map_right_X] < BROWNSAW){
             return true;
         }
 
-        if((levelData[map_top_Y][map_left_X] >= 247 && levelData[map_top_Y][map_left_X] <= 248)
-        || (levelData[map_bottom_Y][map_left_X] >= 247 && levelData[map_bottom_Y][map_left_X] <= 248)
-        || (levelData[map_top_Y][map_right_X] >= 247 && levelData[map_top_Y][map_right_X] <= 248)){
+        if((levelData[map_top_Y][map_left_X] >= BROWNSAW && levelData[map_top_Y][map_left_X] < BROWNSAW + GetSpriteAmount(BROWNSAW))
+        || (levelData[map_bottom_Y][map_left_X] >= BROWNSAW && levelData[map_bottom_Y][map_left_X] < BROWNSAW + GetSpriteAmount(BROWNSAW))
+        || (levelData[map_top_Y][map_right_X] >= BROWNSAW && levelData[map_top_Y][map_right_X] < BROWNSAW + GetSpriteAmount(BROWNSAW))){
             if(left_X > map_left_X * TILE_SIZE + 28) return false;
-            if(top_Y > map_top_Y * TILE_SIZE + 28) return false;
-            return true;
+            return top_Y <= map_top_Y * TILE_SIZE + 28;
         }
 
         // Spike
-        if((levelData[map_bottom_Y][map_left_X] >= 285 && levelData[map_bottom_Y][map_left_X] <= 286)
-        || (levelData[map_bottom_Y][map_right_X] >= 285 && levelData[map_bottom_Y][map_right_X] <= 286)){
-            if(bottom_Y < map_bottom_Y * TILE_SIZE + 26) return false;
-            return true;
+        if((levelData[map_bottom_Y][map_left_X] >= SPIKE && levelData[map_bottom_Y][map_left_X] < SPIKE + GetSpriteAmount(SPIKE))
+        || (levelData[map_bottom_Y][map_right_X] >= SPIKE && levelData[map_bottom_Y][map_right_X] < SPIKE + GetSpriteAmount(SPIKE))){
+            return bottom_Y >= map_bottom_Y * TILE_SIZE + 26;
         }
-        if((levelData[map_bottom_Y][map_left_X] >= 287 && levelData[map_bottom_Y][map_left_X] <= 294)
-        || (levelData[map_bottom_Y][map_right_X] >= 287 && levelData[map_bottom_Y][map_right_X] <= 294)){
-            if(bottom_Y < map_bottom_Y * TILE_SIZE + 19) return false;
+        if((levelData[map_bottom_Y][map_left_X] >= SPIKE2 && levelData[map_bottom_Y][map_left_X] < SPIKE2 + GetSpriteAmount(SPIKE2))
+        || (levelData[map_bottom_Y][map_right_X] >= SPIKE2 && levelData[map_bottom_Y][map_right_X] < SPIKE2 + GetSpriteAmount(SPIKE2))){
+            return (bottom_Y >= map_bottom_Y * TILE_SIZE + 19);
+        }
+
+        if((levelData[map_top_Y][map_left_X] >= SPIKE && levelData[map_top_Y][map_left_X] < SPIKE + GetSpriteAmount(SPIKE))
+        || (levelData[map_top_Y][map_right_X] >= SPIKE && levelData[map_top_Y][map_right_X] < SPIKE + GetSpriteAmount(SPIKE))
+        || (levelData[map_top_Y][map_left_X] >= SPIKE2 && levelData[map_top_Y][map_left_X] < SPIKE2 + GetSpriteAmount(SPIKE2))
+        || (levelData[map_top_Y][map_right_X] >= SPIKE2 && levelData[map_top_Y][map_right_X] < SPIKE2 + GetSpriteAmount(SPIKE2))){
             return true;
         }
 
-        if((levelData[map_top_Y][map_left_X] >= 285 && levelData[map_top_Y][map_left_X] <= 286)
-        || (levelData[map_top_Y][map_right_X] >= 285 && levelData[map_top_Y][map_right_X] <= 286)
-        || (levelData[map_top_Y][map_left_X] >= 287 && levelData[map_top_Y][map_left_X] <= 294)
-        || (levelData[map_top_Y][map_right_X] >= 287 && levelData[map_top_Y][map_right_X] <= 294)){
-            return true;
-        }
-
-        if((levelData[map_top_Y][map_left_X] >= 190 && levelData[map_top_Y][map_left_X] <= 195)
-        || (levelData[map_top_Y][map_right_X] >= 190 && levelData[map_top_Y][map_right_X] <= 195)) {
+        if((levelData[map_top_Y][map_left_X] >= CELL_SPIKE && levelData[map_top_Y][map_left_X] < CELL_SPIKE + GetSpriteAmount(CELL_SPIKE))
+        || (levelData[map_top_Y][map_right_X] >= CELL_SPIKE && levelData[map_top_Y][map_right_X] < CELL_SPIKE + GetSpriteAmount(CELL_SPIKE))){
             return true;
         }
 
         // Fire
-        if((levelData[map_bottom_Y][map_left_X] >= 228 && levelData[map_bottom_Y][map_left_X] <= 231)
-        || (levelData[map_top_Y][map_left_X] >= 228 && levelData[map_top_Y][map_left_X] <= 231)){
-            if(left_X < map_left_X * TILE_SIZE + 7) return false;
-            return true;
+        if((levelData[map_bottom_Y][map_left_X] >= FIRE && levelData[map_bottom_Y][map_left_X] < FIRE + GetSpriteAmount(FIRE))
+        || (levelData[map_top_Y][map_left_X] >= FIRE && levelData[map_top_Y][map_left_X] < FIRE + GetSpriteAmount(FIRE))) {
+            return left_X >= map_left_X * TILE_SIZE + 7;
         }
 
-        if((levelData[map_bottom_Y][map_right_X] >= 228 && levelData[map_bottom_Y][map_right_X] <= 231)
-        || (levelData[map_top_Y][map_right_X] >= 228 && levelData[map_top_Y][map_right_X] <= 231)){
-            if(left_X > map_left_X * TILE_SIZE + 26) return false;
-            return true;
+        if((levelData[map_bottom_Y][map_right_X] >= FIRE && levelData[map_bottom_Y][map_right_X] < FIRE + GetSpriteAmount(FIRE))
+        || (levelData[map_top_Y][map_right_X] >= FIRE && levelData[map_top_Y][map_right_X] < FIRE + GetSpriteAmount(FIRE))) {
+            return (left_X <= map_left_X * TILE_SIZE + 26);
         }
         
         // Sword trap
-        if((levelData[map_bottom_Y][map_left_X] >= 133 && levelData[map_bottom_Y][map_left_X] <= 137)
-        || (levelData[map_bottom_Y][map_right_X] >= 133 && levelData[map_bottom_Y][map_right_X] <= 137)){
-            if(bottom_Y < map_bottom_Y * TILE_SIZE + 8) return false;
-            return true;
+        if((levelData[map_bottom_Y][map_left_X] >= SWORDTRAP1 && levelData[map_bottom_Y][map_left_X] < SWORDTRAP1 + GetSpriteAmount(SWORDTRAP1))
+        || (levelData[map_bottom_Y][map_right_X] >= SWORDTRAP1 && levelData[map_bottom_Y][map_right_X] < SWORDTRAP1 + GetSpriteAmount(SWORDTRAP1))){
+            return (bottom_Y >= map_bottom_Y * TILE_SIZE + 8);
         }
 
-        if((levelData[map_top_Y][map_left_X] >= 133 && levelData[map_top_Y][map_left_X] <= 137)
-        || (levelData[map_top_Y][map_right_X] >= 133 && levelData[map_top_Y][map_right_X] <= 137))
-            return true;
-
-        return false;
+        return (levelData[map_top_Y][map_left_X] >= SWORDTRAP1 && levelData[map_top_Y][map_left_X] < SWORDTRAP1 + GetSpriteAmount(SWORDTRAP1))
+            || (levelData[map_top_Y][map_right_X] >= SWORDTRAP1 && levelData[map_top_Y][map_right_X] < SWORDTRAP1 + GetSpriteAmount(SWORDTRAP1));
     }
 
-    public static boolean IsMud(int x, int y, int[][] levelData){
+    public static boolean IsMud(int x, int y, int[][] levelData) {
         return levelData[y][x] == 9 || levelData[y][x] == 28 || levelData[y][x] == 47 || levelData[y][x] == 66
             || levelData[y][x] == 85;
     }

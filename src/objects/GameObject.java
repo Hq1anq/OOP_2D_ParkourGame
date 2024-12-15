@@ -47,9 +47,7 @@ public class GameObject {
         aniTick = 0;
         aniTick = 0;
         active = true;
-        if (objectType == BREAKABLE_PLATFORM) {
-            doAnimation = false;
-        } else doAnimation = true;
+        doAnimation = (objectType != BREAKABLE_PLATFORM);
     }
 
     public int getObjectType() {

@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import levels.Level;
 import main.Game;
 import utilz.LoadSave;
+import utilz.Point;
 
+@SuppressWarnings({"FieldMayBeFinal", "unused"})
 public class ObjectManager {
 
     private Game game;
@@ -20,15 +22,15 @@ public class ObjectManager {
         breakablePlatforms = new ArrayList<>();
     }
 
-    public float checkObjectStepped(Rectangle2D.Float playerHitbox) {
-        Rectangle2D.Float footHitbox = new Rectangle2D.Float(playerHitbox.x, playerHitbox.y + playerHitbox.height + 2, playerHitbox.width, 5);
+    public Point checkObjectStepped(Rectangle2D.Float playerHitbox) {
+        Rectangle2D.Float footHitbox = new Rectangle2D.Float(playerHitbox.x, playerHitbox.y + playerHitbox.height + 2, playerHitbox.width, 10);
         for (BreakablePlatform bp : breakablePlatforms) {
             if (bp.isActive() && footHitbox.intersects(bp.getHitbox())) {
                 bp.setAnimation(true);
-                return bp.getHitbox().y;
+                return new Point((int) bp.getHitbox().x, (int) bp.getHitbox().y);
             }
         }
-        return -1;
+        return null;
     }
 
     public void loadObjects(Level level) {

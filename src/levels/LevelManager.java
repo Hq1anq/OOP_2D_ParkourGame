@@ -4,6 +4,17 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import main.Game;
 import static main.Game.TILE_SIZE;
+import static utilz.Constants.ObjectConstants.BREAKABLE_PLATFORM;
+import static utilz.Constants.ObjectConstants.BROWNSAW;
+import static utilz.Constants.ObjectConstants.CELL_SPIKE;
+import static utilz.Constants.ObjectConstants.CHAINSAW;
+import static utilz.Constants.ObjectConstants.FIRE;
+import static utilz.Constants.ObjectConstants.GetSpriteAmount;
+import static utilz.Constants.ObjectConstants.INVISIBLE_TILE;
+import static utilz.Constants.ObjectConstants.SPIKE;
+import static utilz.Constants.ObjectConstants.SPIKE2;
+import static utilz.Constants.ObjectConstants.SWORDTRAP1;
+import static utilz.Constants.ObjectConstants.SWORDTRAP2;
 import utilz.LoadSave;
 
 @SuppressWarnings("FieldMayBeFinal")
@@ -17,14 +28,14 @@ public class LevelManager {
     private Level level;
     private int currentLevel = 1;
 
-    private float chainsawIndex = 266;
-    private float fireIndex = 228;
-    private float spikeIndex = 285;
-    private float spike2Index = 289;
-    private float swordtrap1Index = 133;
-    private float swordtrap2Index = 152;
-    private float brownsawIndex = 247;
-    private float cellSpikeIndex = 190;
+    private float chainsawIndex = CHAINSAW;
+    private float fireIndex = FIRE;
+    private float spikeIndex = SPIKE;
+    private float spike2Index = SPIKE2;
+    private float swordtrap1Index = SWORDTRAP1;
+    private float swordtrap2Index = SWORDTRAP2;
+    private float brownsawIndex = BROWNSAW;
+    private float cellSpikeIndex = CELL_SPIKE;
 
     private int trapFPU = 40; // 1 frame for 40 updates
 
@@ -48,38 +59,40 @@ public class LevelManager {
         for (int i = 0; i < level.getLevelData().length; i++)
             for (int j = 0; j < level.getLevelData()[0].length; j++) {
                 int index = level.getSpriteIndex(j, i);
-                if (index == 266) {
+                if (index == CHAINSAW) {
                     g.drawImage(levelSprite[(int) chainsawIndex], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     chainsawIndex += 1.0/trapFPU;
-                    if (chainsawIndex > 274) chainsawIndex = 266;
-                } else if (index == 228) {
+                    if (chainsawIndex > CHAINSAW + GetSpriteAmount(CHAINSAW)) chainsawIndex = CHAINSAW;
+                } else if (index == FIRE) {
                     g.drawImage(levelSprite[(int) fireIndex], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     fireIndex += 1.0/trapFPU;
-                    if (fireIndex > 232) fireIndex = 228;
-                } else if (index == 285) {
+                    if (fireIndex > FIRE + GetSpriteAmount(FIRE)) fireIndex = FIRE;
+                } else if (index == SPIKE) {
                     g.drawImage(levelSprite[(int) spikeIndex], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     spikeIndex += 1.0/(10 * trapFPU);
-                    if (spikeIndex > 287) spikeIndex = 285;
-                } else if (index == 190) {
+                    if (spikeIndex > SPIKE + GetSpriteAmount(SPIKE)) spikeIndex = SPIKE;
+                } else if (index == CELL_SPIKE) {
                     g.drawImage(levelSprite[(int) cellSpikeIndex], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     cellSpikeIndex += 1.0/(10 * trapFPU);
-                    if (cellSpikeIndex > 192) cellSpikeIndex = 190;
-                } else if (index == 289) {
+                    if (cellSpikeIndex > CELL_SPIKE + GetSpriteAmount(CELL_SPIKE)) cellSpikeIndex = CELL_SPIKE;
+                } else if (index == SPIKE2) {
                     g.drawImage(levelSprite[(int) spike2Index], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     spike2Index += 5.0/trapFPU;
-                    if (spike2Index > 295) spike2Index = 289;
-                } else if (index == 133) {
+                    if (spike2Index > SPIKE2 + GetSpriteAmount(SPIKE2)) spike2Index = SPIKE2;
+                } else if (index == SWORDTRAP1) {
                     g.drawImage(levelSprite[(int) swordtrap1Index], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     swordtrap1Index += 1.0/trapFPU;
-                    if (swordtrap1Index > 138) swordtrap1Index = 133;
-                } else if (index == 152) {
+                    if (swordtrap1Index > SWORDTRAP1 + GetSpriteAmount(SWORDTRAP1)) swordtrap1Index = SWORDTRAP1;
+                } else if (index == SWORDTRAP2) {
                     g.drawImage(levelSprite[(int) swordtrap2Index], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     swordtrap2Index += 2.0/trapFPU;
-                    if (swordtrap2Index > 156) swordtrap2Index = 152;
-                } else if (index == 247) {
+                    if (swordtrap2Index > SWORDTRAP2 + GetSpriteAmount(SWORDTRAP2)) swordtrap2Index = SWORDTRAP2;
+                } else if (index == BROWNSAW) {
                     g.drawImage(levelSprite[(int) brownsawIndex], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     brownsawIndex += 1.0/(5 * trapFPU);
-                    if (brownsawIndex > 249) brownsawIndex = 247;
+                    if (brownsawIndex > BROWNSAW + GetSpriteAmount(BROWNSAW)) brownsawIndex = BROWNSAW;
+                } else if (index == BREAKABLE_PLATFORM) {
+                    g.drawImage(levelSprite[INVISIBLE_TILE], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                 } else if (index != -1 && (index < 304 || index > 336)) {
                     g.drawImage(levelSprite[index], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                 }

@@ -26,6 +26,7 @@ public class Player extends Entity {
     // Normal moving
     private boolean moving = false, isFacingLeft = false; 
     private boolean left, up, right, down, crouch, jump, climb;
+    private float xSpeed;
     private boolean performCondition = false;       // handle keypress problem
     // private float playerSpeed = 2.0f;            // no more use after added friction and acceleration
     private int[][] levelData;
@@ -79,7 +80,7 @@ public class Player extends Entity {
 
     // CoyoteTime
     private float timeSinceGrounded = 0;            // count time while not on floor/ground
-    private float coyoteTime = 0.1f;                // could be final, 0.15f might be more optimize
+    private float coyoteTime = 0.15f;                // could be final, 0.15f might be more optimize
 
     // Dash
     private boolean dash = false;                   // true if user is pressing dash, false otherwise
@@ -117,9 +118,9 @@ public class Player extends Entity {
     private long timeSinceLastPlayedFootstepsSoundEffect = 0;
 
     // Breakable Platform
-    private Queue<Point> PosOnBP = new LinkedList<>(); // y position on breakable platform
+    private Queue<Point> PosOnBP = new LinkedList<>(); // pos breakable platform on levelData
     private Queue<Long> timeOnBP = new LinkedList<>();
-    private float checkBP;
+    private Point checkBP;
     private boolean isOnBP = false;
     private boolean toggleBreakablePlatform = true;
     private long timeForBP = 1000;
@@ -221,7 +222,6 @@ public class Player extends Entity {
                     (int) (hitbox.x - xDrawOffset) - xLevelOffset,
                     (int) (hitbox.y - yDrawOffset - yLevelOffset),
                     width * flipW, height, null);
-        // g.drawLine(0, 0, 100, (int) ((hitbox.y + airSpeed) / Game.TILE_SIZE) * Game.TILE_SIZE);
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         // drawHitbox(g2, xLevelOffset, yLevelOffset);
     }
@@ -339,32 +339,25 @@ public class Player extends Entity {
         if(HitTrap(hitbox, levelData) && !unvulerable) gotHit();
 
         checkBP = game.checkBreakablePlatformStepped(hitbox);
-        if(checkBP != -1 && toggleBreakablePlatform) {
+        if(checkBP != null && toggleBreakablePlatform) {
             toggleBreakablePlatform = false;
             isOnBP = true;
-            int row = (int) (checkBP / TILE_SIZE);
-            int col = (int) (hitbox.x / TILE_SIZE);
-            levelData[row][col] = 119;
-            PosOnBP.add(new Point(col, row));
+            PosOnBP.add(checkBP);
             timeOnBP.add(System.currentTimeMillis());
-            hitbox.y = checkBP - hitbox.height;
         }
         if (!PosOnBP.isEmpty()) {
             Point point = PosOnBP.peek();
             long timeFromBP = timeOnBP.peek();
-            int row = point.y;
-            int col = point.x;
-            if (levelData[row][col] == 119) {
-                long currentTime = System.currentTimeMillis();
-                if (currentTime - timeFromBP >= timeForBP) {
-                    levelData[row][col] = -1;
-                    PosOnBP.poll();
-                    timeOnBP.poll();
-                    game.startCameraShake();
-                }
+            int row = (int) (point.y / TILE_SIZE);
+            int col = (int) (point.x / TILE_SIZE);
+            if (System.currentTimeMillis() - timeFromBP >= timeForBP) {
+                levelData[row][col] = -1;
+                PosOnBP.poll();
+                timeOnBP.poll();
+                game.startCameraShake();
             }
         }
-        if (checkBP == -1) {
+        if (checkBP == null) {
             toggleBreakablePlatform = true;
             isOnBP = false;
         }
@@ -470,7 +463,7 @@ public class Player extends Entity {
             
         if (canMove && ((left && !right) || (!left && right))) moving = true;
     
-        float xSpeed = 0;   // prefer as delta x : to add to player position x (horizontal)
+        xSpeed = 0;   // prefer as delta x : to add to player position x (horizontal)
         if (canMove && !climbing) {
             if(moving == true){
                 if(left){
@@ -501,10 +494,8 @@ public class Player extends Entity {
         if(leftCurrentSpeed < 0) leftCurrentSpeed = 0;
         if(rightCurrentSpeed < 0) rightCurrentSpeed = 0;
 
-        if(canMove)
-        xSpeed = - leftCurrentSpeed + rightCurrentSpeed;
-        else
-        xSpeed = 0;
+        if(canMove) xSpeed = - leftCurrentSpeed + rightCurrentSpeed;
+        else xSpeed = 0;
 
         // check if player is still on the floor
         // (go to the end of the floor = fall down)
@@ -555,10 +546,7 @@ public class Player extends Entity {
                     } else {
                         hitbox.y = GetEntityYPosUnderRoofOrAboveFloor(hitbox, airSpeed);
                         if (airSpeed > 0) {
-                            if (airSpeed > 9) {
-                                floorSmash = true;
-                                // game.startCameraShake();
-                            } else floorSmash = false;
+                            floorSmash = (airSpeed > 9);
                             resetInAir();
                         }
                         else
@@ -809,7 +797,7 @@ public class Player extends Entity {
     }
 
     public void drawHealth(Graphics2D g2){
-        int x = 10, y = 10;
+        int xHeart = 10, yHeart = 10;
         int temp = 1;
 
         if(unvulerable){
@@ -822,14 +810,14 @@ public class Player extends Entity {
         else delta_shaking = 0;
 
         for(int i = 0; i < 5; i++){
-            g2.drawImage(healthImages[0], x + i * 32, y + delta_shaking * temp, 32, 32, null);
+            g2.drawImage(healthImages[0], xHeart + i * 32, yHeart + delta_shaking * temp, 32, 32, null);
             if(unvulerable) temp *= -1;
         }
 
         temp = 1;
 
         for(int i = 0; i < currentHealth; i++){
-            g2.drawImage(healthImages[1], x + i * 32, y + delta_shaking * temp, 32, 32, null);
+            g2.drawImage(healthImages[1], xHeart + i * 32, yHeart + delta_shaking * temp, 32, 32, null);
             if(unvulerable) temp *= -1;
         }
     }

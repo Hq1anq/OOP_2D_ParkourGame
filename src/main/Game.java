@@ -296,7 +296,7 @@ public class Game implements Runnable {
         }
     }
 
-    public float checkBreakablePlatformStepped(Rectangle2D.Float playerHitbox) {
+    public Point checkBreakablePlatformStepped(Rectangle2D.Float playerHitbox) {
         return objectManager.checkObjectStepped(playerHitbox);
     }
 
