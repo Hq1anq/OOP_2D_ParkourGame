@@ -33,6 +33,15 @@ public class Constants {
             };
         }
     }
+
+    public static class GameState {
+        public static final int START_MENU = -1;
+        public static final int PLAYING = 0;
+        public static final int SETTING = 1;
+        public static final int GUIDES = 2;
+        public static final int EXIT = 3;
+        public static final int CHOOSING_LEVEL = 4;
+    }
     public static class Menu {
         public static final Color DARKEN_BACKGROUND_COLOR = new Color(0, 0, 0, 0.5f);
     }

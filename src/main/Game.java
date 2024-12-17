@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import levels.LevelManager;
 import objects.ObjectManager;
 import sound.Sound;
+import utilz.Constants.GameState;
 import utilz.Constants.Level1;
 import utilz.Constants.Level2;
 import utilz.LoadSave;
@@ -55,13 +56,7 @@ public class Game implements Runnable {
 
     // GAME STATES
     // Main game states
-    public final int startingMenuState = -1;    // for easier code handling than to remember which state to which number
-    public final int playingState = 0;
-    public final int settingState = 1;
-    public final int guidesState = 2;
-    public final int exitState = 3;
-    public final int choosingLevelState = 4;
-    public int gameState = -1;      // current game state : default when start game : starting menu state
+    public int gameState = GameState.START_MENU;      // current game state : default when start game : starting menu state
     public int selectedOptions = 0; // current selecting option : to choose option of the next game state
     // Sub game state
     public boolean paused = false;              // DO NOT TOUCH THIS
@@ -102,7 +97,7 @@ public class Game implements Runnable {
         
         startGameLoop();
 
-        playMusic(0);
+        initializeMusic();
 
         objectManager.loadObjects(levelManager.getCurrentLevel());
 
@@ -148,6 +143,10 @@ public class Game implements Runnable {
         gameThread.start();
     }
 
+    private void initializeMusic() {
+        playMusic(0);
+    }
+
     public void loadLevel() {
         levelManager.loadLevel(currentLevel);
         player.loadLevelData(levelManager.getCurrentLevel().getLevelData());
@@ -156,7 +155,7 @@ public class Game implements Runnable {
     public void update() {
         // UPDATE STATISTICS EVERY FRAME
 
-        if(gameState == playingState){
+        if(gameState == GameState.PLAYING){
             if(paused == false && gameOver == false) {
                 player.update();
                 levelManager.update();
@@ -231,7 +230,7 @@ public class Game implements Runnable {
 
         drawEnvironment(g);
 
-        if(gameState == playingState){
+        if(gameState == GameState.PLAYING){
             levelManager.draw(g, xLevelOffset, yLevelOffset);
             player.drawHealth((Graphics2D)g);
             player.render((Graphics2D)g, xLevelOffset, yLevelOffset);

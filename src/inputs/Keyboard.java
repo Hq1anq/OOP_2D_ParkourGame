@@ -3,9 +3,13 @@ package inputs;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import main.GamePanel;
+import utilz.Constants.GameState;
+
+@SuppressWarnings("FieldMayBeFinal")
 
 public class Keyboard implements KeyListener {
 
+    
     private GamePanel gamePanel;
     public Keyboard(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -38,7 +42,7 @@ public class Keyboard implements KeyListener {
 
         if(gamePanel.getGame().changingButton == true){
             if((code >= KeyEvent.VK_A && code <= KeyEvent.VK_Z) || code == KeyEvent.VK_SPACE){
-                if(gamePanel.getGame().gameState == gamePanel.getGame().settingState){
+                if(gamePanel.getGame().gameState == GameState.SETTING){
                     switch (gamePanel.getGame().selectedOptions) {
                         case 3 -> {
                             if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
@@ -64,14 +68,13 @@ public class Keyboard implements KeyListener {
                             if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
                             climbButton = code;
                         }
-                        default -> {
-                        }
+                        default -> {}
                     }
 
                     gamePanel.getGame().playSoundEffect(6);
                 }
 
-                else if(gamePanel.getGame().gameState == gamePanel.getGame().playingState){
+                else if(gamePanel.getGame().gameState == GameState.PLAYING){
                     switch (gamePanel.getGame().selectedOptions) {
                         case 0 -> {
                             if(appearTwiceOrMore(code, gamePanel.getGame().selectedOptions)) return;
@@ -111,23 +114,15 @@ public class Keyboard implements KeyListener {
         }
 
         // handling every game state input
-        if(gamePanel.getGame().gameState == gamePanel.getGame().startingMenuState){
-            updateStartingMenuState(code);
-        } 
-        else if(gamePanel.getGame().gameState == gamePanel.getGame().playingState){
-            updatePlayingState(code);
-        } 
-        else if(gamePanel.getGame().gameState == gamePanel.getGame().settingState){
-            updateSettingState(code);
-        } 
-        else if(gamePanel.getGame().gameState == gamePanel.getGame().guidesState){
-            updateGuidesState(code);
-        } 
-        else if(gamePanel.getGame().gameState == gamePanel.getGame().exitState){
-            updateExitState(code);
-        } 
-        else if(gamePanel.getGame().gameState == gamePanel.getGame().choosingLevelState){
-            updateChoosingLevelState(code);
+        switch (gamePanel.getGame().gameState) {
+            case GameState.START_MENU -> updateStartingMenuState(code);
+            case GameState.PLAYING -> updatePlayingState(code);
+            case GameState.SETTING -> updateSettingState(code);
+            case GameState.GUIDES -> updateGuidesState(code);
+            case GameState.EXIT -> updateExitState(code);
+            case GameState.CHOOSING_LEVEL -> updateChoosingLevelState(code);
+            default -> {
+            }
         }
         
     }
@@ -149,18 +144,22 @@ public class Keyboard implements KeyListener {
         }
 
         if(code == KeyEvent.VK_ENTER){
-            if(gamePanel.getGame().selectedOptions == gamePanel.getGame().playingState){
-                gamePanel.getGame().gameState = gamePanel.getGame().choosingLevelState;
-            }
-            else if(gamePanel.getGame().selectedOptions == gamePanel.getGame().settingState){
-                gamePanel.getGame().gameState = gamePanel.getGame().settingState;
-            }
-            else if(gamePanel.getGame().selectedOptions == gamePanel.getGame().guidesState){
-                gamePanel.getGame().gameState = gamePanel.getGame().guidesState;
-                gamePanel.setGifVisible(0);
-            }
-            else if(gamePanel.getGame().selectedOptions == gamePanel.getGame().exitState){
-                gamePanel.getGame().gameState = gamePanel.getGame().exitState;
+            switch (gamePanel.getGame().selectedOptions) {
+                case GameState.PLAYING:
+                    gamePanel.getGame().gameState = GameState.CHOOSING_LEVEL;
+                    break;
+                case GameState.SETTING:
+                    gamePanel.getGame().gameState = GameState.SETTING;
+                    break;
+                case GameState.GUIDES:
+                    gamePanel.getGame().gameState = GameState.GUIDES;
+                    gamePanel.setGifVisible(0);
+                    break;
+                case GameState.EXIT:
+                    gamePanel.getGame().gameState = GameState.EXIT;
+                    break;
+                default:
+                    break;
             }
             gamePanel.getGame().selectedOptions = 0;
             gamePanel.getGame().playSoundEffect(6);
@@ -190,7 +189,7 @@ public class Keyboard implements KeyListener {
                 gamePanel.getGame().playSoundEffect(6);
                 gamePanel.getGame().menu.resetAnimationTick();
                 gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
-                gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+                gamePanel.getGame().gameState = GameState.START_MENU;
             }
 
             return;
@@ -259,7 +258,7 @@ public class Keyboard implements KeyListener {
                 gamePanel.getGame().playSoundEffect(6);
                 gamePanel.getGame().menu.resetAnimationTick();
                 gamePanel.getGame().menu.startingMenuTexts[0] = "New Game";
-                gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+                gamePanel.getGame().gameState = GameState.START_MENU;
             }
 
             return;
@@ -302,13 +301,13 @@ public class Keyboard implements KeyListener {
             if(code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT){
                 if(gamePanel.getGame().selectedOptions == 2){
                     if(gamePanel.getGame().musicVolume < 5)
-                    gamePanel.getGame().musicVolume++;
+                        gamePanel.getGame().musicVolume++;
                     gamePanel.getGame().sound.updateMusic();
                     gamePanel.getGame().playSoundEffect(6);
                 }
                 else if(gamePanel.getGame().selectedOptions == 3){
                     if(gamePanel.getGame().soundEffectVolume < 5)
-                    gamePanel.getGame().soundEffectVolume++;
+                        gamePanel.getGame().soundEffectVolume++;
                     gamePanel.getGame().sound.updateSoundEffect();
                     gamePanel.getGame().playSoundEffect(6);
                 }
@@ -317,13 +316,13 @@ public class Keyboard implements KeyListener {
             if(code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT){
                 if(gamePanel.getGame().selectedOptions == 2){
                     if(gamePanel.getGame().musicVolume > 0)
-                    gamePanel.getGame().musicVolume--;
+                        gamePanel.getGame().musicVolume--;
                     gamePanel.getGame().sound.updateMusic();
                     gamePanel.getGame().playSoundEffect(6);
                 }
                 else if(gamePanel.getGame().selectedOptions == 3){
                     if(gamePanel.getGame().soundEffectVolume > 0)
-                    gamePanel.getGame().soundEffectVolume--;
+                        gamePanel.getGame().soundEffectVolume--;
                     gamePanel.getGame().sound.updateSoundEffect();
                     gamePanel.getGame().playSoundEffect(6);
                 }
@@ -346,7 +345,7 @@ public class Keyboard implements KeyListener {
                     case 5:
                         gamePanel.getGame().selectedOptions = 0;
                         gamePanel.getGame().paused = false;
-                        gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+                        gamePanel.getGame().gameState = GameState.START_MENU;
                         gamePanel.getGame().stopMusic();
                         gamePanel.getGame().playMusic(0);
                         gamePanel.getGame().playSoundEffect(6);
@@ -361,18 +360,23 @@ public class Keyboard implements KeyListener {
     private void updateSettingState(int code){
         // HANDLING INPUT LOGIC IN SETTING MENU STATE
         if(code == KeyEvent.VK_ESCAPE){
-            gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+            gamePanel.getGame().gameState = GameState.START_MENU;
             gamePanel.getGame().selectedOptions = 1;
             gamePanel.getGame().playSoundEffect(6);
         }
 
         if(code == KeyEvent.VK_W || code == KeyEvent.VK_UP){
-            if(gamePanel.getGame().selectedOptions == 0)
-                gamePanel.getGame().selectedOptions = 5;
-            else if(gamePanel.getGame().selectedOptions == 6)
-                gamePanel.getGame().selectedOptions = 2;
-            else
-                gamePanel.getGame().selectedOptions--;
+            switch (gamePanel.getGame().selectedOptions) {
+                case 0:
+                    gamePanel.getGame().selectedOptions = 5;
+                    break;
+                case 6:
+                    gamePanel.getGame().selectedOptions = 2;
+                    break;
+                default:
+                    gamePanel.getGame().selectedOptions--;
+                    break;
+            }
             gamePanel.getGame().playSoundEffect(6);
         }
 
@@ -387,13 +391,13 @@ public class Keyboard implements KeyListener {
         if(code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT){
             if(gamePanel.getGame().selectedOptions == 1){
                 if(gamePanel.getGame().musicVolume > 0)
-                gamePanel.getGame().musicVolume--;
+                    gamePanel.getGame().musicVolume--;
                 gamePanel.getGame().sound.updateMusic();
                 gamePanel.getGame().playSoundEffect(6);
             }
             else if(gamePanel.getGame().selectedOptions == 2){
                 if(gamePanel.getGame().soundEffectVolume > 0)
-                gamePanel.getGame().soundEffectVolume--;
+                    gamePanel.getGame().soundEffectVolume--;
                 gamePanel.getGame().sound.updateSoundEffect();
                 gamePanel.getGame().playSoundEffect(6);
             }
@@ -410,13 +414,13 @@ public class Keyboard implements KeyListener {
         if(code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT){
             if(gamePanel.getGame().selectedOptions == 1){
                 if(gamePanel.getGame().musicVolume < 5)
-                gamePanel.getGame().musicVolume++;
+                    gamePanel.getGame().musicVolume++;
                 gamePanel.getGame().sound.updateMusic();
                 gamePanel.getGame().playSoundEffect(6);
             }
             else if(gamePanel.getGame().selectedOptions == 2){
                 if(gamePanel.getGame().soundEffectVolume < 5)
-                gamePanel.getGame().soundEffectVolume++;
+                    gamePanel.getGame().soundEffectVolume++;
                 gamePanel.getGame().sound.updateSoundEffect();
                 gamePanel.getGame().playSoundEffect(6);
             }
@@ -444,32 +448,34 @@ public class Keyboard implements KeyListener {
 
     private void updateGuidesState(int code){
         // HANDLING INPUT LOGIC IN GUIDES MENU STATE
-        if(code == KeyEvent.VK_ESCAPE){
-            gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
-            gamePanel.getGame().selectedOptions = 2;
-            gamePanel.setAllGifUnvisible();
-            gamePanel.getGame().playSoundEffect(6);
-        }
-
-        else if(code == KeyEvent.VK_UP || code == KeyEvent.VK_W){
-            gamePanel.getGame().selectedOptions--;
-            if(gamePanel.getGame().selectedOptions < 0) gamePanel.getGame().selectedOptions = 6;
-            gamePanel.setGifVisible(gamePanel.getGame().selectedOptions);
-            gamePanel.getGame().playSoundEffect(6);
-        }
-
-        else if(code == KeyEvent.VK_DOWN || code == KeyEvent.VK_S){
-            gamePanel.getGame().selectedOptions++;
-            if(gamePanel.getGame().selectedOptions > 6) gamePanel.getGame().selectedOptions = 0;
-            gamePanel.setGifVisible(gamePanel.getGame().selectedOptions);
-            gamePanel.getGame().playSoundEffect(6);
+        switch (code) {
+            case KeyEvent.VK_ESCAPE -> {
+                gamePanel.getGame().gameState = GameState.START_MENU;
+                gamePanel.getGame().selectedOptions = 2;
+                gamePanel.setAllGifUnvisible();
+                gamePanel.getGame().playSoundEffect(6);
+            }
+            case KeyEvent.VK_UP, KeyEvent.VK_W -> {
+                gamePanel.getGame().selectedOptions--;
+                if(gamePanel.getGame().selectedOptions < 0) gamePanel.getGame().selectedOptions = 6;
+                gamePanel.setGifVisible(gamePanel.getGame().selectedOptions);
+                gamePanel.getGame().playSoundEffect(6);
+            }
+            case KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
+                gamePanel.getGame().selectedOptions++;
+                if(gamePanel.getGame().selectedOptions > 6) gamePanel.getGame().selectedOptions = 0;
+                gamePanel.setGifVisible(gamePanel.getGame().selectedOptions);
+                gamePanel.getGame().playSoundEffect(6);
+            }
+            default -> {
+            }
         }
     }
 
     private void updateExitState(int code){
         // HANDLING INPUT LOGIC IN EXITING STATE
         if(code == KeyEvent.VK_ESCAPE){
-            gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
+            gamePanel.getGame().gameState = GameState.START_MENU;
             gamePanel.getGame().selectedOptions = 3;
             gamePanel.getGame().playSoundEffect(6);
         }
@@ -510,66 +516,62 @@ public class Keyboard implements KeyListener {
                 gamePanel.getGame().warning = false;
                 gamePanel.getGame().selectedOptions = 0;
                 gamePanel.getGame().menu.startingMenuTexts[0] = "Continue";
-                gamePanel.getGame().gameState = gamePanel.getGame().playingState;
+                gamePanel.getGame().gameState = GameState.PLAYING;
             }
 
             return;
         }
 
-        if(code == KeyEvent.VK_ESCAPE){
-            gamePanel.getGame().selectedOptions = 0;
-            gamePanel.getGame().gameState = gamePanel.getGame().startingMenuState;
-            gamePanel.getGame().playSoundEffect(6);
-        }
-
-        else if(code == KeyEvent.VK_UP || code == KeyEvent.VK_W || code == KeyEvent.VK_DOWN || code == KeyEvent.VK_S){
-            if(gamePanel.getGame().finishedLevel1){
-                gamePanel.getGame().selectedOptions = 1 - gamePanel.getGame().selectedOptions;
+        switch (code) {
+            case KeyEvent.VK_ESCAPE -> {
+                gamePanel.getGame().selectedOptions = 0;
+                gamePanel.getGame().gameState = GameState.START_MENU;
                 gamePanel.getGame().playSoundEffect(6);
             }
-        }
-
-        else if(code == KeyEvent.VK_ENTER){
-            if((gamePanel.getGame().selectedOptions == 0 && gamePanel.getGame().playingLevel2)
-            || (gamePanel.getGame().selectedOptions == 1 && gamePanel.getGame().playingLevel1)){
-                gamePanel.getGame().warning = true;
-                gamePanel.getGame().playSoundEffect(6);
-                return;
-            }
-
-            
-            gamePanel.getGame().stopMusic();
-            gamePanel.getGame().currentLevel = gamePanel.getGame().selectedOptions + 1;
-
-            if(gamePanel.getGame().currentLevel == 1){
-                if(gamePanel.getGame().playingLevel1 == false){
-                    gamePanel.getGame().loadLevel();
+            case KeyEvent.VK_UP, KeyEvent.VK_W, KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
+                if(gamePanel.getGame().finishedLevel1){
+                    gamePanel.getGame().selectedOptions = 1 - gamePanel.getGame().selectedOptions;
+                    gamePanel.getGame().playSoundEffect(6);
                 }
-                gamePanel.getGame().playingLevel1 = true;
-                gamePanel.getGame().playingLevel2 = false;
-                gamePanel.getGame().playMusic(1);
             }
-            else if(gamePanel.getGame().currentLevel == 2){
-                if(gamePanel.getGame().playingLevel2 == false){
-                    gamePanel.getGame().loadLevel();
+            case KeyEvent.VK_ENTER -> {
+                if((gamePanel.getGame().selectedOptions == 0 && gamePanel.getGame().playingLevel2)
+                        || (gamePanel.getGame().selectedOptions == 1 && gamePanel.getGame().playingLevel1)){
+                    gamePanel.getGame().warning = true;
+                    gamePanel.getGame().playSoundEffect(6);
+                    return;
+                }   gamePanel.getGame().stopMusic();
+                gamePanel.getGame().currentLevel = gamePanel.getGame().selectedOptions + 1;
+                if(gamePanel.getGame().currentLevel == 1){
+                    if(gamePanel.getGame().playingLevel1 == false){
+                        gamePanel.getGame().loadLevel();
+                    }
+                    gamePanel.getGame().playingLevel1 = true;
+                    gamePanel.getGame().playingLevel2 = false;
+                    gamePanel.getGame().playMusic(1);
                 }
-                gamePanel.getGame().playingLevel1 = false;
-                gamePanel.getGame().playingLevel2 = true;
-                gamePanel.getGame().playMusic(2);
+                else if(gamePanel.getGame().currentLevel == 2){
+                    if(gamePanel.getGame().playingLevel2 == false){
+                        gamePanel.getGame().loadLevel();
+                    }
+                    gamePanel.getGame().playingLevel1 = false;
+                    gamePanel.getGame().playingLevel2 = true;
+                    gamePanel.getGame().playMusic(2);
+                }   gamePanel.getGame().selectedOptions = 0;
+                gamePanel.getGame().menu.startingMenuTexts[0] = "Continue";
+                gamePanel.getGame().gameState = GameState.PLAYING;
             }
-
-            gamePanel.getGame().selectedOptions = 0;
-            gamePanel.getGame().menu.startingMenuTexts[0] = "Continue";
-            gamePanel.getGame().gameState = gamePanel.getGame().playingState;
+            default -> {
+            }
         }
     }
 
     private boolean appearTwiceOrMore(int code, int selectedOptions){
         // check if the code is already in the code set
         int[] temp = {upButton, leftButton, dashButton, downButton, rightButton, climbButton};
-        if(gamePanel.getGame().gameState == gamePanel.getGame().settingState)
+        if(gamePanel.getGame().gameState == GameState.SETTING)
             temp[selectedOptions - 2] = code;
-        else if(gamePanel.getGame().gameState == gamePanel.getGame().playingState)
+        else if(gamePanel.getGame().gameState == GameState.PLAYING)
             temp[selectedOptions] = code;
         int appear = 0;
 

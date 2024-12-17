@@ -1,12 +1,13 @@
 package sound;
 
 import java.io.File;
-
+import java.io.IOException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
-
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import main.Game;
 
 public class Sound {
@@ -56,7 +57,7 @@ public class Sound {
             musicPlayer.open(ais);
             musicFloatControl = (FloatControl)musicPlayer.getControl(FloatControl.Type.MASTER_GAIN);
             updateMusic();
-        } catch (Exception e) {
+        } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
             System.out.println("Error" + e);
         }
     }
@@ -68,7 +69,7 @@ public class Sound {
             soundEffectPlayer.open(ais);
             soundEffectFloatControl = (FloatControl)soundEffectPlayer.getControl(FloatControl.Type.MASTER_GAIN);
             updateSoundEffect();
-        } catch (Exception e) {
+        } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
             System.out.println("Error" + e);
         }
     }
@@ -96,12 +97,12 @@ public class Sound {
     public void updateMusic(){
         float trueVolume = -80f;
         switch (game.musicVolume) {
-            case 0: trueVolume = -80f;  break;
-            case 1: trueVolume = -20f;  break;
-            case 2: trueVolume = -12f;  break;
-            case 3: trueVolume = -5f;   break;
-            case 4: trueVolume = 1f;    break;
-            case 5: trueVolume = 6f;    break;
+            case 0 -> trueVolume = -80f;
+            case 1 -> trueVolume = -20f;
+            case 2 -> trueVolume = -12f;
+            case 3 -> trueVolume = -5f;
+            case 4 -> trueVolume = 1f;
+            case 5 -> trueVolume = 6f;
         }
         musicFloatControl.setValue(trueVolume);
     }
@@ -109,12 +110,12 @@ public class Sound {
     public void updateSoundEffect(){
         float trueVolume = -80f;
         switch (game.soundEffectVolume) {
-            case 0: trueVolume = -80f;  break;
-            case 1: trueVolume = -20f;  break;
-            case 2: trueVolume = -12f;  break;
-            case 3: trueVolume = -5f;   break;
-            case 4: trueVolume = 1f;    break;
-            case 5: trueVolume = 6f;    break;
+            case 0 -> trueVolume = -80f;
+            case 1 -> trueVolume = -20f;
+            case 2 -> trueVolume = -12f;
+            case 3 -> trueVolume = -5f;
+            case 4 -> trueVolume = 1f;
+            case 5 -> trueVolume = 6f;
         }
         soundEffectFloatControl.setValue(trueVolume);
     }

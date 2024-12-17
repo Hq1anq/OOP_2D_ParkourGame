@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 public class GameWindow {
     private final JFrame jframe;
     public GameWindow(GamePanel gamePanel) {
-        jframe = new JFrame();;
+        jframe = new JFrame();
 
         jframe.setResizable(false);
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

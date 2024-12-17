@@ -4,7 +4,6 @@ import inputs.Keyboard;
 import inputs.Mouse;
 import java.awt.Dimension;
 import java.awt.Graphics;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -99,29 +98,15 @@ public class GamePanel extends JPanel {
     public void setGifVisible(int gifNumber){
         setAllGifUnvisible();
         switch (gifNumber) {
-            case 0:
-                Dash.setVisible(true);
-                break;
-            case 1:
-                DoubleJump.setVisible(true);
-                break;
-            case 2:
-                JumpCutting.setVisible(true);
-                break;
-            case 3:
-                LaddleClimb.setVisible(true);
-                break;
-            case 4:
-                LedgeClimb.setVisible(true);
-                break;
-            case 5:
-                WallClimb.setVisible(true);
-                break;
-            case 6:
-                WallKick.setVisible(true);
-                break;
-            default:
-                break;
+            case 0 -> Dash.setVisible(true);
+            case 1 -> DoubleJump.setVisible(true);
+            case 2 -> JumpCutting.setVisible(true);
+            case 3 -> LaddleClimb.setVisible(true);
+            case 4 -> LedgeClimb.setVisible(true);
+            case 5 -> WallClimb.setVisible(true);
+            case 6 -> WallKick.setVisible(true);
+            default -> {
+            }
         }
     }
 

@@ -3,15 +3,18 @@ package main;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import static main.Game.GAME_HEIGHT;
 import static main.Game.GAME_WIDTH;
 import static main.Game.TILE_SIZE;
 import static utilz.Constants.GAME_NAME;
+import utilz.Constants.GameState;
 import static utilz.Constants.Menu.DARKEN_BACKGROUND_COLOR;
 
 @SuppressWarnings("FieldMayBeFinal")
@@ -45,7 +48,7 @@ public class Menu {
         try {
             file = new File("res/font/ThaleahFat.ttf");
             mainFont = Font.createFont(Font.TRUETYPE_FONT, file).deriveFont(48f);
-        } catch (Exception e) {
+        } catch (FontFormatException | IOException e) {
             System.out.println("Error: " + e);
         }
     }
@@ -58,27 +61,21 @@ public class Menu {
         try{
             file = new File("res/images/starting_menu_background_main_project.png");
             mainBackground = ImageIO.read(file);
-        } catch(Exception e){
+        } catch(IOException e){
             System.out.println("Error: " + e);
         }
     }
 
     public void draw(Graphics2D g2){
         // MAIN DRAWING METHOD
-        if(gamePanel.getGame().gameState == gamePanel.getGame().startingMenuState){
-            drawStartingMenuScreen(g2);
-        } 
-        else if(gamePanel.getGame().gameState == gamePanel.getGame().settingState){
-            drawSettingScreen(g2);
-        } 
-        else if(gamePanel.getGame().gameState == gamePanel.getGame().guidesState){
-            drawGuidesScreen(g2);
-        } 
-        else if(gamePanel.getGame().gameState == gamePanel.getGame().exitState){
-            drawExitScreen(g2);
-        }
-        else if(gamePanel.getGame().gameState == gamePanel.getGame().choosingLevelState){
-            drawChoosingLevelScreen(g2);
+        switch (gamePanel.getGame().gameState) {
+            case GameState.START_MENU -> drawStartingMenuScreen(g2);
+            case GameState.SETTING -> drawSettingScreen(g2);
+            case GameState.GUIDES -> drawGuidesScreen(g2);
+            case GameState.EXIT -> drawExitScreen(g2);
+            case GameState.CHOOSING_LEVEL -> drawChoosingLevelScreen(g2);
+            default -> {
+            }
         }
     }
 
@@ -555,7 +552,7 @@ public class Menu {
         g2.setColor(miniFrameBackgroundColor);
         g2.fillRect(GAME_WIDTH - getTextLenght(g2, text) - 20, 0, getTextLenght(g2, text) + 20, 40);
         g2.setColor(selectedTextColor);
-        g2.drawString(text, GAME_WIDTH - getTextLenght(g2, text) - 10, 30);
+        g2.drawString(text, GAME_WIDTH - getTextLenght(g2, text) - 10, 25);
     }
 
     private int getTextLenght(Graphics2D g2, String text){
