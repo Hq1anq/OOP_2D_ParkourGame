@@ -3,10 +3,10 @@ package objects;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
-import main.Game;
 import static utilz.Constants.ANI_SPEED;
 import static utilz.Constants.ObjectConstants.BREAKABLE_PLATFORM;
 import static utilz.Constants.ObjectConstants.GetSpriteAmount;
+import static utilz.Constants.ObjectConstants.SHOOTER;
 
 public class GameObject {
     protected int x, y, objectType;
@@ -21,8 +21,8 @@ public class GameObject {
         this.objectType = objectType;
     }
 
-    protected void initHitbox(int width, int height) {
-        hitbox = new Rectangle2D.Float(x, y, (int) (width * Game.SCALE), (int) (height * Game.SCALE));
+    protected void initHitbox(float width, float height) {
+        hitbox = new Rectangle2D.Float(x, y, width, height);
     }
 
     public void drawHitbox(Graphics g, int xLevelOffset, int yLevelOffset) {
@@ -39,7 +39,9 @@ public class GameObject {
 				if (objectType == BREAKABLE_PLATFORM) {
 					doAnimation = false;
 					active = false;
-				}
+				} else if (objectType == SHOOTER) {
+                    doAnimation = false;
+                }
 			}
 		}
 	}
@@ -70,6 +72,10 @@ public class GameObject {
         this.doAnimation = doAnimation;
     }
 
+    public boolean isAnimating() {
+        return doAnimation;
+    }
+
     public int getxDrawOffset() {
         return xDrawOffset;
     }
@@ -80,6 +86,10 @@ public class GameObject {
 
     public int getAniIndex() {
         return aniIndex;
+    }
+
+    public int getAniTick() {
+        return aniTick;
     }
 
 }

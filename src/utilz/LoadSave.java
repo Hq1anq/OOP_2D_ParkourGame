@@ -10,7 +10,7 @@ import levels.Level;
 
 public class LoadSave {
 
-    public static final String PLAYER_ATLAS = "images/player_spirites.png";
+    public static final String PLAYER_ATLAS = "images/player_sprites.png";
     public static final String LEVEL_ATLAS = "images/outside_sprites.png";
     public static final String FRONT_TREE = "images/front_tree.png";
     public static final String BEHIND_TREE = "images/behind_tree.png";

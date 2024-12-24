@@ -6,13 +6,12 @@ import main.Game;
 import static main.Game.TILE_SIZE;
 import static utilz.Constants.ObjectConstants.BREAKABLE_PLATFORM;
 import static utilz.Constants.ObjectConstants.BROWNSAW;
-import static utilz.Constants.ObjectConstants.CELL_SPIKE;
 import static utilz.Constants.ObjectConstants.CHAINSAW;
 import static utilz.Constants.ObjectConstants.FIRE;
 import static utilz.Constants.ObjectConstants.GetSpriteAmount;
 import static utilz.Constants.ObjectConstants.INVISIBLE_TILE;
+import static utilz.Constants.ObjectConstants.SHOOTER;
 import static utilz.Constants.ObjectConstants.SPIKE;
-import static utilz.Constants.ObjectConstants.SPIKE2;
 import static utilz.Constants.ObjectConstants.SWORDTRAP1;
 import static utilz.Constants.ObjectConstants.SWORDTRAP2;
 import utilz.LoadSave;
@@ -31,11 +30,10 @@ public class LevelManager {
     private float chainsawIndex = CHAINSAW;
     private float fireIndex = FIRE;
     private float spikeIndex = SPIKE;
-    private float spike2Index = SPIKE2;
     private float swordtrap1Index = SWORDTRAP1;
     private float swordtrap2Index = SWORDTRAP2;
     private float brownsawIndex = BROWNSAW;
-    private float cellSpikeIndex = CELL_SPIKE;
+    // private float cellSpikeIndex = CELL_SPIKE;
 
     private int trapFPU = 40; // 1 frame for 40 updates
 
@@ -69,16 +67,8 @@ public class LevelManager {
                     if (fireIndex > FIRE + GetSpriteAmount(FIRE)) fireIndex = FIRE;
                 } else if (index == SPIKE) {
                     g.drawImage(levelSprite[(int) spikeIndex], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
-                    spikeIndex += 1.0/(10 * trapFPU);
+                    spikeIndex += 1.0/(2 * trapFPU);
                     if (spikeIndex > SPIKE + GetSpriteAmount(SPIKE)) spikeIndex = SPIKE;
-                } else if (index == CELL_SPIKE) {
-                    g.drawImage(levelSprite[(int) cellSpikeIndex], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
-                    cellSpikeIndex += 1.0/(10 * trapFPU);
-                    if (cellSpikeIndex > CELL_SPIKE + GetSpriteAmount(CELL_SPIKE)) cellSpikeIndex = CELL_SPIKE;
-                } else if (index == SPIKE2) {
-                    g.drawImage(levelSprite[(int) spike2Index], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
-                    spike2Index += 5.0/trapFPU;
-                    if (spike2Index > SPIKE2 + GetSpriteAmount(SPIKE2)) spike2Index = SPIKE2;
                 } else if (index == SWORDTRAP1) {
                     g.drawImage(levelSprite[(int) swordtrap1Index], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                     swordtrap1Index += 1.0/trapFPU;
@@ -93,7 +83,7 @@ public class LevelManager {
                     if (brownsawIndex > BROWNSAW + GetSpriteAmount(BROWNSAW)) brownsawIndex = BROWNSAW;
                 } else if (index == BREAKABLE_PLATFORM) {
                     g.drawImage(levelSprite[INVISIBLE_TILE], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
-                } else if (index != -1 && (index < 304 || index > 336)) {
+                } else if (index != -1 && index != SHOOTER && (index < 304 || index > 336)) {
                     g.drawImage(levelSprite[index], TILE_SIZE * j - xLevelOffset, TILE_SIZE * i - yLevelOffset, TILE_SIZE, TILE_SIZE, null);
                 }
 

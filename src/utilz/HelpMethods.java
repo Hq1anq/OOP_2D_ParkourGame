@@ -8,15 +8,16 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import main.Game;
 import static main.Game.TILE_SIZE;
+import objects.Arrow;
 import objects.BreakablePlatform;
+import objects.Shooter;
 import static utilz.Constants.ObjectConstants.BREAKABLE_PLATFORM;
 import static utilz.Constants.ObjectConstants.BROWNSAW;
-import static utilz.Constants.ObjectConstants.CELL_SPIKE;
 import static utilz.Constants.ObjectConstants.CHAINSAW;
 import static utilz.Constants.ObjectConstants.FIRE;
 import static utilz.Constants.ObjectConstants.GetSpriteAmount;
+import static utilz.Constants.ObjectConstants.SHOOTER;
 import static utilz.Constants.ObjectConstants.SPIKE;
-import static utilz.Constants.ObjectConstants.SPIKE2;
 import static utilz.Constants.ObjectConstants.SWORDTRAP1;
 
 public class HelpMethods {
@@ -157,24 +158,18 @@ public class HelpMethods {
         // Spike
         if((levelData[map_bottom_Y][map_left_X] >= SPIKE && levelData[map_bottom_Y][map_left_X] < SPIKE + GetSpriteAmount(SPIKE))
         || (levelData[map_bottom_Y][map_right_X] >= SPIKE && levelData[map_bottom_Y][map_right_X] < SPIKE + GetSpriteAmount(SPIKE))){
-            return bottom_Y >= map_bottom_Y * TILE_SIZE + 26;
-        }
-        if((levelData[map_bottom_Y][map_left_X] >= SPIKE2 && levelData[map_bottom_Y][map_left_X] < SPIKE2 + GetSpriteAmount(SPIKE2))
-        || (levelData[map_bottom_Y][map_right_X] >= SPIKE2 && levelData[map_bottom_Y][map_right_X] < SPIKE2 + GetSpriteAmount(SPIKE2))){
-            return (bottom_Y >= map_bottom_Y * TILE_SIZE + 19);
+            return bottom_Y >= map_bottom_Y * TILE_SIZE + 19;
         }
 
         if((levelData[map_top_Y][map_left_X] >= SPIKE && levelData[map_top_Y][map_left_X] < SPIKE + GetSpriteAmount(SPIKE))
-        || (levelData[map_top_Y][map_right_X] >= SPIKE && levelData[map_top_Y][map_right_X] < SPIKE + GetSpriteAmount(SPIKE))
-        || (levelData[map_top_Y][map_left_X] >= SPIKE2 && levelData[map_top_Y][map_left_X] < SPIKE2 + GetSpriteAmount(SPIKE2))
-        || (levelData[map_top_Y][map_right_X] >= SPIKE2 && levelData[map_top_Y][map_right_X] < SPIKE2 + GetSpriteAmount(SPIKE2))){
+        || (levelData[map_top_Y][map_right_X] >= SPIKE && levelData[map_top_Y][map_right_X] < SPIKE + GetSpriteAmount(SPIKE))){
             return true;
         }
 
-        if((levelData[map_top_Y][map_left_X] >= CELL_SPIKE && levelData[map_top_Y][map_left_X] < CELL_SPIKE + GetSpriteAmount(CELL_SPIKE))
-        || (levelData[map_top_Y][map_right_X] >= CELL_SPIKE && levelData[map_top_Y][map_right_X] < CELL_SPIKE + GetSpriteAmount(CELL_SPIKE))){
-            return true;
-        }
+        // if((levelData[map_top_Y][map_left_X] >= CELL_SPIKE && levelData[map_top_Y][map_left_X] < CELL_SPIKE + GetSpriteAmount(CELL_SPIKE))
+        // || (levelData[map_top_Y][map_right_X] >= CELL_SPIKE && levelData[map_top_Y][map_right_X] < CELL_SPIKE + GetSpriteAmount(CELL_SPIKE))){
+        //     return true;
+        // }
 
         // Fire
         if((levelData[map_bottom_Y][map_left_X] >= FIRE && levelData[map_bottom_Y][map_left_X] < FIRE + GetSpriteAmount(FIRE))
@@ -246,5 +241,20 @@ public class HelpMethods {
                 }
             }
         return breakablePlatforms;
+    }
+
+    public static ArrayList<Shooter> GetShooters(int[][] levelData) {
+        ArrayList<Shooter> shooters = new ArrayList<>();
+        for (int i = 0; i < levelData.length; i++)
+            for (int j = 0; j < levelData[0].length; j++) {
+                if (levelData[i][j] == SHOOTER) {
+                    shooters.add(new Shooter(j * TILE_SIZE, i * TILE_SIZE, SHOOTER));
+                }
+            }
+        return shooters;
+    }
+
+    public static boolean IsArrowHitLevel(Arrow arrow, int[][] levelData) {
+        return IsSolid(arrow.getHitbox().x + arrow.getHitbox().width/2, arrow.getHitbox().y + arrow.getHitbox().height/2, levelData);
     }
 }

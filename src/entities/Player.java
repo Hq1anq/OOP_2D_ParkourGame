@@ -830,6 +830,10 @@ public class Player extends Entity {
         game.playSoundEffect(9);
     }
 
+    public boolean getUnvulerable(){
+        return unvulerable;
+    }
+
     public void showDetail() {
         System.out.println("Player position: " + hitbox.x + " " + hitbox.y);
     }

@@ -1,34 +1,49 @@
 package utilz;
 
 import java.awt.Color;
+import main.Game;
 
 public class Constants {
 
     public static final String GAME_NAME = "Squirrel 's adventure";
     public static final int ANI_SPEED = 15;
 
+    public static class ARROW {
+        public static final int ARROW_DEFAULT_WIDTH = 10;
+        public static final int ARROW_DEFAULT_HEIGHT = 14;
+        public static final int ARROW_WIDTH = (int) (ARROW_DEFAULT_WIDTH * Game.SCALE);
+        public static final int ARROW_HEIGHT = (int) (ARROW_DEFAULT_HEIGHT * Game.SCALE);
+        public static final float SPEED = 1.5f * Game.SCALE;
+    }
     public static class ObjectConstants {
         public static final int BREAKABLE_PLATFORM = 119;
         public static final int INVISIBLE_TILE = 120;
+
         public static final int CHAINSAW = 266;
         public static final int FIRE = 228;
         public static final int SPIKE = 285;
-        public static final int SPIKE2 = 289;
         public static final int SWORDTRAP1 = 133;
         public static final int SWORDTRAP2 = 152;
         public static final int BROWNSAW = 247;
-        public static final int CELL_SPIKE = 190;
+        // public static final int CELL_SPIKE = 190;
+
+        public static final int SHOOTER = 190;
+
+        public static final int SHOOTER_DEFAULT_WIDTH = 26;
+        public static final int SHOOTER_DEFAULT_HEIGHT = 14;
+        public static final int SHOOTER_WIDTH = (int) (SHOOTER_DEFAULT_WIDTH * Game.SCALE);
+        public static final int SHOOTER_HEIGHT = (int) (SHOOTER_DEFAULT_HEIGHT * Game.SCALE);
         public static int GetSpriteAmount(int objType) {
             return switch (objType) {
                 case BREAKABLE_PLATFORM -> 15;
                 case CHAINSAW -> 8;
                 case FIRE -> 4;
-                case SPIKE -> 2;
-                case SPIKE2 -> 6;
+                case SPIKE -> 10;
                 case SWORDTRAP1 -> 5;
                 case SWORDTRAP2 -> 4;
                 case BROWNSAW -> 2;
-                case CELL_SPIKE -> 2;
+                // case CELL_SPIKE -> 2;
+                case SHOOTER -> 13;
                 default -> 1;
             };
         }

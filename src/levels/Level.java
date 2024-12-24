@@ -2,6 +2,7 @@ package levels;
 
 import java.util.ArrayList;
 import objects.BreakablePlatform;
+import objects.Shooter;
 import utilz.HelpMethods;
 import utilz.LoadSave;
 import utilz.Point;
@@ -13,6 +14,7 @@ public class Level {
     private int id;
     private int[][] levelData;
     private ArrayList<BreakablePlatform> breakablePlatforms;
+    private ArrayList<Shooter> shooters;
     private int levelTileHeight;
     private int levelTileWide;
     private Point playerSpawn;
@@ -22,6 +24,7 @@ public class Level {
         this.id = id;
         loadLevel();
         createBreakablePlatforms();
+        createShooters();
     }
     
     private void loadLevel() {
@@ -42,6 +45,9 @@ public class Level {
     }
     private void createBreakablePlatforms() {
         breakablePlatforms = HelpMethods.GetBreakablePlatforms(levelData);
+    }
+    private void createShooters() {
+        shooters = HelpMethods.GetShooters(levelData);
     }
     public int getId() {
         return id;
@@ -66,5 +72,8 @@ public class Level {
     }
     public ArrayList<BreakablePlatform> getBreakablePlatforms() {
         return breakablePlatforms;
+    }
+    public ArrayList<Shooter> getShooters() {
+        return shooters;
     }
 }

@@ -159,7 +159,7 @@ public class Game implements Runnable {
             if(paused == false && gameOver == false) {
                 player.update();
                 levelManager.update();
-                objectManager.update();
+                objectManager.update(levelManager.getCurrentLevel().getLevelData(), player);
                 checkCloseToBorder();
                 updateCameraShake();
 
@@ -304,7 +304,7 @@ public class Game implements Runnable {
         // RUN WHEN START THREAD
         // RE-UPDATE AND RE-RENDER EVERY FRAME TIME: 1s / FPS
 
-        double timePerFrame = 1000000000.0 / FPS_SET;
+        double timePerFrame = 1000000000.0 / FPS_SET; // 10^9 nano seconds = 1 second
         double timePerUpdate = 1000000000.0 / UPS_SET;
 
         long previousTime = System.nanoTime();
